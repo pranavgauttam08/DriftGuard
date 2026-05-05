@@ -35,7 +35,12 @@ yarn-error.log*
 
 # vercel
 .vercel
+push.js
+push-to-github.bat
+setup-env.js
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.vercel
