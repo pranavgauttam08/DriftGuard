@@ -82,34 +82,7 @@ curl -X POST https://driftguard.vercel.app/api/ingest \
     "tokenCount": 142
   }'
 🧪 How Behavioral Fingerprinting Works
-AI Responses (N samples)
-        │
-        ▼
-┌─────────────────────────┐
-│   1. Embed all texts     │  → 768-dim vectors (text-embedding-004)
-│   2. Compute centroid    │  → Geometric center of all embeddings
-│   3. Classify tone       │  → Gemini: formal/casual/technical/empathetic
-│   4. Detect refusals     │  → Pattern matching (9 refusal patterns)
-│   5. Score hallucination │  → Gemini: factual consistency rating
-│   6. Compute statistics  │  → Latency, tokens, length percentiles
-│   7. Topic consistency   │  → Avg pairwise cosine similarity
-└─────────────────────────┘
-        │
-        ▼
-  BehavioralFingerprint (8 dimensions)
-        │
-        ▼
-┌─────────────────────────┐
-│   Diff Engine            │
-│   Compare v1.3 → v1.4   │
-│   Compute deltas         │
-│   Classify severity      │
-│   Issue verdict          │
-│   Generate explanation   │  → Gemini: actionable 2-sentence summary
-└─────────────────────────┘
-        │
-        ▼
-  PASS ✅  |  WARN ⚠️  |  BLOCK ❌
+
 
 🛡️ Adversarial Probe Categories
 Category	Example Probe	What It Tests
