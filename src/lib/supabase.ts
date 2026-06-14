@@ -76,3 +76,43 @@ export function getUserSupabase(userId: string) {
     userId,
   };
 }
+
+/**
+ * Get a tenant-scoped Supabase client that sets both user_id and org_id for RLS.
+ * Used by v1 API routes that are multi-tenant aware.
+ */
+export function getTenantSupabase(userId: string, orgId: string) {
+  if (!isSupabaseConfigured()) {
+    throw new Error('Supabase is not configured');
+  }
+
+  const client = createClient(supabaseUrl, supabaseServiceKey);
+
+  return {
+    client,
+    /**
+     * Execute a query with both user and org RLS context set.
+     */
+    async query<T>(fn: (client: SupabaseClient) => Promise<T>): Promise<T> {
+      try {
+        // Set both user and org context for RLS policies
+        await client.rpc('set_config', {
+          setting: 'app.user_id',
+          value: userId,
+          is_local: true,
+        });
+        await client.rpc('set_config', {
+          setting: 'app.org_id',
+          value: orgId,
+          is_local: true,
+        });
+      } catch {
+        // RLS functions may not exist yet — proceed with manual filtering
+      }
+      return fn(client);
+    },
+    userId,
+    orgId,
+  };
+}
+

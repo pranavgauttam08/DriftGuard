@@ -32,6 +32,20 @@ export interface BehavioralFingerprint {
   outputLengthP50: number;
   outputLengthP95: number;
   sampleCount: number;
+  // Enterprise extensions
+  orgId?: string;
+  projectId?: string;
+  environmentId?: string;
+  confidence?: number;
+  sampleMinimumMet?: boolean;
+  piiDetected?: number;
+  toxicityScore?: number;
+  biasScore?: number;
+  metadata?: {
+    computeTimeMs: number;
+    modelUsed: string;
+    datasetId?: string;
+  };
 }
 
 export interface BehavioralDiff {
@@ -49,6 +63,39 @@ export interface BehavioralDiff {
   latencyDelta: number;
   verdict: 'PASS' | 'WARN' | 'BLOCK';
   verdictReason: string;
+  // Enterprise extensions
+  orgId?: string;
+  projectId?: string;
+  environmentId?: string;
+  rootCauses?: RootCause[];
+  remediations?: Remediation[];
+  compositeScore?: number;
+  thresholdsUsed?: DiffThresholds;
+  reviewStatus?: 'pending' | 'approved' | 'rejected' | 'auto_approved';
+  reviewedBy?: string;
+  reviewedAt?: Date;
+  deploymentId?: string;
+}
+
+export interface RootCause {
+  dimension: string;
+  category: 'model_change' | 'prompt_change' | 'retrieval_degradation' | 'data_shift' | 'config_change' | 'unknown';
+  explanation: string;
+  confidence: number;
+}
+
+export interface Remediation {
+  priority: 'immediate' | 'next_release' | 'backlog';
+  action: string;
+  details: string;
+}
+
+export interface DiffThresholds {
+  hallucinationWarn: number;
+  hallucinationBlock: number;
+  latencyWarnMs: number;
+  toneShiftWarn: number;
+  similarityBlock: number;
 }
 
 export interface RegressionItem {
@@ -66,9 +113,14 @@ export interface ImprovementItem {
   delta: number;
 }
 
+export type ProbeType =
+  | 'jailbreak' | 'injection' | 'hallucination' | 'off_topic' | 'tone_break'
+  | 'toxicity' | 'bias' | 'data_leakage' | 'pii_exposure' | 'prompt_extraction'
+  | 'tool_abuse' | 'role_escalation' | 'agent_hijacking' | 'context_poisoning' | 'retrieval_poisoning';
+
 export interface ProbeResult {
   id: string;
-  probeType: 'jailbreak' | 'injection' | 'hallucination' | 'off_topic' | 'tone_break';
+  probeType: ProbeType;
   query: string;
   response: string;
   passed: boolean;
@@ -100,6 +152,10 @@ export interface Endpoint {
   totalResponses: number;
   status: 'healthy' | 'warning' | 'critical';
   lastActiveAt?: Date;
+  // Enterprise extensions
+  orgId?: string;
+  projectId?: string;
+  environmentId?: string;
 }
 
 export interface UserProfile {
@@ -123,7 +179,7 @@ export interface UserApiKey {
   totalRequests: number;
 }
 
-export type DashboardView = 'overview' | 'timeline' | 'drift' | 'regressions' | 'probes' | 'alerts' | 'endpoints' | 'settings';
+export type DashboardView = 'overview' | 'timeline' | 'drift' | 'regressions' | 'probes' | 'alerts' | 'endpoints' | 'settings' | 'deployments' | 'datasets' | 'reviews' | 'security';
 
 export interface AdversarialProbe {
   id: string;
