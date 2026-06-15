@@ -5,14 +5,15 @@ import TopBar from '@/components/dashboard/TopBar';
 import GlowButton from '@/components/ui/GlowButton';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { useTenant } from '@/hooks/useTenant';
+import { useDriftGuardContext } from '../layout';
 import {
   GitBranch, ArrowRight, CheckCircle2, XCircle, Clock, Loader2, RotateCcw,
   ShieldCheck, ChevronDown, ChevronRight, MessageSquare, FileText,
-  ArrowUpRight, AlertTriangle, Activity,
+  ArrowUpRight, AlertTriangle, Activity, X, Zap,
 } from 'lucide-react';
 
 // Demo deployment data — represents real pipeline states
-const DEMO_DEPLOYMENTS = [
+const INITIAL_DEPLOYMENTS = [
   {
     id: 'dep-001', endpointId: 'support-bot', endpointName: 'Customer Support Bot', version: 'v1.3.0',
     sourceEnv: 'staging', targetEnv: 'production',
@@ -140,11 +141,122 @@ type TabView = 'pipeline' | 'promotion';
 
 export default function DeploymentsPage() {
   const tenant = useTenant();
+  const dg = useDriftGuardContext();
+  const [deployments, setDeployments] = useState(INITIAL_DEPLOYMENTS);
   const [selectedDep, setSelectedDep] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabView>('pipeline');
   const [showAudit, setShowAudit] = useState(false);
+  const [showNewDeployModal, setShowNewDeployModal] = useState(false);
 
-  const selected = DEMO_DEPLOYMENTS.find(d => d.id === selectedDep);
+  // New Deployment form state
+  const [newDep, setNewDep] = useState({
+    endpointName: '',
+    version: '',
+    sourceEnv: 'staging',
+    targetEnv: 'production',
+  });
+  const [isCreating, setIsCreating] = useState(false);
+
+  const selected = deployments.find(d => d.id === selectedDep);
+
+  const handleCreateDeployment = async () => {
+    if (!newDep.endpointName.trim() || !newDep.version.trim()) return;
+
+    setIsCreating(true);
+
+    // Simulate the pipeline steps running one-by-one
+    const depId = `dep-${Date.now()}`;
+    const newDeployment: any = {
+      id: depId,
+      endpointId: newDep.endpointName.toLowerCase().replace(/\s+/g, '-'),
+      endpointName: newDep.endpointName,
+      version: newDep.version.startsWith('v') ? newDep.version : `v${newDep.version}`,
+      sourceEnv: newDep.sourceEnv,
+      targetEnv: newDep.targetEnv,
+      status: 'fingerprinting',
+      verdict: null,
+      progress: 0,
+      currentStep: 'Computing behavioral fingerprint...',
+      createdAt: new Date(),
+      createdBy: 'you@company.com',
+      steps: [
+        { name: 'Fingerprint', status: 'running', duration: null },
+        { name: 'Dataset Eval', status: 'pending' },
+        { name: 'Probe Suite', status: 'pending' },
+        { name: 'Behavioral Diff', status: 'pending' },
+        { name: 'Deploy', status: 'pending' },
+      ],
+      regressions: [],
+      improvements: [],
+      rootCauses: [],
+      compositeScore: 0,
+      audit: [
+        { timestamp: 'just now', action: 'deployment.created', user: 'you@company.com', details: 'Deployment initiated' },
+      ],
+    };
+
+    setDeployments(prev => [newDeployment, ...prev]);
+    setShowNewDeployModal(false);
+    setNewDep({ endpointName: '', version: '', sourceEnv: 'staging', targetEnv: 'production' });
+    setSelectedDep(depId);
+
+    // Simulate pipeline progression
+    const simulateStep = (stepIdx: number, status: string, progress: number, delay: number, stepStatus: string, extras?: any) => {
+      return new Promise<void>(resolve => {
+        setTimeout(() => {
+          setDeployments(prev => prev.map(d => {
+            if (d.id !== depId) return d;
+            const steps = [...d.steps];
+            steps[stepIdx] = { ...steps[stepIdx], status: stepStatus as any, ...extras };
+            if (stepIdx + 1 < steps.length && stepStatus === 'completed') {
+              steps[stepIdx + 1] = { ...steps[stepIdx + 1], status: 'running' as any };
+            }
+            return {
+              ...d,
+              status: status as any,
+              progress,
+              steps,
+              audit: [
+                ...d.audit,
+                { timestamp: 'just now', action: `${steps[stepIdx].name.toLowerCase().replace(' ', '_')}.${stepStatus}`, user: 'system', details: `${steps[stepIdx].name} ${stepStatus}` },
+              ],
+            };
+          }));
+          resolve();
+        }, delay);
+      });
+    };
+
+    // Run pipeline simulation
+    await simulateStep(0, 'fingerprinting', 15, 1500, 'completed', { duration: '11s' });
+    await simulateStep(1, 'evaluating', 35, 2000, 'completed', { duration: '42s', passRate: '96%' });
+    await simulateStep(2, 'probing', 55, 2500, 'completed', { duration: '35s', passRate: '98%' });
+    await simulateStep(3, 'diffing', 75, 1500, 'completed', { duration: '7s', verdict: 'PASS' });
+
+    // Final: set verdict to PASS and status to awaiting_approval
+    setTimeout(() => {
+      setDeployments(prev => prev.map(d => {
+        if (d.id !== depId) return d;
+        const steps = [...d.steps];
+        steps[4] = { ...steps[4], status: 'pending' as any };
+        return {
+          ...d,
+          status: 'awaiting_approval' as any,
+          verdict: 'PASS' as any,
+          progress: 85,
+          currentStep: 'Awaiting approval',
+          improvements: [
+            { dimension: 'Response Quality', baseValue: 0.82, newValue: 0.89, delta: 0.07 },
+          ],
+          audit: [
+            ...d.audit,
+            { timestamp: 'just now', action: 'review.created', user: 'system', details: 'All gates passed — awaiting reviewer approval' },
+          ],
+        };
+      }));
+      setIsCreating(false);
+    }, 8500);
+  };
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -173,7 +285,7 @@ export default function DeploymentsPage() {
           <ArrowUpRight size={12} className="inline mr-1" /> Environment Promotion
         </button>
         <div className="ml-auto">
-          <GlowButton size="sm" icon={<GitBranch size={14} />}>New Deployment</GlowButton>
+          <GlowButton size="sm" icon={<GitBranch size={14} />} onClick={() => setShowNewDeployModal(true)}>New Deployment</GlowButton>
         </div>
       </div>
 
@@ -205,7 +317,7 @@ export default function DeploymentsPage() {
 
           {/* Deployments list */}
           <div className="space-y-3">
-            {DEMO_DEPLOYMENTS.map((dep, i) => {
+            {deployments.map((dep, i) => {
               const config = STATUS_CONFIG[dep.status] || STATUS_CONFIG.pending;
               const StatusIcon = config.icon;
               const isSelected = selectedDep === dep.id;
@@ -358,20 +470,43 @@ export default function DeploymentsPage() {
                           <div className="flex gap-3">
                             {selected.status === 'awaiting_approval' && (
                               <>
-                                <GlowButton size="sm" icon={<CheckCircle2 size={14} />}>Approve & Deploy</GlowButton>
-                                <GlowButton variant="danger" size="sm" icon={<XCircle size={14} />}>Reject</GlowButton>
-                                <GlowButton variant="ghost" size="sm" icon={<MessageSquare size={14} />}>Request Changes</GlowButton>
+                                <GlowButton size="sm" icon={<CheckCircle2 size={14} />}
+                                  onClick={() => {
+                                    setDeployments(prev => prev.map(d => d.id === selected.id ? {
+                                      ...d, status: 'deployed' as any, progress: 100, currentStep: 'Deployed',
+                                      steps: d.steps.map((s, i) => i === 4 ? { ...s, status: 'completed' as any } : s),
+                                      audit: [...d.audit, { timestamp: 'just now', action: 'deployment.approved', user: 'you', details: 'Approved & deployed' }],
+                                    } : d));
+                                  }}
+                                >Approve & Deploy</GlowButton>
+                                <GlowButton variant="danger" size="sm" icon={<XCircle size={14} />}
+                                  onClick={() => {
+                                    setDeployments(prev => prev.map(d => d.id === selected.id ? {
+                                      ...d, status: 'rejected' as any, progress: 100, currentStep: 'Rejected',
+                                      steps: d.steps.map((s, i) => i === 4 ? { ...s, status: 'failed' as any } : s),
+                                      rejectionReason: 'Rejected by reviewer',
+                                      audit: [...d.audit, { timestamp: 'just now', action: 'deployment.rejected', user: 'you', details: 'Deployment rejected' }],
+                                    } : d));
+                                  }}
+                                >Reject</GlowButton>
                               </>
                             )}
                             {['deployed', 'approved'].includes(selected.status) && (
-                              <GlowButton variant="danger" size="sm" icon={<RotateCcw size={14} />}>Rollback</GlowButton>
+                              <GlowButton variant="danger" size="sm" icon={<RotateCcw size={14} />}
+                                onClick={() => {
+                                  setDeployments(prev => prev.map(d => d.id === selected.id ? {
+                                    ...d, status: 'rolled_back' as any, currentStep: 'Rolled back',
+                                    audit: [...d.audit, { timestamp: 'just now', action: 'deployment.rolled_back', user: 'you', details: 'Deployment rolled back' }],
+                                  } : d));
+                                }}
+                              >Rollback</GlowButton>
                             )}
                           </div>
 
-                          {selected.rejectionReason && (
+                          {(selected as any).rejectionReason && (
                             <div className="rounded-lg text-xs mt-3" style={{ padding: '10px 14px', background: 'rgba(255,61,107,0.04)', border: '1px solid rgba(255,61,107,0.12)' }}>
                               <span className="text-[var(--color-biolume-danger)] font-mono">Rejection reason:</span>{' '}
-                              <span className="text-[var(--color-muted-text)]">{selected.rejectionReason}</span>
+                              <span className="text-[var(--color-muted-text)]">{(selected as any).rejectionReason}</span>
                             </div>
                           )}
                         </div>
@@ -404,42 +539,32 @@ export default function DeploymentsPage() {
               </div>
 
               <div className="flex items-center gap-2">
-                {/* Dev */}
                 <div className="flex-1 rounded-lg text-center" style={{ padding: '10px', background: 'rgba(0,229,255,0.04)', border: '1px solid rgba(0,229,255,0.1)' }}>
                   <span className="text-[10px] text-[var(--color-ghost-text)] block">DEV</span>
                   <span className="text-xs font-mono text-[#00E5FF]">{promo.devVersion}</span>
                 </div>
-
-                {/* Arrow dev→staging */}
                 <div className="flex flex-col items-center">
                   <ArrowRight size={14} style={{ color: promo.devToStaging === 'ahead' ? '#FFB800' : '#00FF88' }} />
                   <span className="text-[8px] font-mono" style={{ color: promo.devToStaging === 'ahead' ? '#FFB800' : '#00FF88' }}>
                     {promo.devToStaging === 'ahead' ? 'PROMOTE' : 'IN SYNC'}
                   </span>
                 </div>
-
-                {/* Staging */}
                 <div className="flex-1 rounded-lg text-center" style={{ padding: '10px', background: 'rgba(255,184,0,0.04)', border: '1px solid rgba(255,184,0,0.1)' }}>
                   <span className="text-[10px] text-[var(--color-ghost-text)] block">STAGING</span>
                   <span className="text-xs font-mono text-[#FFB800]">{promo.stagingVersion}</span>
                 </div>
-
-                {/* Arrow staging→prod */}
                 <div className="flex flex-col items-center">
                   <ArrowRight size={14} style={{ color: promo.stagingToProd === 'ahead' ? '#FFB800' : '#00FF88' }} />
                   <span className="text-[8px] font-mono" style={{ color: promo.stagingToProd === 'ahead' ? '#FFB800' : '#00FF88' }}>
                     {promo.stagingToProd === 'ahead' ? 'PROMOTE' : 'IN SYNC'}
                   </span>
                 </div>
-
-                {/* Production */}
                 <div className="flex-1 rounded-lg text-center" style={{ padding: '10px', background: 'rgba(0,255,136,0.04)', border: '1px solid rgba(0,255,136,0.1)' }}>
                   <span className="text-[10px] text-[var(--color-ghost-text)] block">PRODUCTION</span>
                   <span className="text-xs font-mono text-[#00FF88]">{promo.prodVersion}</span>
                 </div>
               </div>
 
-              {/* Action buttons */}
               {(promo.devToStaging === 'ahead' || promo.stagingToProd === 'ahead') && (
                 <div className="flex gap-2 mt-3">
                   {promo.devToStaging === 'ahead' && (
@@ -454,6 +579,112 @@ export default function DeploymentsPage() {
           ))}
         </div>
       )}
+
+      {/* ═══════════════════════════════════════════════════════════
+          NEW DEPLOYMENT MODAL
+          ═══════════════════════════════════════════════════════════ */}
+      <AnimatePresence>
+        {showNewDeployModal && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center"
+            style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}
+            onClick={() => setShowNewDeployModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+              className="bio-card w-full max-w-lg"
+              style={{ padding: '2rem', position: 'relative' }}
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Close */}
+              <button onClick={() => setShowNewDeployModal(false)}
+                className="absolute top-4 right-4 text-[var(--color-ghost-text)] hover:text-[var(--color-surface-text)] transition-colors">
+                <X size={18} />
+              </button>
+
+              <div className="flex items-center gap-2 mb-6">
+                <div className="p-2 rounded-lg" style={{ background: 'rgba(0,255,209,0.08)' }}>
+                  <Zap size={18} style={{ color: '#00FFD1' }} />
+                </div>
+                <div>
+                  <h2 className="text-base font-semibold text-[var(--color-surface-text)]">New Deployment</h2>
+                  <p className="text-[10px] text-[var(--color-ghost-text)]">Run the full behavioral gating pipeline</p>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {/* Endpoint Name */}
+                <div>
+                  <label className="text-[10px] font-mono text-[var(--color-ghost-text)] uppercase tracking-wider block mb-1.5">
+                    Endpoint / AI System Name
+                  </label>
+                  <input
+                    className="bio-input w-full"
+                    placeholder="e.g. Customer Support Bot"
+                    value={newDep.endpointName}
+                    onChange={e => setNewDep(p => ({ ...p, endpointName: e.target.value }))}
+                  />
+                </div>
+
+                {/* Version */}
+                <div>
+                  <label className="text-[10px] font-mono text-[var(--color-ghost-text)] uppercase tracking-wider block mb-1.5">
+                    Version
+                  </label>
+                  <input
+                    className="bio-input w-full"
+                    placeholder="e.g. v2.0.0"
+                    value={newDep.version}
+                    onChange={e => setNewDep(p => ({ ...p, version: e.target.value }))}
+                  />
+                </div>
+
+                {/* Source and Target Environment */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[10px] font-mono text-[var(--color-ghost-text)] uppercase tracking-wider block mb-1.5">
+                      Source Environment
+                    </label>
+                    <select className="bio-input w-full" value={newDep.sourceEnv} onChange={e => setNewDep(p => ({ ...p, sourceEnv: e.target.value }))}>
+                      <option value="development">Development</option>
+                      <option value="staging">Staging</option>
+                      <option value="production">Production</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-mono text-[var(--color-ghost-text)] uppercase tracking-wider block mb-1.5">
+                      Target Environment
+                    </label>
+                    <select className="bio-input w-full" value={newDep.targetEnv} onChange={e => setNewDep(p => ({ ...p, targetEnv: e.target.value }))}>
+                      <option value="staging">Staging</option>
+                      <option value="production">Production</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Pipeline info */}
+                <div className="rounded-lg" style={{ padding: '10px 14px', background: 'rgba(0,255,209,0.03)', border: '1px solid rgba(0,255,209,0.08)' }}>
+                  <div className="text-[10px] text-[var(--color-muted-text)] leading-relaxed">
+                    <strong className="text-[var(--color-biolume-primary)]">Pipeline will run:</strong> Fingerprint → Dataset Eval → Probe Suite (50 probes) → Behavioral Diff → Verdict
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex justify-end gap-3 pt-2">
+                  <GlowButton variant="ghost" size="sm" onClick={() => setShowNewDeployModal(false)}>Cancel</GlowButton>
+                  <GlowButton size="sm" icon={<GitBranch size={14} />}
+                    onClick={handleCreateDeployment}
+                    disabled={!newDep.endpointName.trim() || !newDep.version.trim() || isCreating}
+                  >
+                    {isCreating ? 'Creating...' : 'Start Deployment'}
+                  </GlowButton>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
