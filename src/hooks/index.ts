@@ -1,26 +1,93 @@
 'use client';
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useUser } from '@clerk/nextjs';
 import { Endpoint, BehavioralFingerprint, BehavioralDiff, Alert, ProbeResult } from '@/types';
 import { seedEndpoints, seedFingerprints, seedDiffs, seedAlerts, seedProbeResults } from '@/lib/seed';
+import { loadCollection, saveCollection, reviveDates, COLLECTIONS } from '@/lib/persistence';
 
 // ============================================================
-// useDriftGuard — Master state hook
+// useDriftGuard — Master state hook with persistence
 // All dashboard pages read from this single source of truth.
-// When you add/modify data here, ALL pages update instantly.
+// Data is persisted to localStorage scoped by Clerk userId.
 // ============================================================
 export function useDriftGuard() {
-  const [endpoints, setEndpoints] = useState<Endpoint[]>(seedEndpoints);
-  const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoint | null>(seedEndpoints[0]);
-  const [fingerprints, setFingerprints] = useState<BehavioralFingerprint[]>(seedFingerprints);
-  const [diffs, setDiffs] = useState<BehavioralDiff[]>(seedDiffs);
-  const [alerts, setAlerts] = useState<Alert[]>(seedAlerts);
-  const [probeResults, setProbeResults] = useState<ProbeResult[]>(seedProbeResults);
+  const { user } = useUser();
+  const userId = user?.id || 'anonymous';
+  const initialized = useRef(false);
+
+  // ── Initialize state from localStorage or seed ────────────
+  const [endpoints, setEndpoints] = useState<Endpoint[]>([]);
+  const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoint | null>(null);
+  const [fingerprints, setFingerprints] = useState<BehavioralFingerprint[]>([]);
+  const [diffs, setDiffs] = useState<BehavioralDiff[]>([]);
+  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [probeResults, setProbeResults] = useState<ProbeResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // ── Load persisted data on mount ──────────────────────────
+  useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
+
+    const storedEndpoints = reviveDates(loadCollection<Endpoint>(userId, COLLECTIONS.ENDPOINTS));
+    const storedFingerprints = reviveDates(loadCollection<BehavioralFingerprint>(userId, COLLECTIONS.FINGERPRINTS));
+    const storedDiffs = reviveDates(loadCollection<BehavioralDiff>(userId, COLLECTIONS.DIFFS));
+    const storedAlerts = reviveDates(loadCollection<Alert>(userId, COLLECTIONS.ALERTS));
+    const storedProbes = reviveDates(loadCollection<ProbeResult>(userId, COLLECTIONS.PROBE_RESULTS));
+
+    // If user has stored data, use it. Otherwise use seed data for demo.
+    const eps = storedEndpoints.length > 0 ? storedEndpoints : seedEndpoints;
+    const fps = storedFingerprints.length > 0 ? storedFingerprints : seedFingerprints;
+    const dfs = storedDiffs.length > 0 ? storedDiffs : seedDiffs;
+    const als = storedAlerts.length > 0 ? storedAlerts : seedAlerts;
+    const prs = storedProbes.length > 0 ? storedProbes : seedProbeResults;
+
+    setEndpoints(eps);
+    setFingerprints(fps);
+    setDiffs(dfs);
+    setAlerts(als);
+    setProbeResults(prs);
+    setSelectedEndpoint(eps[0] || null);
+
+    // Persist seed data for first-time users so it survives refresh
+    if (storedEndpoints.length === 0) {
+      saveCollection(userId, COLLECTIONS.ENDPOINTS, seedEndpoints);
+      saveCollection(userId, COLLECTIONS.FINGERPRINTS, seedFingerprints);
+      saveCollection(userId, COLLECTIONS.DIFFS, seedDiffs);
+      saveCollection(userId, COLLECTIONS.ALERTS, seedAlerts);
+      saveCollection(userId, COLLECTIONS.PROBE_RESULTS, seedProbeResults);
+    }
+  }, [userId]);
+
+  // ── Persist on every state change ─────────────────────────
+  useEffect(() => {
+    if (!initialized.current) return;
+    saveCollection(userId, COLLECTIONS.ENDPOINTS, endpoints);
+  }, [endpoints, userId]);
+
+  useEffect(() => {
+    if (!initialized.current) return;
+    saveCollection(userId, COLLECTIONS.FINGERPRINTS, fingerprints);
+  }, [fingerprints, userId]);
+
+  useEffect(() => {
+    if (!initialized.current) return;
+    saveCollection(userId, COLLECTIONS.DIFFS, diffs);
+  }, [diffs, userId]);
+
+  useEffect(() => {
+    if (!initialized.current) return;
+    saveCollection(userId, COLLECTIONS.ALERTS, alerts);
+  }, [alerts, userId]);
+
+  useEffect(() => {
+    if (!initialized.current) return;
+    saveCollection(userId, COLLECTIONS.PROBE_RESULTS, probeResults);
+  }, [probeResults, userId]);
 
   // ── Endpoint CRUD ──────────────────────────────────────────
   const addEndpoint = useCallback((endpoint: Endpoint) => {
     setEndpoints(prev => {
-      // Avoid duplicates
       if (prev.some(e => e.id === endpoint.id)) return prev;
       return [...prev, endpoint];
     });
@@ -31,7 +98,6 @@ export function useDriftGuard() {
     setFingerprints(prev => prev.filter(f => f.endpointId !== endpointId));
     setDiffs(prev => prev.filter(d => d.endpointId !== endpointId));
     setAlerts(prev => prev.filter(a => a.endpointId !== endpointId));
-    // If the removed endpoint was selected, switch to first available
     setSelectedEndpoint(prev => {
       if (prev?.id === endpointId) {
         const remaining = endpoints.filter(e => e.id !== endpointId);
@@ -42,18 +108,13 @@ export function useDriftGuard() {
   }, [endpoints]);
 
   // ── Data ingestion tracking ────────────────────────────────
-  // When a response is ingested for an endpoint, update its count and
-  // auto-generate fingerprint/diff data so other pages reflect the change
   const ingestResponse = useCallback((endpointId: string, version: string) => {
-    // Update endpoint response count and last active time
     setEndpoints(prev => prev.map(ep => {
       if (ep.id !== endpointId) return ep;
       const newTotal = ep.totalResponses + 1;
-      // Auto-determine status based on thresholds
       let status: 'healthy' | 'warning' | 'critical' = 'healthy';
-      if (newTotal > 100) status = 'warning';  // Many responses might indicate issues
-      
-      // Check if there are regressions for this endpoint
+      if (newTotal > 100) status = 'warning';
+
       const epDiffs = diffs.filter(d => d.endpointId === endpointId);
       const latestDiff = epDiffs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
       if (latestDiff?.verdict === 'BLOCK') status = 'critical';
@@ -71,7 +132,6 @@ export function useDriftGuard() {
 
   // ── Batch ingest complete → auto-generate fingerprint ──────
   const onBatchComplete = useCallback((endpointId: string, version: string, count: number) => {
-    // Generate a new fingerprint for this version
     const existingFp = fingerprints.find(f => f.endpointId === endpointId && f.version === version);
     if (!existingFp) {
       const newFp: BehavioralFingerprint = {
@@ -87,7 +147,7 @@ export function useDriftGuard() {
           empathetic: 0.15 + Math.random() * 0.15,
         },
         refusalRate: Math.random() * 0.08,
-        hallucinationScore: Math.random() * 0.15, // Mostly healthy
+        hallucinationScore: Math.random() * 0.15,
         avgLatencyMs: 350 + Math.random() * 200,
         avgTokenCount: 120 + Math.random() * 100,
         topicConsistency: 0.85 + Math.random() * 0.1,
@@ -103,17 +163,16 @@ export function useDriftGuard() {
         .map(f => f.version)
         .filter((v, i, arr) => arr.indexOf(v) === i)
         .sort();
-      
+
       if (allVersions.length > 0) {
         const prevVersion = allVersions[allVersions.length - 1];
         const prevFp = fingerprints.find(f => f.endpointId === endpointId && f.version === prevVersion);
-        
+
         if (prevFp) {
           const hallDelta = newFp.hallucinationScore - prevFp.hallucinationScore;
           const latDelta = newFp.avgLatencyMs - prevFp.avgLatencyMs;
           const tcDelta = newFp.topicConsistency - prevFp.topicConsistency;
 
-          // Determine verdict based on deltas
           let verdict: 'PASS' | 'WARN' | 'BLOCK' = 'PASS';
           let verdictReason = 'Behavioral fingerprint is stable. No significant regressions detected.';
           const regressions: any[] = [];
@@ -164,7 +223,6 @@ export function useDriftGuard() {
           };
           setDiffs(prev => [...prev, newDiff]);
 
-          // Generate alerts for regressions
           if (verdict === 'BLOCK' || verdict === 'WARN') {
             const newAlert: Alert = {
               id: `alert-${Date.now()}`,
@@ -179,7 +237,6 @@ export function useDriftGuard() {
             setAlerts(prev => [newAlert, ...prev]);
           }
 
-          // Update endpoint status based on verdict
           setEndpoints(prev => prev.map(ep => {
             if (ep.id !== endpointId) return ep;
             return {
@@ -193,7 +250,6 @@ export function useDriftGuard() {
   }, [fingerprints, diffs]);
 
   const fetchEndpoints = useCallback(async () => {
-    // Merge seed + API endpoints
     try {
       const res = await fetch('/api/endpoints');
       const data = await res.json();
@@ -208,14 +264,13 @@ export function useDriftGuard() {
           status: (e.status || 'healthy') as 'healthy' | 'warning' | 'critical',
           lastActiveAt: e.last_active_at ? new Date(e.last_active_at) : undefined,
         }));
-        // Merge without duplicates
         setEndpoints(prev => {
           const ids = new Set(prev.map(e => e.id));
           const newOnes = apiEndpoints.filter(e => !ids.has(e.id));
-          return [...prev, ...newOnes];
+          return newOnes.length > 0 ? [...prev, ...newOnes] : prev;
         });
       }
-    } catch { /* API not available — seed data is fine */ }
+    } catch { /* API not available — localStorage data is fine */ }
   }, []);
 
   useEffect(() => { fetchEndpoints(); }, [fetchEndpoints]);
@@ -303,7 +358,6 @@ export function useDriftGuard() {
     endpoints, selectedEndpoint, fingerprints, diffs, alerts, probeResults, isLoading,
     fetchEndpoints, fetchFingerprints, fetchDiffs, triggerFingerprint, triggerDiff,
     runProbes, acknowledgeAlert, selectEndpoint,
-    // NEW: methods for real-time data flow
     addEndpoint, removeEndpoint, ingestResponse, onBatchComplete, setEndpoints,
   };
 }

@@ -8,7 +8,7 @@ import { useTenant } from '@/hooks/useTenant';
 import {
   LayoutDashboard, Clock, Map, AlertTriangle, ShieldAlert, Bell, Server, Settings, LogOut,
   ChevronDown, Building2, FolderKanban, GitBranch, Database, ClipboardCheck, Shield, Activity,
-  Crown, Book,
+  Crown, Book, DollarSign, Cpu, ShieldCheck, EyeOff, ScrollText, Key,
 } from 'lucide-react';
 
 const navItems = [
@@ -21,6 +21,17 @@ const navItems = [
   { href: '/dashboard/alerts', label: 'Alerts', icon: Bell },
 ];
 
+const intelligenceNav = [
+  { href: '/dashboard/cost-intelligence', label: 'Cost Intelligence', icon: DollarSign },
+  { href: '/dashboard/model-advisor', label: 'Model Advisor', icon: Cpu },
+];
+
+const governanceNav = [
+  { href: '/dashboard/compliance', label: 'Compliance', icon: ShieldCheck },
+  { href: '/dashboard/pii-protection', label: 'PII Protection', icon: EyeOff },
+  { href: '/dashboard/audit-center', label: 'Audit Center', icon: ScrollText },
+];
+
 const enterpriseNav = [
   { href: '/dashboard/executive', label: 'Executive', icon: Crown },
   { href: '/dashboard/deployments', label: 'Deployments', icon: GitBranch },
@@ -31,6 +42,7 @@ const enterpriseNav = [
 
 const bottomNav = [
   { href: '/dashboard/api-docs', label: 'API Docs', icon: Book },
+  { href: '/dashboard/settings/api-keys', label: 'API Keys', icon: Key },
   { href: '/dashboard/settings', label: 'Settings', icon: Settings },
   { href: '/dashboard/settings/security', label: 'Security', icon: Shield },
 ];
@@ -211,6 +223,54 @@ export default function Sidebar() {
           );
         })}
 
+        {/* Intelligence section */}
+        <div className="text-[9px] font-mono uppercase text-[var(--color-ghost-text)]" style={{ padding: '12px 12px 4px' }}>Intelligence</div>
+        {intelligenceNav.map(item => {
+          const isActive = pathname === item.href || pathname.startsWith(item.href);
+          const Icon = item.icon;
+          return (
+            <Link key={item.href} href={item.href}>
+              <motion.div whileHover={{ x: 2 }}
+                className="flex items-center gap-3 rounded-lg text-xs transition-all"
+                style={{
+                  padding: '8px 12px',
+                  color: isActive ? '#00FFD1' : '#5A7A7D',
+                  background: isActive ? 'rgba(0,255,209,0.06)' : 'transparent',
+                  borderLeft: isActive ? '2px solid #00FFD1' : '2px solid transparent',
+                  textShadow: isActive ? '0 0 10px rgba(0,255,209,0.4)' : 'none',
+                }}
+              >
+                <Icon size={14} />
+                <span>{item.label}</span>
+              </motion.div>
+            </Link>
+          );
+        })}
+
+        {/* Governance section */}
+        <div className="text-[9px] font-mono uppercase text-[var(--color-ghost-text)]" style={{ padding: '12px 12px 4px' }}>Governance</div>
+        {governanceNav.map(item => {
+          const isActive = pathname === item.href || pathname.startsWith(item.href);
+          const Icon = item.icon;
+          return (
+            <Link key={item.href} href={item.href}>
+              <motion.div whileHover={{ x: 2 }}
+                className="flex items-center gap-3 rounded-lg text-xs transition-all"
+                style={{
+                  padding: '8px 12px',
+                  color: isActive ? '#00FFD1' : '#5A7A7D',
+                  background: isActive ? 'rgba(0,255,209,0.06)' : 'transparent',
+                  borderLeft: isActive ? '2px solid #00FFD1' : '2px solid transparent',
+                  textShadow: isActive ? '0 0 10px rgba(0,255,209,0.4)' : 'none',
+                }}
+              >
+                <Icon size={14} />
+                <span>{item.label}</span>
+              </motion.div>
+            </Link>
+          );
+        })}
+
         {/* Enterprise section */}
         <div className="text-[9px] font-mono uppercase text-[var(--color-ghost-text)]" style={{ padding: '12px 12px 4px' }}>Enterprise</div>
         {enterpriseNav.map(item => {
@@ -262,7 +322,7 @@ export default function Sidebar() {
       </div>
 
       {/* Version */}
-      <div style={{ padding: '8px 20px', fontSize: '10px', color: '#2A4A4D', fontFamily: 'var(--font-mono)' }}>v1.0.0-enterprise</div>
+      <div style={{ padding: '8px 20px', fontSize: '10px', color: '#2A4A4D', fontFamily: 'var(--font-mono)' }}>v2.0.0-enterprise</div>
     </aside>
   );
 }
