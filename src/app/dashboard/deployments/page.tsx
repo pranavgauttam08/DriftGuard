@@ -28,6 +28,12 @@ const INITIAL_DEPLOYMENTS = [
       { name: 'Behavioral Diff', status: 'completed' as const, duration: '8s', verdict: 'WARN' },
       { name: 'Deploy', status: 'pending' as const },
     ],
+    gates: [
+      { name: 'PII Protection', status: 'pass' },
+      { name: 'Compliance Checks', status: 'pass' },
+      { name: 'Cost Envelope', status: 'pass' },
+      { name: 'Model Suitability', status: 'warn' },
+    ],
     regressions: [
       { dimension: 'Empathetic Tone', baseValue: 0.32, newValue: 0.20, delta: -0.12, severity: 'medium' as const },
     ],
@@ -62,6 +68,12 @@ const INITIAL_DEPLOYMENTS = [
       { name: 'Behavioral Diff', status: 'completed' as const, duration: '6s', verdict: 'PASS' },
       { name: 'Deploy', status: 'completed' as const },
     ],
+    gates: [
+      { name: 'PII Protection', status: 'pass' },
+      { name: 'Compliance Checks', status: 'pass' },
+      { name: 'Cost Envelope', status: 'pass' },
+      { name: 'Model Suitability', status: 'pass' },
+    ],
     regressions: [],
     improvements: [
       { dimension: 'Semantic Consistency', baseValue: 0.89, newValue: 0.97, delta: 0.08 },
@@ -90,6 +102,12 @@ const INITIAL_DEPLOYMENTS = [
       { name: 'Probe Suite', status: 'completed' as const, duration: '52s', passRate: '87%' },
       { name: 'Behavioral Diff', status: 'completed' as const, duration: '9s', verdict: 'BLOCK' },
       { name: 'Deploy', status: 'failed' as const },
+    ],
+    gates: [
+      { name: 'PII Protection', status: 'pass' },
+      { name: 'Compliance Checks', status: 'fail' },
+      { name: 'Cost Envelope', status: 'pass' },
+      { name: 'Model Suitability', status: 'fail' },
     ],
     regressions: [
       { dimension: 'Hallucination Score', baseValue: 0.08, newValue: 0.33, delta: 0.25, severity: 'critical' as const },
@@ -186,6 +204,12 @@ export default function DeploymentsPage() {
         { name: 'Behavioral Diff', status: 'pending' },
         { name: 'Deploy', status: 'pending' },
       ],
+      gates: [
+        { name: 'PII Protection', status: 'pending' },
+        { name: 'Compliance Checks', status: 'pending' },
+        { name: 'Cost Envelope', status: 'pending' },
+        { name: 'Model Suitability', status: 'pending' },
+      ],
       regressions: [],
       improvements: [],
       rootCauses: [],
@@ -247,6 +271,12 @@ export default function DeploymentsPage() {
           currentStep: 'Awaiting approval',
           improvements: [
             { dimension: 'Response Quality', baseValue: 0.82, newValue: 0.89, delta: 0.07 },
+          ],
+          gates: [
+            { name: 'PII Protection', status: 'pass' },
+            { name: 'Compliance Checks', status: 'pass' },
+            { name: 'Cost Envelope', status: 'pass' },
+            { name: 'Model Suitability', status: 'pass' },
           ],
           audit: [
             ...d.audit,
@@ -392,8 +422,29 @@ export default function DeploymentsPage() {
                             ))}
                           </div>
 
+                          {/* Release Gates */}
+                          {selected.gates && selected.gates.length > 0 && (
+                            <div style={{ marginBottom: '1rem' }}>
+                              <div className="text-[10px] font-mono text-[var(--color-ghost-text)] mb-2 uppercase">Release Gates</div>
+                              <div className="flex flex-wrap items-center gap-2 mb-4">
+                                {selected.gates.map((gate: any) => (
+                                  <div key={gate.name} className="flex items-center gap-1 text-[10px] font-mono rounded-lg"
+                                    style={{
+                                      padding: '4px 10px',
+                                      background: gate.status === 'pass' ? 'rgba(0,255,136,0.1)' : gate.status === 'fail' ? 'rgba(255,61,107,0.1)' : gate.status === 'warn' ? 'rgba(255,184,0,0.1)' : 'rgba(0,255,209,0.04)',
+                                      border: `1px solid ${gate.status === 'pass' ? 'rgba(0,255,136,0.3)' : gate.status === 'fail' ? 'rgba(255,61,107,0.3)' : gate.status === 'warn' ? 'rgba(255,184,0,0.3)' : 'rgba(0,255,209,0.1)'}`,
+                                      color: gate.status === 'pass' ? '#00FF88' : gate.status === 'fail' ? '#FF3D6B' : gate.status === 'warn' ? '#FFB800' : '#5A7A7D',
+                                    }}>
+                                    {gate.status === 'pass' ? <CheckCircle2 size={10} /> : gate.status === 'fail' ? <XCircle size={10} /> : gate.status === 'warn' ? <AlertTriangle size={10} /> : <Loader2 size={10} className={gate.status === 'running' ? 'animate-spin' : ''} />}
+                                    {gate.name}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
                           {/* Root causes */}
-                          {selected.rootCauses.length > 0 && (
+                          {selected.rootCauses && selected.rootCauses.length > 0 && (
                             <div style={{ marginBottom: '1rem' }}>
                               <div className="text-[10px] font-mono text-[var(--color-biolume-warning)] mb-2 uppercase">Root Cause Analysis</div>
                               {selected.rootCauses.map((rc: any, ri: number) => (
