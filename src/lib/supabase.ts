@@ -58,6 +58,9 @@ export function getUserSupabase(userId: string) {
 
   return {
     client,
+    // Proxy common methods so callers can use supabase.from() directly
+    from: client.from.bind(client),
+    rpc: client.rpc.bind(client),
     /**
      * Execute a query with the user's RLS context set.
      */
@@ -90,6 +93,9 @@ export function getTenantSupabase(userId: string, orgId: string) {
 
   return {
     client,
+    // Proxy common methods so callers can use supabase.from() directly
+    from: client.from.bind(client),
+    rpc: client.rpc.bind(client),
     /**
      * Execute a query with both user and org RLS context set.
      */

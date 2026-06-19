@@ -204,7 +204,7 @@ export default function DeploymentsPage() {
     const simulateStep = (stepIdx: number, status: string, progress: number, delay: number, stepStatus: string, extras?: any) => {
       return new Promise<void>(resolve => {
         setTimeout(() => {
-          setDeployments(prev => prev.map(d => {
+          setDeployments((prev: any[]) => prev.map((d: any) => {
             if (d.id !== depId) return d;
             const steps = [...d.steps];
             steps[stepIdx] = { ...steps[stepIdx], status: stepStatus as any, ...extras };
@@ -235,7 +235,7 @@ export default function DeploymentsPage() {
 
     // Final: set verdict to PASS and status to awaiting_approval
     setTimeout(() => {
-      setDeployments(prev => prev.map(d => {
+      setDeployments((prev: any[]) => prev.map((d: any) => {
         if (d.id !== depId) return d;
         const steps = [...d.steps];
         steps[4] = { ...steps[4], status: 'pending' as any };
@@ -472,18 +472,18 @@ export default function DeploymentsPage() {
                               <>
                                 <GlowButton size="sm" icon={<CheckCircle2 size={14} />}
                                   onClick={() => {
-                                    setDeployments(prev => prev.map(d => d.id === selected.id ? {
+                                    setDeployments((prev: any[]) => prev.map((d: any) => d.id === selected.id ? {
                                       ...d, status: 'deployed' as any, progress: 100, currentStep: 'Deployed',
-                                      steps: d.steps.map((s, i) => i === 4 ? { ...s, status: 'completed' as any } : s),
+                                      steps: d.steps.map((s: any, i: number) => i === 4 ? { ...s, status: 'completed' as any } : s),
                                       audit: [...d.audit, { timestamp: 'just now', action: 'deployment.approved', user: 'you', details: 'Approved & deployed' }],
                                     } : d));
                                   }}
                                 >Approve & Deploy</GlowButton>
                                 <GlowButton variant="danger" size="sm" icon={<XCircle size={14} />}
                                   onClick={() => {
-                                    setDeployments(prev => prev.map(d => d.id === selected.id ? {
+                                    setDeployments((prev: any[]) => prev.map((d: any) => d.id === selected.id ? {
                                       ...d, status: 'rejected' as any, progress: 100, currentStep: 'Rejected',
-                                      steps: d.steps.map((s, i) => i === 4 ? { ...s, status: 'failed' as any } : s),
+                                      steps: d.steps.map((s: any, i: number) => i === 4 ? { ...s, status: 'failed' as any } : s),
                                       rejectionReason: 'Rejected by reviewer',
                                       audit: [...d.audit, { timestamp: 'just now', action: 'deployment.rejected', user: 'you', details: 'Deployment rejected' }],
                                     } : d));
@@ -494,7 +494,7 @@ export default function DeploymentsPage() {
                             {['deployed', 'approved'].includes(selected.status) && (
                               <GlowButton variant="danger" size="sm" icon={<RotateCcw size={14} />}
                                 onClick={() => {
-                                  setDeployments(prev => prev.map(d => d.id === selected.id ? {
+                                  setDeployments((prev: any[]) => prev.map((d: any) => d.id === selected.id ? {
                                     ...d, status: 'rolled_back' as any, currentStep: 'Rolled back',
                                     audit: [...d.audit, { timestamp: 'just now', action: 'deployment.rolled_back', user: 'you', details: 'Deployment rolled back' }],
                                   } : d));

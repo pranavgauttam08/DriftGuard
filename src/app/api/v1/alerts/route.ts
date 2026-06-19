@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case 'create_channel': {
-        await requirePermission(userId, orgId, 'settings:manage');
+        await requirePermission(userId, orgId, 'alert:configure');
         const { type, name, config, alertTypes, minSeverity, enabled } = body;
         if (!type || !name || !config) return NextResponse.json({ error: { code: 'VALIDATION_ERROR', message: 'type, name, and config are required' } }, { status: 400 });
         const channel = await createChannel({ orgId, type, name, config, alertTypes: alertTypes || [], minSeverity: minSeverity || 'warning', enabled: enabled !== false });
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       }
 
       case 'delete_channel': {
-        await requirePermission(userId, orgId, 'settings:manage');
+        await requirePermission(userId, orgId, 'alert:configure');
         const { channelId } = body;
         if (!channelId) return NextResponse.json({ error: { code: 'VALIDATION_ERROR', message: 'channelId is required' } }, { status: 400 });
         await deleteChannel(channelId, orgId);
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
       }
 
       case 'toggle_channel': {
-        await requirePermission(userId, orgId, 'settings:manage');
+        await requirePermission(userId, orgId, 'alert:configure');
         const { channelId: toggleId, enabled: toggleEnabled } = body;
         if (!toggleId) return NextResponse.json({ error: { code: 'VALIDATION_ERROR', message: 'channelId is required' } }, { status: 400 });
         await toggleChannel(toggleId, toggleEnabled, orgId);
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       }
 
       case 'update_thresholds': {
-        await requirePermission(userId, orgId, 'settings:manage');
+        await requirePermission(userId, orgId, 'alert:configure');
         const { projectId, thresholds } = body;
         const updated = await updateThresholds(orgId, thresholds, projectId);
         return NextResponse.json({ thresholds: updated });

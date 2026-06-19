@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
   if (!orgId) return NextResponse.json({ error: { code: 'VALIDATION_ERROR', message: 'orgId is required' } }, { status: 400 });
 
   try {
-    await requirePermission(userId, orgId, 'settings:manage');
+    await requirePermission(userId, orgId, 'settings:security');
 
     switch (resource) {
       case 'audit_logs': {
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     const { action, orgId } = body;
 
     if (!orgId) return NextResponse.json({ error: { code: 'VALIDATION_ERROR', message: 'orgId is required' } }, { status: 400 });
-    await requirePermission(userId, orgId, 'settings:manage');
+    await requirePermission(userId, orgId, 'settings:security');
 
     switch (action) {
       case 'create_api_key': {

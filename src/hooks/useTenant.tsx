@@ -27,8 +27,8 @@ interface TenantState {
   switchOrg: (orgId: string) => void;
   switchProject: (projectId: string) => void;
   switchEnvironment: (envName: EnvironmentName) => void;
-  refreshOrgs: () => Promise<void>;
-  refreshProjects: () => Promise<void>;
+  refreshOrgs: () => Promise<Organization | null | undefined>;
+  refreshProjects: (orgId?: string) => Promise<Project | null | undefined | void>;
 }
 
 const TenantContext = createContext<TenantState>({
@@ -43,7 +43,7 @@ const TenantContext = createContext<TenantState>({
   switchOrg: () => {},
   switchProject: () => {},
   switchEnvironment: () => {},
-  refreshOrgs: async () => {},
+  refreshOrgs: async () => null,
   refreshProjects: async () => {},
 });
 
