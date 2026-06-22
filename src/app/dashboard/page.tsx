@@ -2,200 +2,185 @@
 import { useDriftGuardContext } from './layout';
 import { useUser } from '@clerk/nextjs';
 import TopBar from '@/components/dashboard/TopBar';
-import EndpointSelector from '@/components/dashboard/EndpointSelector';
-import MetricCard from '@/components/dashboard/MetricCard';
-import BehavioralTimeline from '@/components/dashboard/BehavioralTimeline';
-import AnomalyFeed from '@/components/dashboard/AnomalyFeed';
-import HallucinationTracker from '@/components/dashboard/HallucinationTracker';
 import StatusBadge from '@/components/ui/StatusBadge';
-import GlowButton from '@/components/ui/GlowButton';
-import { Activity, Server, ShieldAlert, Brain, Plus, Sparkles } from 'lucide-react';
+import ComplianceScoreRing from '@/components/governance/ComplianceScoreRing';
+import { getOverallScore, getDomainHealthMap, getActiveAlertCount, getCriticalControls } from '@/lib/controls-engine';
+import { Activity, Shield, Bell, ShieldCheck, AlertTriangle, ChevronRight, Plus, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+
+const containerVariants = { animate: { transition: { staggerChildren: 0.06 } } };
+const cardVariants = {
+  initial: { opacity: 0, y: 16, scale: 0.98 },
+  animate: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] } },
+};
+
+const MOCK_ALERTS = [
+  { id: '1', severity: 'critical', title: 'Hallucination spike detected on Support Bot v3.2', time: '12m ago', framework: 'NIST AI RMF' },
+  { id: '2', severity: 'high', title: 'PII detected in LLM output — PR-02 control failing', time: '34m ago', framework: 'GDPR' },
+  { id: '3', severity: 'high', title: 'Behavioral drift exceeds threshold on Code Review Bot', time: '1h ago', framework: 'ISO42001' },
+  { id: '4', severity: 'medium', title: 'Shadow AI usage detected — 3 new tools this week', time: '2h ago', framework: 'SOC2' },
+  { id: '5', severity: 'medium', title: 'Cost forecast exceeded 80% monthly budget threshold', time: '3h ago', framework: 'Internal' },
+];
 
 export default function DashboardOverview() {
   const dg = useDriftGuardContext();
   const { user } = useUser();
-  const epId = dg.selectedEndpoint?.id || '';
-  const epFps = dg.fingerprints.filter(f => f.endpointId === epId);
-  const epDiffs = dg.diffs.filter(d => d.endpointId === epId);
-  const epAlerts = dg.alerts.filter(a => a.endpointId === epId);
-  const latestDiff = epDiffs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
-  const latestFp = [...epFps].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
-
-  // Sum total responses across ALL user endpoints
-  const totalResponses = dg.endpoints.reduce((sum, ep) => sum + ep.totalResponses, 0);
+  const overall = getOverallScore();
+  const domainHealth = getDomainHealthMap();
+  const alertCount = getActiveAlertCount();
+  const criticalControls = getCriticalControls();
 
   const firstName = user?.firstName || 'there';
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
-  // Determine overall status across all endpoints
-  const worstStatus = dg.endpoints.some(e => e.status === 'critical') ? 'critical' :
-    dg.endpoints.some(e => e.status === 'warning') ? 'warning' : 'healthy';
-  const critCount = dg.endpoints.filter(e => e.status === 'critical').length;
-  const warnCount = dg.endpoints.filter(e => e.status === 'warning').length;
-  const statusText = critCount > 0 ? `${critCount} critical` : warnCount > 0 ? `${warnCount} warning` : 'all healthy';
-  const statusColor = worstStatus === 'critical' ? '#FF3D6B' : worstStatus === 'warning' ? '#FFB800' : '#00FF88';
-
-  const hasData = dg.endpoints.length > 0;
-
-  // Build sparkline from fingerprint data
-  const sparkline = epFps
-    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
-    .map(fp => Math.round(fp.sampleCount * 10 + Math.random() * 20));
-
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      <TopBar title="Overview" />
+    <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <TopBar title="Control Tower" />
 
-      {/* Greeting bar */}
+      {/* Greeting */}
       <div className="flex items-center gap-2 text-sm">
-        <span className="text-[var(--color-muted-text)]">{greeting}, <span className="text-[var(--color-surface-text)] font-medium">{firstName}</span></span>
-        <span className="text-[var(--color-ghost-text)]">✦</span>
-        {hasData ? (
-          <span className="text-[var(--color-muted-text)]">Your AI systems are <span style={{ color: statusColor }}>{statusText}</span></span>
-        ) : (
-          <span className="text-[var(--color-muted-text)]">Ready to start monitoring</span>
-        )}
+        <span style={{ color: 'var(--color-text-secondary)' }}>{greeting}, <span className="font-medium" style={{ color: 'var(--color-text-primary)' }}>{firstName}</span></span>
+        <span style={{ color: 'var(--color-text-muted)' }}>·</span>
+        <span style={{ color: 'var(--color-text-secondary)' }}>
+          Governance score: <span className="font-mono font-semibold" style={{ color: overall.score >= 70 ? '#10B981' : '#F59E0B' }}>{overall.score}/100</span>
+        </span>
       </div>
 
-      {!hasData ? (
-        /* Empty state for new users */
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-          className="text-center" style={{ padding: '5rem 2rem' }}
-        >
-          <div className="mx-auto" style={{ width: '80px', height: '80px', marginBottom: '2rem' }}>
-            <div className="rounded-full animate-pulse" style={{
-              width: '80px', height: '80px',
-              background: 'radial-gradient(circle at 35% 35%, rgba(0,255,209,0.2), rgba(0,229,255,0.1), transparent)',
-              boxShadow: '0 0 40px rgba(0,255,209,0.1), 0 0 80px rgba(0,255,209,0.05)',
-              border: '1px solid rgba(0,255,209,0.15)',
-            }} />
+      {/* ── Top KPI Row ─────────────────────────────────────── */}
+      <motion.div variants={containerVariants} initial="initial" animate="animate" className="grid grid-cols-4 gap-3 max-lg:grid-cols-2">
+        {/* Governance Score */}
+        <motion.div variants={cardVariants} className="ag-card flex items-center gap-3" style={{ padding: '1.25rem' }}>
+          <div className="relative" style={{ width: 64, height: 64 }}>
+            <ComplianceScoreRing score={overall.score} framework="" color="#3B82F6" size="sm" />
           </div>
-          <h3 className="text-lg font-semibold" style={{ marginBottom: '0.75rem' }}>
-            You haven&apos;t monitored anything yet.
-          </h3>
-          <p className="text-sm text-[var(--color-muted-text)]" style={{ maxWidth: '400px', margin: '0 auto 2rem', lineHeight: 1.7 }}>
-            Create your first endpoint and send some responses to see your behavioral analytics here.
-          </p>
-          <div className="flex justify-center gap-3 flex-wrap">
-            <Link href="/dashboard/endpoints">
-              <GlowButton icon={<Plus size={16} />}>Create First Endpoint</GlowButton>
-            </Link>
-            <Link href="/onboarding">
-              <GlowButton variant="ghost" icon={<Sparkles size={16} />}>Try with Example Data</GlowButton>
-            </Link>
+          <div>
+            <div className="text-[10px] font-mono uppercase" style={{ color: 'var(--color-text-muted)', letterSpacing: '0.05em' }}>Governance</div>
+            <div className="text-xl font-bold" style={{ color: 'var(--color-text-primary)' }}>{overall.score}<span className="text-sm font-normal" style={{ color: 'var(--color-text-muted)' }}>/100</span></div>
           </div>
         </motion.div>
-      ) : (
-        <>
-          {/* Endpoint selector */}
-          <div className="flex items-center gap-4">
-            <span className="text-xs text-[var(--color-muted-text)] font-mono">Viewing:</span>
-            <EndpointSelector endpoints={dg.endpoints} selected={dg.selectedEndpoint} onSelect={dg.selectEndpoint} />
+
+        {/* Controls Passing */}
+        <motion.div variants={cardVariants} className="ag-card" style={{ padding: '1.25rem' }}>
+          <div className="flex items-center gap-2 mb-2">
+            <ShieldCheck size={16} style={{ color: '#10B981' }} />
+            <span className="text-[10px] font-mono uppercase" style={{ color: 'var(--color-text-muted)' }}>Controls Passing</span>
           </div>
-
-          {/* Top metric cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.25rem' }}>
-            <MetricCard
-              title="Total Responses"
-              value={dg.selectedEndpoint?.totalResponses || 0}
-              icon={<Activity size={18} />}
-              trend={totalResponses > 0 ? 'up' : 'neutral'}
-              delta={dg.selectedEndpoint?.totalResponses || 0}
-              deltaLabel="this endpoint"
-              sparkline={sparkline.length > 2 ? sparkline : [0, 0, 0]}
-            />
-            <MetricCard
-              title="Active Endpoints"
-              value={dg.endpoints.length}
-              icon={<Server size={18} />}
-              status={worstStatus as any}
-            />
-            <MetricCard
-              title="Last Verdict"
-              value={0}
-              prefix=""
-              suffix=""
-              icon={<ShieldAlert size={18} />}
-              status={latestDiff?.verdict === 'BLOCK' ? 'critical' : latestDiff?.verdict === 'WARN' ? 'warning' : 'healthy'}
-              halo={latestDiff?.verdict === 'BLOCK'}
-            />
-            <MetricCard
-              title="Hallucination Score"
-              value={latestFp?.hallucinationScore || 0}
-              format="percent"
-              icon={<Brain size={18} />}
-              status={latestFp?.hallucinationScore ? (latestFp.hallucinationScore > 0.2 ? 'critical' : latestFp.hallucinationScore > 0.1 ? 'warning' : 'healthy') : 'healthy'}
-              delta={latestDiff?.hallucinationDelta}
-              deltaLabel="vs prev version"
-              trend={latestDiff?.hallucinationDelta ? (latestDiff.hallucinationDelta > 0 ? 'down' : 'up') : 'neutral'}
-              halo={(latestFp?.hallucinationScore || 0) > 0.2}
-            />
+          <div className="text-2xl font-bold font-mono" style={{ color: '#10B981' }}>
+            {overall.passing}<span className="text-sm font-normal" style={{ color: 'var(--color-text-muted)' }}>/{overall.total}</span>
           </div>
+        </motion.div>
 
-          {/* Middle: Timeline + Anomaly Feed */}
-          <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: '1.25rem' }}>
-            {epFps.length > 0 ? (
-              <BehavioralTimeline fingerprints={epFps} />
-            ) : (
-              <div className="bio-card flex items-center justify-center" style={{ padding: '3rem', minHeight: '220px' }}>
-                <div className="text-center">
-                  <p className="text-sm text-[var(--color-muted-text)]">No version data for <strong>{dg.selectedEndpoint?.name}</strong></p>
-                  <p className="text-xs text-[var(--color-ghost-text)] mt-2">Send data via the Endpoints page to see the timeline</p>
-                </div>
-              </div>
-            )}
-            <AnomalyFeed alerts={epAlerts.length > 0 ? epAlerts : dg.alerts.slice(0, 5)} />
+        {/* Active Alerts */}
+        <motion.div variants={cardVariants} className="ag-card" style={{ padding: '1.25rem' }}>
+          <div className="flex items-center gap-2 mb-2">
+            <Bell size={16} style={{ color: '#EF4444' }} />
+            <span className="text-[10px] font-mono uppercase" style={{ color: 'var(--color-text-muted)' }}>Active Alerts</span>
           </div>
+          <div className="text-2xl font-bold font-mono" style={{ color: '#EF4444' }}>
+            {alertCount}
+          </div>
+        </motion.div>
 
-          {/* Bottom: Hallucination + Latest Diff */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
-            {epFps.length > 0 ? (
-              <HallucinationTracker fingerprints={epFps} />
-            ) : (
-              <div className="bio-card flex items-center justify-center" style={{ padding: '3rem', minHeight: '200px' }}>
-                <p className="text-sm text-[var(--color-muted-text)]">Hallucination data will appear after version tracking</p>
-              </div>
-            )}
+        {/* Frameworks */}
+        <motion.div variants={cardVariants} className="ag-card" style={{ padding: '1.25rem' }}>
+          <div className="flex items-center gap-2 mb-2">
+            <Shield size={16} style={{ color: '#3B82F6' }} />
+            <span className="text-[10px] font-mono uppercase" style={{ color: 'var(--color-text-muted)' }}>Frameworks</span>
+          </div>
+          <div className="text-2xl font-bold font-mono" style={{ color: '#3B82F6' }}>14</div>
+        </motion.div>
+      </motion.div>
 
-            {latestDiff ? (
-              <div className="bio-card" style={{ padding: '1.5rem' }}>
-                <div className="flex items-center justify-between" style={{ marginBottom: '1.25rem' }}>
-                  <h3 className="text-sm font-semibold">Latest Diff</h3>
-                  <StatusBadge status={latestDiff.verdict === 'BLOCK' ? 'block' : latestDiff.verdict === 'WARN' ? 'warn' : 'pass'} />
-                </div>
-                <div className="text-xs font-mono text-[var(--color-muted-text)]" style={{ marginBottom: '0.75rem' }}>{latestDiff.baseVersion} → {latestDiff.newVersion}</div>
-                <p className="text-sm text-[var(--color-surface-text)] leading-relaxed" style={{ marginBottom: '1.25rem' }}>{latestDiff.verdictReason}</p>
-                <div className="space-y-2">
-                  {latestDiff.regressions.map((r, i) => (
-                    <div key={i} className="flex items-center justify-between rounded-lg" style={{ padding: '0.75rem', background: 'rgba(255,61,107,0.04)', border: '1px solid rgba(255,61,107,0.15)' }}>
-                      <span className="text-xs">{r.dimension}</span>
-                      <div className="flex items-center gap-3">
-                        <span className="text-[10px] font-mono text-[var(--color-muted-text)]">{r.baseValue.toFixed(2)} → {r.newValue.toFixed(2)}</span>
-                        <StatusBadge status={r.severity === 'critical' ? 'critical' : r.severity === 'high' ? 'block' : 'warn'} size="sm" label={r.severity.toUpperCase()} />
-                      </div>
+      {/* ── Middle Row: Domain Heatmap + Alert Feed ──────────── */}
+      <div className="grid gap-4" style={{ gridTemplateColumns: '1fr 380px' }}>
+        {/* Domain Health Heatmap */}
+        <div>
+          <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--color-text-primary)' }}>
+            <Activity size={14} style={{ color: 'var(--color-brand-primary)' }} /> Domain Health
+          </h3>
+          <motion.div variants={containerVariants} initial="initial" animate="animate" className="grid grid-cols-3 gap-2 max-lg:grid-cols-2">
+            {domainHealth.map(d => {
+              const sc = d.score.score >= 80 ? '#10B981' : d.score.score >= 50 ? '#F59E0B' : '#EF4444';
+              return (
+                <motion.div key={d.code} variants={cardVariants} className="ag-card group cursor-pointer" style={{ padding: '0.75rem' }}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[9px] font-mono font-semibold" style={{ color: 'var(--color-brand-primary)', letterSpacing: '0.05em' }}>{d.code}</span>
+                    <span className="text-xs font-bold font-mono" style={{ color: sc }}>{d.score.score}</span>
+                  </div>
+                  <h4 className="text-[11px] font-medium leading-tight" style={{ color: 'var(--color-text-primary)', minHeight: '28px' }}>{d.name}</h4>
+                  <div className="w-full rounded-full overflow-hidden mt-2" style={{ height: '3px', background: 'var(--color-bg-overlay)' }}>
+                    <motion.div className="h-full rounded-full" initial={{ width: 0 }} animate={{ width: `${d.score.score}%` }} transition={{ duration: 0.6 }} style={{ background: sc }} />
+                  </div>
+                  <div className="flex gap-2 mt-1.5 text-[9px] font-mono" style={{ color: 'var(--color-text-muted)' }}>
+                    <span style={{ color: '#10B981' }}>✓{d.score.passing}</span>
+                    <span style={{ color: '#F59E0B' }}>⚠{d.score.warning}</span>
+                    <span style={{ color: '#EF4444' }}>✕{d.score.failing}</span>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+
+        {/* Live Alert Feed */}
+        <div>
+          <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: 'var(--color-text-primary)' }}>
+            <Bell size={14} style={{ color: '#EF4444' }} /> Live Alerts
+          </h3>
+          <div className="space-y-2">
+            {MOCK_ALERTS.map(alert => (
+              <motion.div
+                key={alert.id}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="ag-card group cursor-pointer"
+                style={{ padding: '0.75rem 1rem' }}
+              >
+                <div className="flex items-start gap-2">
+                  <span className="mt-0.5 rounded-full animate-pulse-dot" style={{
+                    width: '6px', height: '6px', flexShrink: 0,
+                    background: alert.severity === 'critical' ? '#EF4444' : alert.severity === 'high' ? '#F59E0B' : '#3B82F6',
+                    boxShadow: `0 0 6px ${alert.severity === 'critical' ? '#EF4444' : alert.severity === 'high' ? '#F59E0B' : '#3B82F6'}`,
+                  }} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs leading-snug" style={{ color: 'var(--color-text-primary)' }}>{alert.title}</p>
+                    <div className="flex items-center gap-2 mt-1 text-[9px] font-mono" style={{ color: 'var(--color-text-muted)' }}>
+                      <span>{alert.time}</span>
+                      <span style={{ color: 'var(--color-brand-primary)' }}>{alert.framework}</span>
                     </div>
-                  ))}
-                  {latestDiff.improvements.map((imp, i) => (
-                    <div key={i} className="flex items-center justify-between rounded-lg" style={{ padding: '0.75rem', background: 'rgba(0,255,136,0.04)', border: '1px solid rgba(0,255,136,0.15)' }}>
-                      <span className="text-xs">{imp.dimension}</span>
-                      <span className="text-[10px] font-mono text-[var(--color-biolume-tertiary)]">+{Math.abs(imp.delta).toFixed(2)} ✓</span>
-                    </div>
-                  ))}
+                  </div>
                 </div>
+              </motion.div>
+            ))}
+            <Link href="/dashboard/alerts">
+              <div className="flex items-center justify-center gap-1 text-[11px] py-2 transition-all" style={{ color: 'var(--color-brand-primary)' }}>
+                View all alerts <ChevronRight size={12} />
               </div>
-            ) : (
-              <div className="bio-card flex items-center justify-center" style={{ padding: '3rem', minHeight: '200px' }}>
-                <div className="text-center">
-                  <p className="text-sm text-[var(--color-muted-text)]">No diffs generated yet</p>
-                  <p className="text-xs text-[var(--color-ghost-text)] mt-2">Send 2+ versions to compare behavior</p>
-                </div>
-              </div>
-            )}
+            </Link>
           </div>
-        </>
+        </div>
+      </div>
+
+      {/* ── Critical Controls Needing Attention ──────────────── */}
+      {criticalControls.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold mb-3 flex items-center gap-2" style={{ color: '#EF4444' }}>
+            <AlertTriangle size={14} /> Critical Controls Needing Attention ({criticalControls.length})
+          </h3>
+          <div className="grid grid-cols-2 gap-2 max-lg:grid-cols-1">
+            {criticalControls.slice(0, 4).map(c => (
+              <div key={c.id} className="ag-card flex items-center gap-3" style={{ padding: '0.75rem 1rem' }}>
+                <StatusBadge status={c.assessment.status} size="sm" />
+                <div className="min-w-0">
+                  <span className="text-[10px] font-mono" style={{ color: 'var(--color-brand-primary)' }}>{c.id}</span>
+                  <p className="text-xs truncate" style={{ color: 'var(--color-text-primary)' }}>{c.name}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );

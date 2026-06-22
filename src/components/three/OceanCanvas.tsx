@@ -19,8 +19,8 @@ function CSSFallbackOcean() {
       {/* Radial gradient caustics */}
       <div className="absolute inset-0" style={{
         background: `
-          radial-gradient(ellipse 600px 400px at 15% 80%, rgba(0,255,209,0.06) 0%, transparent 70%),
-          radial-gradient(ellipse 500px 500px at 85% 20%, rgba(0,229,255,0.04) 0%, transparent 60%),
+          radial-gradient(ellipse 600px 400px at 15% 80%, rgba(59,130,246,0.06) 0%, transparent 70%),
+          radial-gradient(ellipse 500px 500px at 85% 20%, rgba(139,92,246,0.04) 0%, transparent 60%),
           radial-gradient(ellipse 400px 300px at 50% 50%, rgba(0,255,136,0.03) 0%, transparent 50%)
         `,
       }} />
@@ -38,9 +38,9 @@ function CSSFallbackOcean() {
             height: `${size}px`,
             left: `${left}%`,
             top: `${top}%`,
-            background: ['#00FFD1', '#00E5FF', '#00FF88'][i % 3],
+            background: ['#3B82F6', '#00E5FF', '#00FF88'][i % 3],
             opacity: 0.2 + (i % 5) * 0.08,
-            boxShadow: `0 0 ${6 + (i % 3) * 4}px ${['rgba(0,255,209,0.4)', 'rgba(0,229,255,0.4)', 'rgba(0,255,136,0.3)'][i % 3]}`,
+            boxShadow: `0 0 ${6 + (i % 3) * 4}px ${['rgba(59,130,246,0.4)', 'rgba(139,92,246,0.4)', 'rgba(0,255,136,0.3)'][i % 3]}`,
             animationName: 'bio-drift',
             animationDuration: `${dur}s`,
             animationTimingFunction: 'ease-in-out',
@@ -58,7 +58,7 @@ function CSSFallbackOcean() {
           height: `${80 + i * 40}px`,
           left: `${15 + i * 25}%`,
           top: `${20 + i * 15}%`,
-          borderColor: 'rgba(0,255,209,0.08)',
+          borderColor: 'rgba(59,130,246,0.08)',
           opacity: 0.5,
           animationName: 'bio-drift',
           animationDuration: `${12 + i * 3}s`,
@@ -71,7 +71,7 @@ function CSSFallbackOcean() {
 
       {/* Scan line effect */}
       <div className="absolute left-0 right-0 h-px animate-scan" style={{
-        background: 'linear-gradient(90deg, transparent, rgba(0,255,209,0.15), transparent)',
+        background: 'linear-gradient(90deg, transparent, rgba(59,130,246,0.15), transparent)',
       }} />
     </div>
   );
@@ -110,7 +110,7 @@ function WebGLOcean() {
         const colors = new Float32Array(particleCount * 3);
         const offsets = new Float32Array(particleCount);
         const speeds = new Float32Array(particleCount);
-        const bColors = [new THREE.Color('#00FFD1'), new THREE.Color('#00E5FF'), new THREE.Color('#00FF88')];
+        const bColors = [new THREE.Color('#3B82F6'), new THREE.Color('#00E5FF'), new THREE.Color('#00FF88')];
 
         for (let i = 0; i < particleCount; i++) {
           positions[i * 3] = (Math.random() - 0.5) * 800;
@@ -135,7 +135,7 @@ function WebGLOcean() {
         const jellies: InstanceType<typeof THREE.Mesh>[] = [];
         for (let i = 0; i < 3; i++) {
           const geo = new THREE.TorusGeometry(1.5 + Math.random(), 0.3, 8, 20);
-          const mat = new THREE.MeshBasicMaterial({ color: '#00FFD1', transparent: true, opacity: 0.06, wireframe: true });
+          const mat = new THREE.MeshBasicMaterial({ color: '#3B82F6', transparent: true, opacity: 0.06, wireframe: true });
           const mesh = new THREE.Mesh(geo, mat);
           mesh.position.set((Math.random() - 0.5) * 400, (Math.random() - 0.5) * 600, (Math.random() - 0.5) * 200);
           mesh.scale.setScalar(8 + Math.random() * 12);

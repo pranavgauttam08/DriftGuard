@@ -22,10 +22,10 @@ function AnimatedStat({ label, value, prefix, suffix, custom }: { label: string;
   if (isVisible && !counter.started) counter.start();
   return (
     <div ref={ref} className="text-center">
-      <div className="text-2xl font-bold bio-glow-text font-mono">
+      <div className="text-2xl font-bold ag-glow-text font-mono">
         {custom || `${prefix || ''}${counter.value}${suffix || ''}`}
       </div>
-      <div className="text-xs text-[var(--color-muted-text)] mt-1">{label}</div>
+      <div className="text-xs text-[var(--color-text-secondary)] mt-1">{label}</div>
     </div>
   );
 }
@@ -40,19 +40,19 @@ export default function HeroSection() {
             className="inline-flex items-center gap-2 rounded-full border border-[var(--color-biolume-border)] bg-[var(--color-biolume-glass)]"
             style={{ padding: '8px 16px', marginBottom: '2rem' }}
           >
-            <Shield size={14} className="text-[var(--color-biolume-primary)]" />
-            <span className="font-mono text-xs text-[var(--color-biolume-primary)]" style={{ letterSpacing: '0.05em' }}>&lt; BEHAVIORAL VERSION CONTROL /&gt;</span>
+            <Shield size={14} className="text-[var(--color-brand-primary)]" />
+            <span className="font-mono text-xs text-[var(--color-brand-primary)]" style={{ letterSpacing: '0.05em' }}>&lt; BEHAVIORAL VERSION CONTROL /&gt;</span>
           </motion.div>
 
           <h1 style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', fontWeight: 800, lineHeight: 1.1, marginBottom: '2rem' }}>
-            <span className="text-[var(--color-surface-text)]">Your AI Has</span>
+            <span className="text-[var(--color-text-primary)]">Your AI Has</span>
             <br />
-            <span className="bio-glow-text" style={{ filter: 'drop-shadow(0 0 30px rgba(0,255,209,0.4))' }}>
+            <span className="ag-glow-text" style={{ filter: 'drop-shadow(0 0 30px rgba(59,130,246,0.4))' }}>
               No Version Control.
             </span>
           </h1>
 
-          <p className="text-[var(--color-muted-text)]" style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1.125rem)', maxWidth: '500px', marginBottom: '2.5rem', lineHeight: 1.7 }}>
+          <p className="text-[var(--color-text-secondary)]" style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1.125rem)', maxWidth: '500px', marginBottom: '2.5rem', lineHeight: 1.7 }}>
             DriftGuard fingerprints every AI deployment, diffs behavioral changes like code, and blocks regressions before your users feel them.
           </p>
 
@@ -81,18 +81,18 @@ export default function HeroSection() {
             <BioCard className="absolute z-10 animate-bio-drift" delay={0.5}
               style={{ top: '1rem', left: '0', padding: '12px', maxWidth: '200px' }}>
               <div className="flex items-center gap-2" style={{ marginBottom: '4px' }}>
-                <span className="text-xs font-mono text-[var(--color-muted-text)]">v1.3 → v1.4</span>
+                <span className="text-xs font-mono text-[var(--color-text-secondary)]">v1.3 → v1.4</span>
                 <StatusBadge status="block" size="sm" />
               </div>
-              <div className="text-xs text-[var(--color-biolume-danger)]">Hallucination +23%</div>
+              <div className="text-xs text-[var(--color-block)]">Hallucination +23%</div>
             </BioCard>
 
             <BioCard className="absolute z-10 animate-bio-drift-slow" delay={0.7}
               style={{ bottom: '4rem', right: '0', padding: '12px', maxWidth: '180px' }}>
-              <div className="text-xs font-mono text-[var(--color-muted-text)]" style={{ marginBottom: '4px' }}>Fingerprint</div>
+              <div className="text-xs font-mono text-[var(--color-text-secondary)]" style={{ marginBottom: '4px' }}>Fingerprint</div>
               <div className="flex gap-1">
                 {[0.9, 0.7, 0.85, 0.6, 0.95, 0.4].map((v, i) => (
-                  <div key={i} style={{ width: '12px', borderRadius: '2px', height: `${v * 28}px`, background: `rgba(0,255,209,${0.3 + v * 0.5})` }} />
+                  <div key={i} style={{ width: '12px', borderRadius: '2px', height: `${v * 28}px`, background: `rgba(59,130,246,${0.3 + v * 0.5})` }} />
                 ))}
               </div>
             </BioCard>
@@ -100,7 +100,7 @@ export default function HeroSection() {
             <BioCard className="absolute z-10 animate-bio-drift-fast" delay={0.9}
               style={{ bottom: '0', left: '1rem', padding: '12px', maxWidth: '210px' }}>
               <div className="flex items-center gap-2">
-                <span className="text-[var(--color-biolume-warning)]">⚠</span>
+                <span className="text-[var(--color-warn)]">⚠</span>
                 <span className="text-xs">Tone shift · billing endpoint</span>
               </div>
             </BioCard>

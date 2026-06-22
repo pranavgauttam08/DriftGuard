@@ -6,8 +6,8 @@ import { AlertChannel, AlertEvent } from '@/types/alert-config';
 
 const SEVERITY_COLORS: Record<string, string> = {
   info: '#00E5FF',
-  warning: '#FFB800',
-  critical: '#FF3D6B',
+  warning: '#F59E0B',
+  critical: '#EF4444',
 };
 
 const SEVERITY_EMOJI: Record<string, string> = {

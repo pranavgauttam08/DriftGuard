@@ -29,7 +29,7 @@ function CSSFallbackDrift({ driftData = [] }: DriftSphereProps) {
       <svg viewBox={`0 0 ${size} ${size}`} width={size} height={size}>
         {/* Grid rings */}
         {[0.25, 0.5, 0.75, 1].map(r => (
-          <circle key={r} cx={cx} cy={cy} r={maxR * r} fill="none" stroke="rgba(0,255,209,0.06)" strokeWidth="0.5" />
+          <circle key={r} cx={cx} cy={cy} r={maxR * r} fill="none" stroke="rgba(59,130,246,0.06)" strokeWidth="0.5" />
         ))}
 
         {/* Drift polygon */}
@@ -40,8 +40,8 @@ function CSSFallbackDrift({ driftData = [] }: DriftSphereProps) {
             const r = (0.6 + dv * 0.4) * maxR;
             return `${cx + Math.cos(angle) * r},${cy + Math.sin(angle) * r}`;
           }).join(' ')}
-          fill="rgba(0,255,209,0.08)"
-          stroke="#00FFD1"
+          fill="rgba(59,130,246,0.08)"
+          stroke="#3B82F6"
           strokeWidth="1"
           opacity="0.7"
         >
@@ -70,12 +70,12 @@ function CSSFallbackDrift({ driftData = [] }: DriftSphereProps) {
           const angle = (i / segments) * Math.PI * 2 - Math.PI / 2;
           const dv = driftData.length > 0 ? driftData[i % driftData.length] : Math.random() * 0.4;
           const r = (0.6 + dv * 0.4) * maxR;
-          const color = dv > 0.6 ? '#FF3D6B' : dv > 0.3 ? '#FFB800' : '#00FFD1';
+          const color = dv > 0.6 ? '#EF4444' : dv > 0.3 ? '#F59E0B' : '#3B82F6';
           return <circle key={i} cx={cx + Math.cos(angle) * r} cy={cy + Math.sin(angle) * r} r={2} fill={color} opacity="0.8" />;
         })}
 
         {/* Center label */}
-        <text x={cx} y={cy + 4} fill="#4A8F8A" fontSize="9" textAnchor="middle" fontFamily="Fira Code">DRIFT</text>
+        <text x={cx} y={cy + 4} fill="#4A8F8A" fontSize="9" textAnchor="middle" fontFamily="JetBrains Mono">DRIFT</text>
       </svg>
     </div>
   );
@@ -109,9 +109,9 @@ function WebGLDrift({ driftData = [] }: DriftSphereProps) {
         const geo = new THREE.SphereGeometry(1.5, 24, 24);
         const posCount = geo.attributes.position.count;
         const vertColors = new Float32Array(posCount * 3);
-        const tealC = new THREE.Color('#00FFD1');
-        const warnC = new THREE.Color('#FFB800');
-        const dangerC = new THREE.Color('#FF3D6B');
+        const tealC = new THREE.Color('#3B82F6');
+        const warnC = new THREE.Color('#F59E0B');
+        const dangerC = new THREE.Color('#EF4444');
 
         for (let i = 0; i < posCount; i++) {
           const dv = driftData.length > 0 ? driftData[i % driftData.length] : Math.random() * 0.3;

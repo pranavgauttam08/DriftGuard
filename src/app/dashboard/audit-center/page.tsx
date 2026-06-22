@@ -48,8 +48,8 @@ const CATEGORY_ICONS: Record<string, any> = {
 
 const CATEGORY_COLORS: Record<string, string> = {
   deployment: '#00E5FF',
-  endpoint: '#00FFD1',
-  config: '#FFB800',
+  endpoint: '#3B82F6',
+  config: '#F59E0B',
   auth: '#D4A574',
   compliance: '#00FF88',
   review: '#B388FF',
@@ -112,20 +112,20 @@ export default function AuditCenterPage() {
       <TopBar title="Audit Center" />
 
       {/* Activity chart */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bio-card" style={{ padding: '1.25rem' }}>
-        <div className="text-[10px] font-mono text-[var(--color-ghost-text)] uppercase mb-3">Activity (Last 10 Days)</div>
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ag-card" style={{ padding: '1.25rem' }}>
+        <div className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase mb-3">Activity (Last 10 Days)</div>
         <div className="flex items-end gap-2" style={{ height: '60px' }}>
           {activityByDay.map((day, i) => (
             <div key={i} className="flex-1 flex flex-col items-center gap-1">
               <div className="w-full rounded-t transition-all"
                 style={{
                   height: `${Math.max(4, (day.count / maxActivity) * 100)}%`,
-                  background: day.count > 2 ? '#FFB800' : '#00FFD1',
+                  background: day.count > 2 ? '#F59E0B' : '#3B82F6',
                   opacity: 0.7,
                 }}
                 title={`${day.date}: ${day.count} events`}
               />
-              <span className="text-[7px] text-[var(--color-ghost-text)]">{day.date.split('-')[2]}</span>
+              <span className="text-[7px] text-[var(--color-text-muted)]">{day.date.split('-')[2]}</span>
             </div>
           ))}
         </div>
@@ -134,7 +134,7 @@ export default function AuditCenterPage() {
       {/* Filters */}
       <div className="flex items-center gap-3 flex-wrap">
         <div className="relative flex-1" style={{ maxWidth: '280px' }}>
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-ghost-text)]" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
           <input className="bio-input w-full" style={{ paddingLeft: '36px' }}
             placeholder="Search audit logs..." value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)} />
@@ -146,8 +146,8 @@ export default function AuditCenterPage() {
               className="text-[9px] font-mono rounded-full transition-all"
               style={{
                 padding: '4px 8px',
-                background: filterCategory === cat ? CATEGORY_COLORS[cat] + '15' : 'rgba(0,255,209,0.02)',
-                border: `1px solid ${filterCategory === cat ? CATEGORY_COLORS[cat] + '40' : 'rgba(0,255,209,0.06)'}`,
+                background: filterCategory === cat ? CATEGORY_COLORS[cat] + '15' : 'rgba(59,130,246,0.02)',
+                border: `1px solid ${filterCategory === cat ? CATEGORY_COLORS[cat] + '40' : 'rgba(59,130,246,0.06)'}`,
                 color: filterCategory === cat ? CATEGORY_COLORS[cat] : '#5A7A7D',
               }}>{cat}</button>
           ))}
@@ -159,9 +159,9 @@ export default function AuditCenterPage() {
               className="text-[9px] font-mono rounded-full transition-all"
               style={{
                 padding: '4px 8px',
-                background: filterSeverity === sev ? 'rgba(0,255,209,0.08)' : 'rgba(0,255,209,0.02)',
-                border: `1px solid ${filterSeverity === sev ? 'rgba(0,255,209,0.25)' : 'rgba(0,255,209,0.06)'}`,
-                color: filterSeverity === sev ? (sev === 'critical' ? '#FF3D6B' : sev === 'warning' ? '#FFB800' : '#00E5FF') : '#5A7A7D',
+                background: filterSeverity === sev ? 'rgba(59,130,246,0.08)' : 'rgba(59,130,246,0.02)',
+                border: `1px solid ${filterSeverity === sev ? 'rgba(59,130,246,0.25)' : 'rgba(59,130,246,0.06)'}`,
+                color: filterSeverity === sev ? (sev === 'critical' ? '#EF4444' : sev === 'warning' ? '#F59E0B' : '#00E5FF') : '#5A7A7D',
               }}>{sev}</button>
           ))}
         </div>
@@ -172,17 +172,17 @@ export default function AuditCenterPage() {
       </div>
 
       {/* Audit log entries */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bio-card" style={{ padding: '0' }}>
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ag-card" style={{ padding: '0' }}>
         <div className="space-y-0">
           {filtered.map((entry, i) => {
             const Icon = CATEGORY_ICONS[entry.category] || ScrollText;
             const catColor = CATEGORY_COLORS[entry.category] || '#5A7A7D';
             return (
               <div key={entry.id}
-                className="flex items-start gap-3 transition-colors hover:bg-[rgba(0,255,209,0.02)]"
+                className="flex items-start gap-3 transition-colors hover:bg-[rgba(59,130,246,0.02)]"
                 style={{
                   padding: '14px 20px',
-                  borderBottom: i < filtered.length - 1 ? '1px solid rgba(0,255,209,0.04)' : 'none',
+                  borderBottom: i < filtered.length - 1 ? '1px solid rgba(59,130,246,0.04)' : 'none',
                 }}>
                 {/* Timeline dot */}
                 <div className="flex flex-col items-center gap-1 pt-0.5">
@@ -201,26 +201,26 @@ export default function AuditCenterPage() {
                     <span className="text-[9px] font-mono rounded-full"
                       style={{
                         padding: '1px 6px',
-                        background: entry.severity === 'critical' ? 'rgba(255,61,107,0.08)' : entry.severity === 'warning' ? 'rgba(255,184,0,0.08)' : 'rgba(0,229,255,0.05)',
-                        color: entry.severity === 'critical' ? '#FF3D6B' : entry.severity === 'warning' ? '#FFB800' : '#00E5FF',
+                        background: entry.severity === 'critical' ? 'rgba(255,61,107,0.08)' : entry.severity === 'warning' ? 'rgba(255,184,0,0.08)' : 'rgba(139,92,246,0.05)',
+                        color: entry.severity === 'critical' ? '#EF4444' : entry.severity === 'warning' ? '#F59E0B' : '#00E5FF',
                       }}>{entry.severity}</span>
                     <span className="text-[9px] font-mono rounded-full"
-                      style={{ padding: '1px 6px', background: 'rgba(0,255,209,0.04)', color: '#5A7A7D' }}>
+                      style={{ padding: '1px 6px', background: 'rgba(59,130,246,0.04)', color: '#5A7A7D' }}>
                       {entry.environment}
                     </span>
                   </div>
 
-                  <div className="text-xs text-[var(--color-surface-text)] mb-0.5">
-                    <span className="text-[var(--color-muted-text)]">{entry.user}</span>
-                    <span className="text-[var(--color-ghost-text)]"> → </span>
+                  <div className="text-xs text-[var(--color-text-primary)] mb-0.5">
+                    <span className="text-[var(--color-text-secondary)]">{entry.user}</span>
+                    <span className="text-[var(--color-text-muted)]"> → </span>
                     <span className="font-medium">{entry.resource}</span>
                   </div>
 
-                  <p className="text-[10px] text-[var(--color-ghost-text)]">{entry.details}</p>
+                  <p className="text-[10px] text-[var(--color-text-muted)]">{entry.details}</p>
                 </div>
 
                 {/* Timestamp */}
-                <span className="text-[10px] text-[var(--color-ghost-text)] flex items-center gap-1 whitespace-nowrap flex-shrink-0">
+                <span className="text-[10px] text-[var(--color-text-muted)] flex items-center gap-1 whitespace-nowrap flex-shrink-0">
                   <Clock size={10} /> {timeAgo(entry.timestamp)}
                 </span>
               </div>
@@ -230,9 +230,9 @@ export default function AuditCenterPage() {
       </motion.div>
 
       {/* Immutability notice */}
-      <div className="rounded-xl flex items-center gap-2 text-[10px] text-[var(--color-muted-text)]"
-        style={{ padding: '10px 14px', background: 'rgba(0,255,209,0.02)', border: '1px solid rgba(0,255,209,0.06)' }}>
-        <Shield size={12} className="text-[var(--color-biolume-primary)]" />
+      <div className="rounded-xl flex items-center gap-2 text-[10px] text-[var(--color-text-secondary)]"
+        style={{ padding: '10px 14px', background: 'rgba(59,130,246,0.02)', border: '1px solid rgba(59,130,246,0.06)' }}>
+        <Shield size={12} className="text-[var(--color-brand-primary)]" />
         All audit entries are immutable and tamper-proof. Logs are retained for 7 years per compliance requirements.
       </div>
     </div>

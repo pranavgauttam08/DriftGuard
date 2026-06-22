@@ -151,18 +151,18 @@ export default function OnboardingPage() {
                   className="rounded-full flex items-center justify-center text-xs font-mono transition-all"
                   style={{
                     width: '32px', height: '32px',
-                    background: i < step ? 'rgba(0,255,209,0.2)' : i === step ? 'rgba(0,255,209,0.15)' : 'rgba(0,255,209,0.04)',
-                    border: `1px solid ${i <= step ? 'rgba(0,255,209,0.5)' : 'rgba(0,255,209,0.1)'}`,
-                    color: i <= step ? '#00FFD1' : '#3A5A5D',
-                    boxShadow: i === step ? '0 0 15px rgba(0,255,209,0.3)' : 'none',
+                    background: i < step ? 'rgba(59,130,246,0.2)' : i === step ? 'rgba(59,130,246,0.15)' : 'rgba(59,130,246,0.04)',
+                    border: `1px solid ${i <= step ? 'rgba(59,130,246,0.5)' : 'rgba(59,130,246,0.1)'}`,
+                    color: i <= step ? '#3B82F6' : '#3A5A5D',
+                    boxShadow: i === step ? '0 0 15px rgba(59,130,246,0.3)' : 'none',
                   }}
                 >
                   {i < step ? <Check size={14} /> : i + 1}
                 </div>
-                <span className="text-[10px] mt-2" style={{ color: i <= step ? '#00FFD1' : '#3A5A5D' }}>{s.label}</span>
+                <span className="text-[10px] mt-2" style={{ color: i <= step ? '#3B82F6' : '#3A5A5D' }}>{s.label}</span>
               </div>
               {i < steps.length - 1 && (
-                <div className="flex-1 h-px mx-3" style={{ background: i < step ? 'rgba(0,255,209,0.4)' : 'rgba(0,255,209,0.08)', marginTop: '-20px' }} />
+                <div className="flex-1 h-px mx-3" style={{ background: i < step ? 'rgba(59,130,246,0.4)' : 'rgba(59,130,246,0.08)', marginTop: '-20px' }} />
               )}
             </div>
           ))}
@@ -177,7 +177,7 @@ export default function OnboardingPage() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.8 }}
               className="fixed rounded-full pointer-events-none"
-              style={{ width: '100px', height: '100px', background: 'radial-gradient(circle, rgba(0,255,209,0.3), transparent)', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
+              style={{ width: '100px', height: '100px', background: 'radial-gradient(circle, rgba(59,130,246,0.3), transparent)', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
             />
           )}
         </AnimatePresence>
@@ -188,7 +188,7 @@ export default function OnboardingPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="bio-card"
+          className="ag-card"
           style={{ padding: 'clamp(1.5rem, 4vw, 2.5rem)' }}
         >
           {/* ─── Step 1: Create Endpoint ─── */}
@@ -197,11 +197,11 @@ export default function OnboardingPage() {
               <h2 className="text-xl font-bold" style={{ marginBottom: '0.5rem' }}>
                 Welcome to DriftGuard, {firstName} 👋
               </h2>
-              <p className="text-sm text-[var(--color-muted-text)]" style={{ marginBottom: '2rem' }}>
+              <p className="text-sm text-[var(--color-text-secondary)]" style={{ marginBottom: '2rem' }}>
                 Let&apos;s set up your first AI endpoint to monitor.
               </p>
               <div style={{ marginBottom: '1.25rem' }}>
-                <label className="block text-xs text-[var(--color-muted-text)] font-mono" style={{ marginBottom: '6px' }}>Endpoint Name</label>
+                <label className="block text-xs text-[var(--color-text-secondary)] font-mono" style={{ marginBottom: '6px' }}>Endpoint Name</label>
                 <input
                   type="text"
                   value={endpointName}
@@ -212,7 +212,7 @@ export default function OnboardingPage() {
                 />
               </div>
               <div style={{ marginBottom: '2rem' }}>
-                <label className="block text-xs text-[var(--color-muted-text)] font-mono" style={{ marginBottom: '6px' }}>Description (optional)</label>
+                <label className="block text-xs text-[var(--color-text-secondary)] font-mono" style={{ marginBottom: '6px' }}>Description (optional)</label>
                 <input
                   type="text"
                   value={endpointDesc}
@@ -231,7 +231,7 @@ export default function OnboardingPage() {
           {step === 1 && (
             <div>
               <h2 className="text-xl font-bold" style={{ marginBottom: '0.5rem' }}>Send Your First Responses</h2>
-              <p className="text-sm text-[var(--color-muted-text)]" style={{ marginBottom: '2rem' }}>
+              <p className="text-sm text-[var(--color-text-secondary)]" style={{ marginBottom: '2rem' }}>
                 Feed DriftGuard 10 query-response pairs to build a behavioral fingerprint for version v1.0.0.
               </p>
 
@@ -240,7 +240,7 @@ export default function OnboardingPage() {
                   <GlowButton onClick={loadExamples} disabled={isLoading} icon={<Sparkles size={16} />}>
                     ⚡ Load 10 Example Responses
                   </GlowButton>
-                  <p className="text-xs text-[var(--color-ghost-text)] mt-3">
+                  <p className="text-xs text-[var(--color-text-muted)] mt-3">
                     Loads realistic e-commerce support bot data instantly.
                   </p>
                 </div>
@@ -249,15 +249,15 @@ export default function OnboardingPage() {
                   {/* Progress bar */}
                   <div style={{ marginBottom: '1.5rem' }}>
                     <div className="flex justify-between text-xs font-mono" style={{ marginBottom: '6px' }}>
-                      <span className="text-[var(--color-muted-text)]">Progress</span>
-                      <span className={sentCount >= 10 ? 'text-[var(--color-biolume-tertiary)]' : 'text-[var(--color-biolume-primary)]'}>
+                      <span className="text-[var(--color-text-secondary)]">Progress</span>
+                      <span className={sentCount >= 10 ? 'text-[var(--color-pass)]' : 'text-[var(--color-brand-primary)]'}>
                         {sentCount} / 10 responses {sentCount >= 10 ? '✓' : ''}
                       </span>
                     </div>
-                    <div className="rounded-full overflow-hidden" style={{ height: '6px', background: 'rgba(0,255,209,0.08)' }}>
+                    <div className="rounded-full overflow-hidden" style={{ height: '6px', background: 'rgba(59,130,246,0.08)' }}>
                       <motion.div
                         className="h-full rounded-full"
-                        style={{ background: 'linear-gradient(90deg, #00FFD1, #00E5FF)' }}
+                        style={{ background: 'linear-gradient(90deg, #3B82F6, #00E5FF)' }}
                         initial={{ width: 0 }}
                         animate={{ width: `${(sentCount / 10) * 100}%` }}
                       />
@@ -273,20 +273,20 @@ export default function OnboardingPage() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.05 }}
                         className="flex items-center gap-3 rounded-lg text-xs"
-                        style={{ padding: '10px 12px', background: 'rgba(0,255,209,0.03)', border: '1px solid rgba(0,255,209,0.08)' }}
+                        style={{ padding: '10px 12px', background: 'rgba(59,130,246,0.03)', border: '1px solid rgba(59,130,246,0.08)' }}
                       >
                         <span className="flex-shrink-0" style={{ width: '16px' }}>
-                          {r.status === 'sent' ? <Check size={14} className="text-[var(--color-biolume-tertiary)]" /> :
-                           r.status === 'pending' ? <Loader2 size={14} className="animate-spin text-[var(--color-ghost-text)]" /> : '!'}
+                          {r.status === 'sent' ? <Check size={14} className="text-[var(--color-pass)]" /> :
+                           r.status === 'pending' ? <Loader2 size={14} className="animate-spin text-[var(--color-text-muted)]" /> : '!'}
                         </span>
-                        <span className="truncate text-[var(--color-surface-text)]">{r.query}</span>
+                        <span className="truncate text-[var(--color-text-primary)]">{r.query}</span>
                       </motion.div>
                     ))}
                   </div>
 
                   {sentCount >= 10 && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                      <p className="text-xs text-[var(--color-biolume-tertiary)] font-mono" style={{ marginBottom: '1rem' }}>
+                      <p className="text-xs text-[var(--color-pass)] font-mono" style={{ marginBottom: '1rem' }}>
                         ✓ Fingerprint computed for v1.0.0
                       </p>
                       <GlowButton onClick={() => setStep(2)} icon={<ArrowRight size={16} />}>
@@ -303,14 +303,14 @@ export default function OnboardingPage() {
           {step === 2 && (
             <div>
               <h2 className="text-xl font-bold" style={{ marginBottom: '0.5rem' }}>Run Your First Diff</h2>
-              <p className="text-sm text-[var(--color-muted-text)]" style={{ marginBottom: '1.5rem' }}>
+              <p className="text-sm text-[var(--color-text-secondary)]" style={{ marginBottom: '1.5rem' }}>
                 We&apos;ve prepared a v1.1.0 with slightly different behavior. Run a diff to see what changed.
               </p>
 
               <div className="flex items-center justify-center gap-4 font-mono text-sm" style={{ marginBottom: '2rem' }}>
-                <span className="text-[var(--color-biolume-primary)]" style={{ padding: '6px 16px', background: 'rgba(0,255,209,0.08)', borderRadius: '8px' }}>v1.0.0</span>
-                <span className="text-[var(--color-ghost-text)]">→</span>
-                <span className="text-[var(--color-biolume-secondary)]" style={{ padding: '6px 16px', background: 'rgba(0,229,255,0.08)', borderRadius: '8px' }}>v1.1.0</span>
+                <span className="text-[var(--color-brand-primary)]" style={{ padding: '6px 16px', background: 'rgba(59,130,246,0.08)', borderRadius: '8px' }}>v1.0.0</span>
+                <span className="text-[var(--color-text-muted)]">→</span>
+                <span className="text-[var(--color-brand-secondary)]" style={{ padding: '6px 16px', background: 'rgba(139,92,246,0.08)', borderRadius: '8px' }}>v1.1.0</span>
               </div>
 
               {!diffResult ? (
@@ -329,7 +329,7 @@ export default function OnboardingPage() {
                     <span className="text-lg">{diffResult.verdict === 'PASS' ? '✅' : diffResult.verdict === 'BLOCK' ? '🚫' : '⚠️'}</span>
                     <div>
                       <div className="font-bold text-sm">{diffResult.verdict}</div>
-                      <div className="text-xs text-[var(--color-muted-text)]">{diffResult.verdictReason}</div>
+                      <div className="text-xs text-[var(--color-text-secondary)]">{diffResult.verdictReason}</div>
                     </div>
                   </div>
 
@@ -339,7 +339,7 @@ export default function OnboardingPage() {
                       {diffResult.regressions.map((r: any, i: number) => (
                         <div key={i} className="flex items-center justify-between text-xs rounded-lg" style={{ padding: '10px 14px', background: 'rgba(255,61,107,0.04)', border: '1px solid rgba(255,61,107,0.15)' }}>
                           <span>{r.dimension}</span>
-                          <span className="font-mono text-[var(--color-biolume-danger)]">
+                          <span className="font-mono text-[var(--color-block)]">
                             {typeof r.baseValue === 'number' ? r.baseValue.toFixed?.(0) : r.baseValue} → {typeof r.newValue === 'number' ? r.newValue.toFixed?.(0) : r.newValue}
                           </span>
                         </div>

@@ -119,17 +119,17 @@ export default function EndpointsPage() {
             onClick={() => setShowCreate(false)}
           >
             <motion.div initial={{ scale: 0.95, y: 10 }} animate={{ scale: 1, y: 0 }}
-              className="bio-card" style={{ width: '100%', maxWidth: '460px', padding: '2rem' }}
+              className="ag-card" style={{ width: '100%', maxWidth: '460px', padding: '2rem' }}
               onClick={e => e.stopPropagation()}
             >
               <h3 className="text-lg font-bold" style={{ marginBottom: '1.5rem' }}>Create New Endpoint</h3>
               <div style={{ marginBottom: '1rem' }}>
-                <label className="block text-xs text-[var(--color-muted-text)] font-mono mb-1">Endpoint Name</label>
+                <label className="block text-xs text-[var(--color-text-secondary)] font-mono mb-1">Endpoint Name</label>
                 <input value={newName} onChange={e => setNewName(e.target.value)} placeholder='e.g. "support-bot"'
                   className="bio-input w-full" onKeyDown={e => e.key === 'Enter' && createEndpoint()} autoFocus />
               </div>
               <div style={{ marginBottom: '1.5rem' }}>
-                <label className="block text-xs text-[var(--color-muted-text)] font-mono mb-1">Description (optional)</label>
+                <label className="block text-xs text-[var(--color-text-secondary)] font-mono mb-1">Description (optional)</label>
                 <input value={newDesc} onChange={e => setNewDesc(e.target.value)} placeholder="What does this AI do?"
                   className="bio-input w-full" />
               </div>
@@ -186,14 +186,14 @@ export default function EndpointsPage() {
         >
           <div className="mx-auto" style={{ width: '80px', height: '80px', marginBottom: '2rem' }}>
             <svg viewBox="0 0 80 80" fill="none">
-              <circle cx="40" cy="40" r="35" stroke="rgba(0,255,209,0.15)" strokeWidth="1" strokeDasharray="4 4" />
-              <circle cx="40" cy="40" r="20" stroke="rgba(0,255,209,0.25)" strokeWidth="1" />
-              <circle cx="40" cy="40" r="4" fill="rgba(0,255,209,0.3)" />
-              <text x="40" y="45" textAnchor="middle" fill="rgba(0,255,209,0.4)" fontSize="20">?</text>
+              <circle cx="40" cy="40" r="35" stroke="rgba(59,130,246,0.15)" strokeWidth="1" strokeDasharray="4 4" />
+              <circle cx="40" cy="40" r="20" stroke="rgba(59,130,246,0.25)" strokeWidth="1" />
+              <circle cx="40" cy="40" r="4" fill="rgba(59,130,246,0.3)" />
+              <text x="40" y="45" textAnchor="middle" fill="rgba(59,130,246,0.4)" fontSize="20">?</text>
             </svg>
           </div>
           <h3 className="text-lg font-semibold" style={{ marginBottom: '0.5rem' }}>No endpoints yet.</h3>
-          <p className="text-sm text-[var(--color-muted-text)]" style={{ marginBottom: '2rem', maxWidth: '360px', margin: '0 auto 2rem' }}>
+          <p className="text-sm text-[var(--color-text-secondary)]" style={{ marginBottom: '2rem', maxWidth: '360px', margin: '0 auto 2rem' }}>
             Create your first endpoint to start monitoring your AI.
           </p>
           <GlowButton onClick={() => setShowCreate(true)} icon={<Plus size={16} />}>Create First Endpoint</GlowButton>
@@ -202,25 +202,25 @@ export default function EndpointsPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem' }}>
           {endpoints.map((ep, i) => (
             <motion.div key={ep.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }} className="bio-card" style={{ padding: '1.25rem' }}
+              transition={{ delay: i * 0.05 }} className="ag-card" style={{ padding: '1.25rem' }}
             >
               <div className="flex items-center justify-between" style={{ marginBottom: '1rem' }}>
                 <div className="flex items-center gap-2">
                   <span className="rounded-full" style={{
                     width: '8px', height: '8px',
-                    background: ep.status === 'healthy' ? '#00FF88' : ep.status === 'critical' ? '#FF3D6B' : '#FFB800',
-                    boxShadow: `0 0 8px ${ep.status === 'healthy' ? '#00FF88' : ep.status === 'critical' ? '#FF3D6B' : '#FFB800'}`,
+                    background: ep.status === 'healthy' ? '#00FF88' : ep.status === 'critical' ? '#EF4444' : '#F59E0B',
+                    boxShadow: `0 0 8px ${ep.status === 'healthy' ? '#00FF88' : ep.status === 'critical' ? '#EF4444' : '#F59E0B'}`,
                     animation: 'pulse 2s ease-in-out infinite',
                   }} />
-                  <span className="font-semibold text-sm text-[var(--color-surface-text)]">{ep.name}</span>
+                  <span className="font-semibold text-sm text-[var(--color-text-primary)]">{ep.name}</span>
                 </div>
                 <span className="text-[10px] font-mono uppercase" style={{
                   padding: '3px 8px', borderRadius: '6px',
                   background: ep.status === 'healthy' ? 'rgba(0,255,136,0.1)' : ep.status === 'critical' ? 'rgba(255,61,107,0.1)' : 'rgba(255,184,0,0.1)',
-                  color: ep.status === 'healthy' ? '#00FF88' : ep.status === 'critical' ? '#FF3D6B' : '#FFB800',
+                  color: ep.status === 'healthy' ? '#00FF88' : ep.status === 'critical' ? '#EF4444' : '#F59E0B',
                 }}>{ep.status}</span>
               </div>
-              <div className="space-y-1 text-xs text-[var(--color-muted-text)]" style={{ marginBottom: '1.25rem' }}>
+              <div className="space-y-1 text-xs text-[var(--color-text-secondary)]" style={{ marginBottom: '1.25rem' }}>
                 <div className="flex justify-between"><span>Latest version</span><span className="font-mono">{ep.latest_version || 'v1.0.0'}</span></div>
                 <div className="flex justify-between"><span>Total responses</span><span className="font-mono">{ep.total_responses || 0}</span></div>
                 <div className="flex justify-between"><span>Last active</span><span>{ep.last_active_at ? timeAgo(ep.last_active_at) : 'Never'}</span></div>
@@ -240,7 +240,7 @@ export default function EndpointsPage() {
                   </button>
                   {menuOpen === ep.id && (
                     <div className="absolute right-0 top-full mt-1 rounded-lg overflow-hidden z-20"
-                      style={{ width: '160px', background: 'rgba(1,20,24,0.98)', border: '1px solid rgba(0,255,209,0.12)', boxShadow: '0 10px 30px rgba(0,0,0,0.4)' }}>
+                      style={{ width: '160px', background: 'rgba(1,20,24,0.98)', border: '1px solid rgba(59,130,246,0.12)', boxShadow: '0 10px 30px rgba(0,0,0,0.4)' }}>
                       <button onClick={() => { copyId(ep.id); setMenuOpen(null); }}
                         className="w-full flex items-center gap-2 text-xs text-left transition-all"
                         style={{ padding: '10px 14px', color: '#E0F2F1' }}>
@@ -253,7 +253,7 @@ export default function EndpointsPage() {
                       </button>
                       <button onClick={() => { deleteEndpoint(ep.id); setMenuOpen(null); }}
                         className="w-full flex items-center gap-2 text-xs text-left transition-all"
-                        style={{ padding: '10px 14px', color: '#FF3D6B' }}>
+                        style={{ padding: '10px 14px', color: '#EF4444' }}>
                         <Trash2 size={12} /> Delete Endpoint
                       </button>
                     </div>

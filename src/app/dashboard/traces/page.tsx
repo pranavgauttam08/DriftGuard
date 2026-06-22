@@ -112,18 +112,18 @@ export default function TracesPage() {
       <TopBar title="Trace Explorer" />
 
       {/* Info callout */}
-      <div className="rounded-xl" style={{ padding: '1rem 1.25rem', background: 'rgba(0,229,255,0.04)', border: '1px solid rgba(0,229,255,0.12)' }}>
-        <div className="flex items-center gap-2 text-xs text-[var(--color-biolume-secondary)]">
+      <div className="rounded-xl" style={{ padding: '1rem 1.25rem', background: 'rgba(139,92,246,0.04)', border: '1px solid rgba(139,92,246,0.12)' }}>
+        <div className="flex items-center gap-2 text-xs text-[var(--color-brand-secondary)]">
           <Activity size={14} />
           <span className="font-semibold">Behavioral Traces</span>
-          <span className="text-[var(--color-muted-text)]">— Structured request/response capture for root-cause analysis. Not a generic observability tool.</span>
+          <span className="text-[var(--color-text-secondary)]">— Structured request/response capture for root-cause analysis. Not a generic observability tool.</span>
         </div>
       </div>
 
       {/* Filters */}
       <div className="flex items-center gap-3">
         <div className="relative" style={{ maxWidth: '280px', flex: 1 }}>
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-ghost-text)]" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
           <input placeholder="Search traces..." className="bio-input w-full" style={{ paddingLeft: '36px' }} />
         </div>
 
@@ -133,9 +133,9 @@ export default function TracesPage() {
             className="text-[10px] font-mono rounded-lg transition-all"
             style={{
               padding: '6px 12px',
-              background: !filterEndpoint ? 'rgba(0,255,209,0.1)' : 'transparent',
-              border: `1px solid ${!filterEndpoint ? 'rgba(0,255,209,0.3)' : 'rgba(0,255,209,0.08)'}`,
-              color: !filterEndpoint ? '#00FFD1' : '#5A7A7D',
+              background: !filterEndpoint ? 'rgba(59,130,246,0.1)' : 'transparent',
+              border: `1px solid ${!filterEndpoint ? 'rgba(59,130,246,0.3)' : 'rgba(59,130,246,0.08)'}`,
+              color: !filterEndpoint ? '#3B82F6' : '#5A7A7D',
             }}>All</button>
           {uniqueEndpoints.map(ep => (
             <button key={ep}
@@ -143,14 +143,14 @@ export default function TracesPage() {
               className="text-[10px] font-mono rounded-lg transition-all"
               style={{
                 padding: '6px 12px',
-                background: filterEndpoint === ep ? 'rgba(0,255,209,0.1)' : 'transparent',
-                border: `1px solid ${filterEndpoint === ep ? 'rgba(0,255,209,0.3)' : 'rgba(0,255,209,0.08)'}`,
-                color: filterEndpoint === ep ? '#00FFD1' : '#5A7A7D',
+                background: filterEndpoint === ep ? 'rgba(59,130,246,0.1)' : 'transparent',
+                border: `1px solid ${filterEndpoint === ep ? 'rgba(59,130,246,0.3)' : 'rgba(59,130,246,0.08)'}`,
+                color: filterEndpoint === ep ? '#3B82F6' : '#5A7A7D',
               }}>{ep}</button>
           ))}
         </div>
 
-        <div className="ml-auto text-[10px] text-[var(--color-ghost-text)]">
+        <div className="ml-auto text-[10px] text-[var(--color-text-muted)]">
           {filtered.length} traces
         </div>
       </div>
@@ -172,48 +172,48 @@ export default function TracesPage() {
             >
               <button
                 onClick={() => setExpandedTrace(isExpanded ? null : trace.id)}
-                className="bio-card w-full text-left transition-all"
+                className="ag-card w-full text-left transition-all"
                 style={{
                   padding: '1rem 1.25rem',
-                  borderColor: hasError ? 'rgba(255,61,107,0.2)' : isExpanded ? 'rgba(0,255,209,0.3)' : undefined,
+                  borderColor: hasError ? 'rgba(255,61,107,0.2)' : isExpanded ? 'rgba(59,130,246,0.3)' : undefined,
                 }}
               >
                 <div className="flex items-center gap-3">
-                  {isExpanded ? <ChevronDown size={12} className="text-[var(--color-ghost-text)]" /> : <ChevronRight size={12} className="text-[var(--color-ghost-text)]" />}
+                  {isExpanded ? <ChevronDown size={12} className="text-[var(--color-text-muted)]" /> : <ChevronRight size={12} className="text-[var(--color-text-muted)]" />}
 
                   {/* Endpoint + Version */}
-                  <span className="text-xs font-semibold text-[var(--color-surface-text)]">{trace.endpointId}</span>
-                  <span className="text-[10px] font-mono text-[var(--color-ghost-text)]">{trace.version}</span>
+                  <span className="text-xs font-semibold text-[var(--color-text-primary)]">{trace.endpointId}</span>
+                  <span className="text-[10px] font-mono text-[var(--color-text-muted)]">{trace.version}</span>
 
                   {/* Badges */}
                   <div className="flex gap-1 ml-2">
                     {hasRAG && (
                       <span className="text-[9px] font-mono rounded-full flex items-center gap-1"
-                        style={{ padding: '1px 6px', background: 'rgba(0,229,255,0.08)', color: '#00E5FF' }}>
+                        style={{ padding: '1px 6px', background: 'rgba(139,92,246,0.08)', color: '#00E5FF' }}>
                         <Database size={8} />RAG
                       </span>
                     )}
                     {hasTools && (
                       <span className="text-[9px] font-mono rounded-full flex items-center gap-1"
-                        style={{ padding: '1px 6px', background: 'rgba(255,184,0,0.08)', color: '#FFB800' }}>
+                        style={{ padding: '1px 6px', background: 'rgba(255,184,0,0.08)', color: '#F59E0B' }}>
                         <Wrench size={8} />Tools
                       </span>
                     )}
                     {hasError && (
                       <span className="text-[9px] font-mono rounded-full flex items-center gap-1"
-                        style={{ padding: '1px 6px', background: 'rgba(255,61,107,0.1)', color: '#FF3D6B' }}>
+                        style={{ padding: '1px 6px', background: 'rgba(255,61,107,0.1)', color: '#EF4444' }}>
                         <AlertTriangle size={8} />Error
                       </span>
                     )}
                   </div>
 
                   {/* Query preview */}
-                  <span className="text-xs text-[var(--color-muted-text)] truncate flex-1 ml-2">
+                  <span className="text-xs text-[var(--color-text-secondary)] truncate flex-1 ml-2">
                     {trace.userQuery.slice(0, 60)}{trace.userQuery.length > 60 ? '...' : ''}
                   </span>
 
                   {/* Metrics */}
-                  <div className="flex items-center gap-3 text-[10px] text-[var(--color-ghost-text)] flex-shrink-0">
+                  <div className="flex items-center gap-3 text-[10px] text-[var(--color-text-muted)] flex-shrink-0">
                     <span className="flex items-center gap-1"><Zap size={10} />{trace.latencyMs}ms</span>
                     <span>{trace.tokenCount} tok</span>
                     <span className="flex items-center gap-1"><Clock size={10} />{timeAgo(trace.timestamp)}</span>
@@ -230,32 +230,32 @@ export default function TracesPage() {
                     exit={{ height: 0, opacity: 0 }}
                     className="overflow-hidden"
                   >
-                    <div className="bio-card" style={{ padding: '1.25rem', marginTop: '4px', borderColor: 'rgba(0,255,209,0.15)' }}>
+                    <div className="ag-card" style={{ padding: '1.25rem', marginTop: '4px', borderColor: 'rgba(59,130,246,0.15)' }}>
                       {/* Waterfall steps */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
 
                         {/* System Prompt */}
                         {trace.systemPrompt && (
                           <WaterfallStep icon={<Cpu size={12} />} label="System Prompt" color="#5A7A7D">
-                            <code className="text-[11px] text-[var(--color-muted-text)]">{trace.systemPrompt}</code>
+                            <code className="text-[11px] text-[var(--color-text-secondary)]">{trace.systemPrompt}</code>
                           </WaterfallStep>
                         )}
 
                         {/* User Query */}
                         <WaterfallStep icon={<MessageSquare size={12} />} label="User Query" color="#00E5FF">
-                          <span className="text-xs text-[var(--color-surface-text)]">{trace.userQuery}</span>
+                          <span className="text-xs text-[var(--color-text-primary)]">{trace.userQuery}</span>
                         </WaterfallStep>
 
                         {/* Retrieved Context */}
                         {trace.retrievedContext.length > 0 && (
                           <WaterfallStep icon={<Database size={12} />} label={`Retrieved Context (${trace.retrievedContext.length} chunks)`} color="#00E5FF">
                             {trace.retrievedContext.map((chunk: any, ci: number) => (
-                              <div key={ci} className="rounded-lg mb-1" style={{ padding: '6px 10px', background: 'rgba(0,229,255,0.03)', border: '1px solid rgba(0,229,255,0.08)' }}>
+                              <div key={ci} className="rounded-lg mb-1" style={{ padding: '6px 10px', background: 'rgba(139,92,246,0.03)', border: '1px solid rgba(139,92,246,0.08)' }}>
                                 <div className="flex items-center justify-between mb-1">
-                                  <span className="text-[9px] font-mono text-[var(--color-biolume-secondary)]">{chunk.source}</span>
-                                  {chunk.score && <span className="text-[9px] font-mono text-[var(--color-ghost-text)]">score: {chunk.score.toFixed(2)}</span>}
+                                  <span className="text-[9px] font-mono text-[var(--color-brand-secondary)]">{chunk.source}</span>
+                                  {chunk.score && <span className="text-[9px] font-mono text-[var(--color-text-muted)]">score: {chunk.score.toFixed(2)}</span>}
                                 </div>
-                                <span className="text-[11px] text-[var(--color-muted-text)]">{chunk.text.slice(0, 120)}...</span>
+                                <span className="text-[11px] text-[var(--color-text-secondary)]">{chunk.text.slice(0, 120)}...</span>
                               </div>
                             ))}
                           </WaterfallStep>
@@ -263,18 +263,18 @@ export default function TracesPage() {
 
                         {/* Tool Calls */}
                         {trace.toolCalls.length > 0 && (
-                          <WaterfallStep icon={<Wrench size={12} />} label={`Tool Calls (${trace.toolCalls.length})`} color="#FFB800">
+                          <WaterfallStep icon={<Wrench size={12} />} label={`Tool Calls (${trace.toolCalls.length})`} color="#F59E0B">
                             {trace.toolCalls.map((tool: any, ti: number) => (
                               <div key={ti} className="rounded-lg mb-1" style={{ padding: '6px 10px', background: 'rgba(255,184,0,0.03)', border: '1px solid rgba(255,184,0,0.1)' }}>
                                 <div className="flex items-center justify-between mb-1">
-                                  <span className="text-[10px] font-mono font-semibold" style={{ color: '#FFB800' }}>{tool.name}()</span>
-                                  <span className="text-[9px] font-mono text-[var(--color-ghost-text)]">{tool.latencyMs}ms</span>
+                                  <span className="text-[10px] font-mono font-semibold" style={{ color: '#F59E0B' }}>{tool.name}()</span>
+                                  <span className="text-[9px] font-mono text-[var(--color-text-muted)]">{tool.latencyMs}ms</span>
                                 </div>
-                                <div className="text-[10px] text-[var(--color-ghost-text)]">
-                                  <span className="text-[var(--color-muted-text)]">Input:</span> {JSON.stringify(tool.input)}
+                                <div className="text-[10px] text-[var(--color-text-muted)]">
+                                  <span className="text-[var(--color-text-secondary)]">Input:</span> {JSON.stringify(tool.input)}
                                 </div>
-                                <div className="text-[10px] text-[var(--color-ghost-text)]">
-                                  <span className="text-[var(--color-muted-text)]">Output:</span> {tool.output.slice(0, 100)}
+                                <div className="text-[10px] text-[var(--color-text-muted)]">
+                                  <span className="text-[var(--color-text-secondary)]">Output:</span> {tool.output.slice(0, 100)}
                                 </div>
                               </div>
                             ))}
@@ -285,27 +285,27 @@ export default function TracesPage() {
                         {trace.modelConfig && (
                           <WaterfallStep icon={<Cpu size={12} />} label="Model Config" color="#5A7A7D">
                             <div className="flex gap-3 text-[10px]">
-                              <span className="font-mono text-[var(--color-muted-text)]">{trace.modelConfig.provider}/{trace.modelConfig.model}</span>
-                              {trace.modelConfig.temperature !== undefined && <span className="text-[var(--color-ghost-text)]">temp: {trace.modelConfig.temperature}</span>}
-                              {trace.modelConfig.maxTokens && <span className="text-[var(--color-ghost-text)]">max: {trace.modelConfig.maxTokens}</span>}
+                              <span className="font-mono text-[var(--color-text-secondary)]">{trace.modelConfig.provider}/{trace.modelConfig.model}</span>
+                              {trace.modelConfig.temperature !== undefined && <span className="text-[var(--color-text-muted)]">temp: {trace.modelConfig.temperature}</span>}
+                              {trace.modelConfig.maxTokens && <span className="text-[var(--color-text-muted)]">max: {trace.modelConfig.maxTokens}</span>}
                             </div>
                           </WaterfallStep>
                         )}
 
                         {/* Response or Error */}
                         {trace.error ? (
-                          <WaterfallStep icon={<AlertTriangle size={12} />} label="Error" color="#FF3D6B">
-                            <code className="text-[11px]" style={{ color: '#FF3D6B' }}>{trace.error}</code>
+                          <WaterfallStep icon={<AlertTriangle size={12} />} label="Error" color="#EF4444">
+                            <code className="text-[11px]" style={{ color: '#EF4444' }}>{trace.error}</code>
                           </WaterfallStep>
                         ) : (
                           <WaterfallStep icon={<MessageSquare size={12} />} label="Response" color="#00FF88">
-                            <span className="text-xs text-[var(--color-surface-text)] whitespace-pre-wrap">{trace.finalResponse.slice(0, 400)}{trace.finalResponse.length > 400 ? '...' : ''}</span>
+                            <span className="text-xs text-[var(--color-text-primary)] whitespace-pre-wrap">{trace.finalResponse.slice(0, 400)}{trace.finalResponse.length > 400 ? '...' : ''}</span>
                           </WaterfallStep>
                         )}
                       </div>
 
                       {/* Meta footer */}
-                      <div className="flex items-center gap-4 mt-3 text-[10px] text-[var(--color-ghost-text)]" style={{ paddingTop: '10px', borderTop: '1px solid rgba(0,255,209,0.06)' }}>
+                      <div className="flex items-center gap-4 mt-3 text-[10px] text-[var(--color-text-muted)]" style={{ paddingTop: '10px', borderTop: '1px solid rgba(59,130,246,0.06)' }}>
                         <span>ID: {trace.id}</span>
                         {trace.sessionId && <span>Session: {trace.sessionId}</span>}
                         {trace.endUserId && <span>User: {trace.endUserId}</span>}
@@ -339,12 +339,12 @@ function WaterfallStep({ icon, label, color, children }: {
         <div className="rounded-full flex items-center justify-center" style={{ width: '20px', height: '20px', background: color + '15', color }}>
           {icon}
         </div>
-        <div className="flex-1" style={{ width: '1px', background: 'rgba(0,255,209,0.06)', minHeight: '8px' }} />
+        <div className="flex-1" style={{ width: '1px', background: 'rgba(59,130,246,0.06)', minHeight: '8px' }} />
       </div>
       {/* Content */}
       <div className="flex-1 pb-3">
         <div className="text-[10px] font-mono uppercase mb-1" style={{ color }}>{label}</div>
-        <div className="rounded-lg" style={{ padding: '8px 10px', background: 'rgba(0,255,209,0.02)', border: '1px solid rgba(0,255,209,0.06)' }}>
+        <div className="rounded-lg" style={{ padding: '8px 10px', background: 'rgba(59,130,246,0.02)', border: '1px solid rgba(59,130,246,0.06)' }}>
           {children}
         </div>
       </div>

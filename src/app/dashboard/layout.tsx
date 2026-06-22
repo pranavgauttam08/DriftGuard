@@ -19,14 +19,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <TenantProvider>
       <DriftGuardContext.Provider value={dg}>
-        <div className="flex min-h-screen" style={{ background: 'var(--color-abyss)' }}>
-          {/* Subtle CSS gradient background */}
+        <div className="flex min-h-screen" style={{ background: 'var(--color-bg-base)' }}>
+          {/* Subtle CSS gradient background — Antigravity blue tones */}
           <div className="fixed inset-0 pointer-events-none z-0"
-            style={{ background: 'radial-gradient(ellipse at 10% 90%, rgba(0,255,209,0.03) 0%, transparent 50%), radial-gradient(ellipse at 90% 10%, rgba(0,229,255,0.02) 0%, transparent 50%)' }} />
+            style={{ background: 'radial-gradient(ellipse at 10% 90%, rgba(59,130,246,0.03) 0%, transparent 50%), radial-gradient(ellipse at 90% 10%, rgba(139,92,246,0.02) 0%, transparent 50%)' }} />
 
           <Sidebar />
 
-          <main style={{ flex: 1, marginLeft: '220px', padding: 'clamp(1.5rem, 3vw, 2.5rem)', position: 'relative', zIndex: 10, minHeight: '100vh', overflowX: 'hidden' }}>
+          <main style={{ flex: 1, marginLeft: '260px', padding: 'clamp(1.5rem, 3vw, 2.5rem)', position: 'relative', zIndex: 10, minHeight: '100vh', overflowX: 'hidden' }}>
             {children}
           </main>
 

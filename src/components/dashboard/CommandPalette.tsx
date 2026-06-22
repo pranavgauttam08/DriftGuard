@@ -97,29 +97,29 @@ export default function CommandPalette() {
           className="rounded-xl overflow-hidden"
           style={{
             width: '100%', maxWidth: '520px',
-            background: 'rgba(1,20,24,0.98)', border: '1px solid rgba(0,255,209,0.15)',
-            boxShadow: '0 0 60px rgba(0,255,209,0.08), 0 20px 60px rgba(0,0,0,0.5)',
+            background: 'rgba(1,20,24,0.98)', border: '1px solid rgba(59,130,246,0.15)',
+            boxShadow: '0 0 60px rgba(59,130,246,0.08), 0 20px 60px rgba(0,0,0,0.5)',
           }}
           onClick={e => e.stopPropagation()}
         >
-          <div className="flex items-center gap-3" style={{ padding: '16px 20px', borderBottom: '1px solid rgba(0,255,209,0.08)' }}>
-            <Search size={18} className="text-[var(--color-ghost-text)]" />
+          <div className="flex items-center gap-3" style={{ padding: '16px 20px', borderBottom: '1px solid rgba(59,130,246,0.08)' }}>
+            <Search size={18} className="text-[var(--color-text-muted)]" />
             <input
               ref={inputRef}
               value={query}
               onChange={e => { setQuery(e.target.value); setSelectedIndex(0); }}
               onKeyDown={handleKeyDown}
               placeholder="Search commands, endpoints, pages..."
-              className="flex-1 bg-transparent outline-none text-sm text-[var(--color-surface-text)]"
+              className="flex-1 bg-transparent outline-none text-sm text-[var(--color-text-primary)]"
               style={{ fontFamily: 'inherit' }}
             />
-            <kbd className="text-[10px] font-mono text-[var(--color-ghost-text)] rounded" style={{ padding: '2px 8px', background: 'rgba(0,255,209,0.06)', border: '1px solid rgba(0,255,209,0.1)' }}>ESC</kbd>
+            <kbd className="text-[10px] font-mono text-[var(--color-text-muted)] rounded" style={{ padding: '2px 8px', background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.1)' }}>ESC</kbd>
           </div>
 
           <div style={{ maxHeight: '320px', overflowY: 'auto', padding: '8px' }}>
             {Object.entries(grouped).map(([category, items]) => (
               <div key={category}>
-                <div className="text-[10px] font-mono uppercase text-[var(--color-ghost-text)]" style={{ padding: '8px 12px 4px' }}>{category}</div>
+                <div className="text-[10px] font-mono uppercase text-[var(--color-text-muted)]" style={{ padding: '8px 12px 4px' }}>{category}</div>
                 {items.map((item) => {
                   const globalIndex = filtered.indexOf(item);
                   return (
@@ -129,11 +129,11 @@ export default function CommandPalette() {
                       className="w-full flex items-center gap-3 text-sm rounded-lg transition-all"
                       style={{
                         padding: '10px 12px',
-                        color: globalIndex === selectedIndex ? '#00FFD1' : '#E0F2F1',
-                        background: globalIndex === selectedIndex ? 'rgba(0,255,209,0.08)' : 'transparent',
+                        color: globalIndex === selectedIndex ? '#3B82F6' : '#E0F2F1',
+                        background: globalIndex === selectedIndex ? 'rgba(59,130,246,0.08)' : 'transparent',
                       }}
                     >
-                      <span className="text-[var(--color-muted-text)]">{item.icon}</span>
+                      <span className="text-[var(--color-text-secondary)]">{item.icon}</span>
                       {item.label}
                     </button>
                   );
@@ -141,7 +141,7 @@ export default function CommandPalette() {
               </div>
             ))}
             {filtered.length === 0 && (
-              <div className="text-center text-sm text-[var(--color-ghost-text)]" style={{ padding: '2rem' }}>
+              <div className="text-center text-sm text-[var(--color-text-muted)]" style={{ padding: '2rem' }}>
                 No results for &ldquo;{query}&rdquo;
               </div>
             )}

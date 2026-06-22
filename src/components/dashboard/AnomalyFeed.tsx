@@ -21,10 +21,10 @@ export default function AnomalyFeed({ alerts }: AnomalyFeedProps) {
   const sorted = [...alerts].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
   return (
-    <div className="bio-card p-5 h-full">
+    <div className="ag-card p-5 h-full">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-[var(--color-surface-text)]">Anomaly Feed</h3>
-        <span className="text-[10px] font-mono text-[var(--color-muted-text)]">{alerts.filter(a => !a.acknowledged).length} unread</span>
+        <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Anomaly Feed</h3>
+        <span className="text-[10px] font-mono text-[var(--color-text-secondary)]">{alerts.filter(a => !a.acknowledged).length} unread</span>
       </div>
       <div className="space-y-2 max-h-[400px] overflow-y-auto">
         <AnimatePresence>
@@ -39,14 +39,14 @@ export default function AnomalyFeed({ alerts }: AnomalyFeedProps) {
               <div className="flex items-start gap-2">
                 <StatusBadge status={alert.severity === 'critical' ? 'critical' : alert.severity === 'warning' ? 'warning' : 'info'} size="sm" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-[var(--color-surface-text)] leading-relaxed">{alert.message}</p>
+                  <p className="text-xs text-[var(--color-text-primary)] leading-relaxed">{alert.message}</p>
                   <div className="flex items-center gap-2 mt-1">
-                    <Clock size={10} className="text-[var(--color-ghost-text)]" />
-                    <span className="text-[10px] text-[var(--color-ghost-text)]">{timeAgo(alert.timestamp)}</span>
-                    <span className="text-[10px] text-[var(--color-ghost-text)]">· {alert.endpointId}</span>
+                    <Clock size={10} className="text-[var(--color-text-muted)]" />
+                    <span className="text-[10px] text-[var(--color-text-muted)]">{timeAgo(alert.timestamp)}</span>
+                    <span className="text-[10px] text-[var(--color-text-muted)]">· {alert.endpointId}</span>
                   </div>
                 </div>
-                {!alert.acknowledged && <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-biolume-danger)] mt-1 animate-bio-pulse" />}
+                {!alert.acknowledged && <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-block)] mt-1 animate-bio-pulse" />}
               </div>
             </motion.div>
           ))}

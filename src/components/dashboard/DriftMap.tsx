@@ -33,7 +33,7 @@ export default function DriftMap({ fingerprints }: DriftMapProps) {
   // Dynamic version colors — works for ANY version, not just hardcoded ones
   const versionColors: Record<string, string> = useMemo(() => {
     const allVersions = [...new Set(fingerprints.map(f => f.version))].sort();
-    const palette = ['#00FFD1', '#00E5FF', '#00CBB7', '#00FF88', '#8AEACC', '#00B1A2', '#66FFE0', '#33D9B2', '#00CCAA', '#99FFE6'];
+    const palette = ['#3B82F6', '#00E5FF', '#00CBB7', '#00FF88', '#8AEACC', '#00B1A2', '#66FFE0', '#33D9B2', '#00CCAA', '#99FFE6'];
     const colors: Record<string, string> = {};
     allVersions.forEach((v, i) => { colors[v] = palette[i % palette.length]; });
     return colors;
@@ -50,14 +50,14 @@ export default function DriftMap({ fingerprints }: DriftMapProps) {
   }, [points]);
 
   return (
-    <div className="bio-card p-5 relative">
-      <h3 className="text-sm font-semibold text-[var(--color-surface-text)] mb-4">Semantic Drift Map</h3>
+    <div className="ag-card p-5 relative">
+      <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4">Semantic Drift Map</h3>
       <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ maxHeight: '400px' }}>
         {/* Grid */}
         {Array.from({ length: 5 }).map((_, i) => (
           <g key={i}>
-            <line x1={W * (i + 1) / 6} y1={0} x2={W * (i + 1) / 6} y2={H} stroke="rgba(0,255,209,0.05)" />
-            <line x1={0} y1={H * (i + 1) / 6} x2={W} y2={H * (i + 1) / 6} stroke="rgba(0,255,209,0.05)" />
+            <line x1={W * (i + 1) / 6} y1={0} x2={W * (i + 1) / 6} y2={H} stroke="rgba(59,130,246,0.05)" />
+            <line x1={0} y1={H * (i + 1) / 6} x2={W} y2={H * (i + 1) / 6} stroke="rgba(59,130,246,0.05)" />
           </g>
         ))}
 
@@ -68,7 +68,7 @@ export default function DriftMap({ fingerprints }: DriftMapProps) {
           return (
             <g key={epId}>
               {sorted.slice(0, -1).map((p, i) => (
-                <line key={i} x1={p.x} y1={p.y} x2={sorted[i + 1].x} y2={sorted[i + 1].y} stroke="rgba(0,255,209,0.15)" strokeWidth="1" strokeDasharray="4 2" />
+                <line key={i} x1={p.x} y1={p.y} x2={sorted[i + 1].x} y2={sorted[i + 1].y} stroke="rgba(59,130,246,0.15)" strokeWidth="1" strokeDasharray="4 2" />
               ))}
             </g>
           );
@@ -76,7 +76,7 @@ export default function DriftMap({ fingerprints }: DriftMapProps) {
 
         {/* Points */}
         {points.map((p, i) => {
-          const color = versionColors[p.version] || '#00FFD1';
+          const color = versionColors[p.version] || '#3B82F6';
           return (
             <g key={i}
               onMouseEnter={(e) => setTooltip({ x: e.clientX, y: e.clientY, text: p.label })}
@@ -91,12 +91,12 @@ export default function DriftMap({ fingerprints }: DriftMapProps) {
         })}
 
         {/* Axis labels */}
-        <text x={W / 2} y={H - 5} fill="#4A8F8A" fontSize="9" textAnchor="middle" fontFamily="Fira Code">← Semantic Consistency →</text>
-        <text x={8} y={H / 2} fill="#4A8F8A" fontSize="9" textAnchor="middle" fontFamily="Fira Code" transform={`rotate(-90, 8, ${H / 2})`}>← Behavioral Depth →</text>
+        <text x={W / 2} y={H - 5} fill="#4A8F8A" fontSize="9" textAnchor="middle" fontFamily="JetBrains Mono">← Semantic Consistency →</text>
+        <text x={8} y={H / 2} fill="#4A8F8A" fontSize="9" textAnchor="middle" fontFamily="JetBrains Mono" transform={`rotate(-90, 8, ${H / 2})`}>← Behavioral Depth →</text>
       </svg>
 
       {tooltip && (
-        <div className="fixed z-50 bio-card !p-2 text-xs font-mono" style={{ left: tooltip.x + 10, top: tooltip.y - 30 }}>
+        <div className="fixed z-50 ag-card !p-2 text-xs font-mono" style={{ left: tooltip.x + 10, top: tooltip.y - 30 }}>
           {tooltip.text}
         </div>
       )}

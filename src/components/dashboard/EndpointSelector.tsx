@@ -23,7 +23,7 @@ export default function EndpointSelector({ endpoints, selected, onSelect }: Endp
   }, []);
 
   const statusColor = (s: string) =>
-    s === 'critical' ? '#FF3D6B' : s === 'warning' ? '#FFB800' : '#00FF88';
+    s === 'critical' ? '#EF4444' : s === 'warning' ? '#F59E0B' : '#00FF88';
 
   return (
     <div ref={ref} className="relative" style={{ minWidth: '220px' }}>
@@ -32,8 +32,8 @@ export default function EndpointSelector({ endpoints, selected, onSelect }: Endp
         className="w-full flex items-center justify-between gap-3 rounded-lg transition-all"
         style={{
           padding: '10px 14px',
-          background: 'rgba(0,255,209,0.04)',
-          border: '1px solid rgba(0,255,209,0.12)',
+          background: 'rgba(59,130,246,0.04)',
+          border: '1px solid rgba(59,130,246,0.12)',
         }}
       >
         <div className="flex items-center gap-2 min-w-0">
@@ -45,11 +45,11 @@ export default function EndpointSelector({ endpoints, selected, onSelect }: Endp
               boxShadow: `0 0 6px ${statusColor(selected?.status || 'healthy')}`,
             }}
           />
-          <span className="text-sm font-medium text-[var(--color-surface-text)] truncate">
+          <span className="text-sm font-medium text-[var(--color-text-primary)] truncate">
             {selected?.name || 'Select endpoint'}
           </span>
         </div>
-        <ChevronDown size={14} className={`text-[var(--color-ghost-text)] transition-transform ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown size={14} className={`text-[var(--color-text-muted)] transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
       {open && (
@@ -58,7 +58,7 @@ export default function EndpointSelector({ endpoints, selected, onSelect }: Endp
           className="absolute left-0 right-0 top-full mt-1 rounded-lg overflow-hidden z-30"
           style={{
             background: 'rgba(1,14,18,0.98)',
-            border: '1px solid rgba(0,255,209,0.15)',
+            border: '1px solid rgba(59,130,246,0.15)',
             boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
             maxHeight: '280px',
             overflowY: 'auto',
@@ -71,8 +71,8 @@ export default function EndpointSelector({ endpoints, selected, onSelect }: Endp
               className="w-full flex items-center gap-3 text-left transition-all"
               style={{
                 padding: '10px 14px',
-                background: selected?.id === ep.id ? 'rgba(0,255,209,0.08)' : 'transparent',
-                borderLeft: selected?.id === ep.id ? '2px solid #00FFD1' : '2px solid transparent',
+                background: selected?.id === ep.id ? 'rgba(59,130,246,0.08)' : 'transparent',
+                borderLeft: selected?.id === ep.id ? '2px solid #3B82F6' : '2px solid transparent',
               }}
             >
               <span
@@ -83,8 +83,8 @@ export default function EndpointSelector({ endpoints, selected, onSelect }: Endp
                 }}
               />
               <div className="min-w-0 flex-1">
-                <div className="text-xs font-medium text-[var(--color-surface-text)] truncate">{ep.name}</div>
-                <div className="text-[10px] text-[var(--color-ghost-text)] truncate">{ep.latestVersion} · {ep.totalResponses} responses</div>
+                <div className="text-xs font-medium text-[var(--color-text-primary)] truncate">{ep.name}</div>
+                <div className="text-[10px] text-[var(--color-text-muted)] truncate">{ep.latestVersion} · {ep.totalResponses} responses</div>
               </div>
               <span className="text-[9px] font-mono uppercase shrink-0" style={{ color: statusColor(ep.status) }}>
                 {ep.status}

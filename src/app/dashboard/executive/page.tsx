@@ -52,7 +52,7 @@ export default function ExecutiveDashboard() {
   ));
 
   const riskLevel = riskScore > 60 ? 'critical' : riskScore > 30 ? 'warning' : 'healthy';
-  const riskColor = riskLevel === 'critical' ? '#FF3D6B' : riskLevel === 'warning' ? '#FFB800' : '#00FF88';
+  const riskColor = riskLevel === 'critical' ? '#EF4444' : riskLevel === 'warning' ? '#F59E0B' : '#00FF88';
 
   // Sparkline from diffs over time
   const diffSparkline = dg.diffs
@@ -67,7 +67,7 @@ export default function ExecutiveDashboard() {
       {/* ── Risk Score Hero ──────────────────────────────── */}
       <motion.div
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="bio-card" style={{ padding: '2rem', position: 'relative', overflow: 'hidden' }}
+        className="ag-card" style={{ padding: '2rem', position: 'relative', overflow: 'hidden' }}
       >
         {/* Glow background */}
         <div style={{
@@ -80,11 +80,11 @@ export default function ExecutiveDashboard() {
           <div>
             <div className="flex items-center gap-3 mb-3">
               <Shield size={20} style={{ color: riskColor }} />
-              <h2 className="text-lg font-semibold text-[var(--color-surface-text)]">Organization Health</h2>
+              <h2 className="text-lg font-semibold text-[var(--color-text-primary)]">Organization Health</h2>
               <StatusBadge status={riskLevel === 'critical' ? 'critical' : riskLevel === 'warning' ? 'warn' : 'pass'}
                 label={riskLevel.toUpperCase()} />
             </div>
-            <p className="text-sm text-[var(--color-muted-text)] max-w-md leading-relaxed">
+            <p className="text-sm text-[var(--color-text-secondary)] max-w-md leading-relaxed">
               {riskScore <= 15 ? 'All AI systems are operating within expected behavioral parameters.' :
                riskScore <= 40 ? 'Some endpoints show behavioral drift. Review recommended.' :
                'Multiple systems exhibiting significant behavioral changes. Immediate attention required.'}
@@ -104,7 +104,7 @@ export default function ExecutiveDashboard() {
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-2xl font-bold font-mono" style={{ color: riskColor }}>{riskScore}</span>
-                <span className="text-[9px] text-[var(--color-ghost-text)] uppercase tracking-wider">risk</span>
+                <span className="text-[9px] text-[var(--color-text-muted)] uppercase tracking-wider">risk</span>
               </div>
             </div>
           </div>
@@ -126,15 +126,15 @@ export default function ExecutiveDashboard() {
       </div>
 
       {/* ── Cross-Project Comparison ─────────────────────── */}
-      <div className="bio-card" style={{ padding: '1.5rem' }}>
+      <div className="ag-card" style={{ padding: '1.5rem' }}>
         <div className="flex items-center gap-2 mb-4">
-          <BarChart3 size={16} style={{ color: 'var(--color-biolume-primary)' }} />
-          <h3 className="text-sm font-semibold text-[var(--color-surface-text)]">Cross-Endpoint Comparison</h3>
+          <BarChart3 size={16} style={{ color: 'var(--color-brand-primary)' }} />
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Cross-Endpoint Comparison</h3>
         </div>
 
         <div className="space-y-3">
           {/* Header */}
-          <div className="grid gap-3" style={{ gridTemplateColumns: '2fr 1fr 1.5fr 1fr 1fr 1fr', fontSize: '10px', color: 'var(--color-ghost-text)', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '0 0.5rem' }}>
+          <div className="grid gap-3" style={{ gridTemplateColumns: '2fr 1fr 1.5fr 1fr 1fr 1fr', fontSize: '10px', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '0 0.5rem' }}>
             <span>Endpoint</span>
             <span>Status</span>
             <span>Hallucination</span>
@@ -148,8 +148,8 @@ export default function ExecutiveDashboard() {
             const latestFp = epFps.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
             const hall = latestFp?.hallucinationScore || 0;
             const cons = latestFp?.topicConsistency || 0;
-            const hallColor = hall > 0.2 ? '#FF3D6B' : hall > 0.1 ? '#FFB800' : '#00FF88';
-            const consColor = cons < 0.7 ? '#FFB800' : '#00FF88';
+            const hallColor = hall > 0.2 ? '#EF4444' : hall > 0.1 ? '#F59E0B' : '#00FF88';
+            const consColor = cons < 0.7 ? '#F59E0B' : '#00FF88';
 
             return (
               <motion.div key={ep.id}
@@ -160,17 +160,17 @@ export default function ExecutiveDashboard() {
                 style={{
                   gridTemplateColumns: '2fr 1fr 1.5fr 1fr 1fr 1fr',
                   padding: '0.75rem 0.5rem',
-                  background: 'rgba(0,255,209,0.02)',
+                  background: 'rgba(59,130,246,0.02)',
                   border: '1px solid var(--color-border)',
                 }}
               >
                 {/* Endpoint name */}
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full" style={{
-                    background: ep.status === 'critical' ? '#FF3D6B' : ep.status === 'warning' ? '#FFB800' : '#00FF88',
-                    boxShadow: `0 0 6px ${ep.status === 'critical' ? '#FF3D6B' : ep.status === 'warning' ? '#FFB800' : '#00FF88'}40`,
+                    background: ep.status === 'critical' ? '#EF4444' : ep.status === 'warning' ? '#F59E0B' : '#00FF88',
+                    boxShadow: `0 0 6px ${ep.status === 'critical' ? '#EF4444' : ep.status === 'warning' ? '#F59E0B' : '#00FF88'}40`,
                   }} />
-                  <span className="text-xs font-medium text-[var(--color-surface-text)] truncate">{ep.name}</span>
+                  <span className="text-xs font-medium text-[var(--color-text-primary)] truncate">{ep.name}</span>
                 </div>
 
                 {/* Status */}
@@ -192,10 +192,10 @@ export default function ExecutiveDashboard() {
                 <span className="text-xs font-mono" style={{ color: consColor }}>{(cons * 100).toFixed(0)}%</span>
 
                 {/* Versions */}
-                <span className="text-xs font-mono text-[var(--color-muted-text)]">{epFps.length}</span>
+                <span className="text-xs font-mono text-[var(--color-text-secondary)]">{epFps.length}</span>
 
                 {/* Responses */}
-                <span className="text-xs font-mono text-[var(--color-muted-text)]">{ep.totalResponses.toLocaleString()}</span>
+                <span className="text-xs font-mono text-[var(--color-text-secondary)]">{ep.totalResponses.toLocaleString()}</span>
               </motion.div>
             );
           })}
@@ -205,17 +205,17 @@ export default function ExecutiveDashboard() {
       {/* ── Deployment & Verdict Trends ───────────────────── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
         {/* Verdict breakdown */}
-        <div className="bio-card" style={{ padding: '1.5rem' }}>
+        <div className="ag-card" style={{ padding: '1.5rem' }}>
           <div className="flex items-center gap-2 mb-4">
-            <Zap size={16} style={{ color: 'var(--color-biolume-primary)' }} />
-            <h3 className="text-sm font-semibold text-[var(--color-surface-text)]">Verdict Distribution</h3>
+            <Zap size={16} style={{ color: 'var(--color-brand-primary)' }} />
+            <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Verdict Distribution</h3>
           </div>
 
           <div className="flex items-end justify-center gap-6" style={{ height: '140px', paddingBottom: '1rem' }}>
             {[
               { label: 'PASS', count: passCount, color: '#00FF88', icon: CheckCircle },
-              { label: 'WARN', count: warnCount, color: '#FFB800', icon: AlertTriangle },
-              { label: 'BLOCK', count: blockCount, color: '#FF3D6B', icon: Shield },
+              { label: 'WARN', count: warnCount, color: '#F59E0B', icon: AlertTriangle },
+              { label: 'BLOCK', count: blockCount, color: '#EF4444', icon: Shield },
             ].map(({ label, count, color, icon: Icon }) => {
               const maxCount = Math.max(passCount, warnCount, blockCount, 1);
               const height = Math.max(8, (count / maxCount) * 100);
@@ -236,7 +236,7 @@ export default function ExecutiveDashboard() {
                   <div className="text-center">
                     <Icon size={12} style={{ color, margin: '0 auto 2px' }} />
                     <div className="text-lg font-bold font-mono" style={{ color }}>{count}</div>
-                    <div className="text-[9px] text-[var(--color-ghost-text)] uppercase tracking-wider">{label}</div>
+                    <div className="text-[9px] text-[var(--color-text-muted)] uppercase tracking-wider">{label}</div>
                   </div>
                 </div>
               );
@@ -246,9 +246,9 @@ export default function ExecutiveDashboard() {
           {/* Success rate bar */}
           <div className="mt-4 pt-4" style={{ borderTop: '1px solid var(--color-border)' }}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] text-[var(--color-ghost-text)] uppercase tracking-wider">Deploy Success Rate</span>
+              <span className="text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider">Deploy Success Rate</span>
               <span className="text-sm font-mono font-bold" style={{
-                color: deploySuccessRate >= 0.8 ? '#00FF88' : deploySuccessRate >= 0.5 ? '#FFB800' : '#FF3D6B',
+                color: deploySuccessRate >= 0.8 ? '#00FF88' : deploySuccessRate >= 0.5 ? '#F59E0B' : '#EF4444',
               }}>{(deploySuccessRate * 100).toFixed(0)}%</span>
             </div>
             <div className="h-2 rounded-full bg-[var(--color-border)]">
@@ -258,10 +258,10 @@ export default function ExecutiveDashboard() {
                 transition={{ duration: 1, ease: 'easeOut' }}
                 className="h-full rounded-full"
                 style={{
-                  background: deploySuccessRate >= 0.8 ? 'linear-gradient(90deg, #00FF88, #00FFD1)' :
-                    deploySuccessRate >= 0.5 ? 'linear-gradient(90deg, #FFB800, #FFDA6B)' :
-                    'linear-gradient(90deg, #FF3D6B, #FF7A9A)',
-                  boxShadow: `0 0 8px ${deploySuccessRate >= 0.8 ? '#00FF88' : '#FFB800'}40`,
+                  background: deploySuccessRate >= 0.8 ? 'linear-gradient(90deg, #00FF88, #3B82F6)' :
+                    deploySuccessRate >= 0.5 ? 'linear-gradient(90deg, #F59E0B, #FFDA6B)' :
+                    'linear-gradient(90deg, #EF4444, #FF7A9A)',
+                  boxShadow: `0 0 8px ${deploySuccessRate >= 0.8 ? '#00FF88' : '#F59E0B'}40`,
                 }}
               />
             </div>
@@ -269,10 +269,10 @@ export default function ExecutiveDashboard() {
         </div>
 
         {/* Recent activity */}
-        <div className="bio-card" style={{ padding: '1.5rem' }}>
+        <div className="ag-card" style={{ padding: '1.5rem' }}>
           <div className="flex items-center gap-2 mb-4">
-            <Clock size={16} style={{ color: 'var(--color-biolume-primary)' }} />
-            <h3 className="text-sm font-semibold text-[var(--color-surface-text)]">Recent Activity</h3>
+            <Clock size={16} style={{ color: 'var(--color-brand-primary)' }} />
+            <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Recent Activity</h3>
           </div>
 
           <div className="space-y-2.5" style={{ maxHeight: '240px', overflowY: 'auto' }}>
@@ -281,24 +281,24 @@ export default function ExecutiveDashboard() {
               .slice(0, 8)
               .map((diff, idx) => {
                 const endpoint = dg.endpoints.find(e => e.id === diff.endpointId);
-                const color = diff.verdict === 'PASS' ? '#00FF88' : diff.verdict === 'WARN' ? '#FFB800' : '#FF3D6B';
+                const color = diff.verdict === 'PASS' ? '#00FF88' : diff.verdict === 'WARN' ? '#F59E0B' : '#EF4444';
 
                 return (
                   <motion.div key={diff.id}
                     initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.05 }}
                     className="flex items-center gap-3 p-2.5 rounded-lg"
-                    style={{ background: 'rgba(0,255,209,0.02)', border: '1px solid var(--color-border)' }}
+                    style={{ background: 'rgba(59,130,246,0.02)', border: '1px solid var(--color-border)' }}
                   >
                     <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color, boxShadow: `0 0 6px ${color}40` }} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-medium text-[var(--color-surface-text)] truncate">{endpoint?.name || 'Unknown'}</span>
+                        <span className="text-xs font-medium text-[var(--color-text-primary)] truncate">{endpoint?.name || 'Unknown'}</span>
                         <StatusBadge status={diff.verdict === 'PASS' ? 'pass' : diff.verdict === 'WARN' ? 'warn' : 'block'} size="sm" />
                       </div>
-                      <span className="text-[10px] font-mono text-[var(--color-ghost-text)]">{diff.baseVersion} → {diff.newVersion}</span>
+                      <span className="text-[10px] font-mono text-[var(--color-text-muted)]">{diff.baseVersion} → {diff.newVersion}</span>
                     </div>
-                    <span className="text-[9px] text-[var(--color-ghost-text)] flex-shrink-0">
+                    <span className="text-[9px] text-[var(--color-text-muted)] flex-shrink-0">
                       {timeAgo(new Date(diff.createdAt))}
                     </span>
                   </motion.div>
@@ -307,8 +307,8 @@ export default function ExecutiveDashboard() {
 
             {dg.diffs.length === 0 && (
               <div className="text-center py-8">
-                <p className="text-sm text-[var(--color-muted-text)]">No behavioral diffs yet</p>
-                <p className="text-xs text-[var(--color-ghost-text)] mt-1">Deploy 2+ versions to see activity</p>
+                <p className="text-sm text-[var(--color-text-secondary)]">No behavioral diffs yet</p>
+                <p className="text-xs text-[var(--color-text-muted)] mt-1">Deploy 2+ versions to see activity</p>
               </div>
             )}
           </div>
@@ -316,17 +316,17 @@ export default function ExecutiveDashboard() {
       </div>
 
       {/* ── Endpoint Health Grid ──────────────────────────── */}
-      <div className="bio-card" style={{ padding: '1.5rem' }}>
+      <div className="ag-card" style={{ padding: '1.5rem' }}>
         <div className="flex items-center gap-2 mb-4">
-          <TrendingUp size={16} style={{ color: 'var(--color-biolume-primary)' }} />
-          <h3 className="text-sm font-semibold text-[var(--color-surface-text)]">Health Summary</h3>
+          <TrendingUp size={16} style={{ color: 'var(--color-brand-primary)' }} />
+          <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Health Summary</h3>
         </div>
 
         <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
           {[
             { label: 'Healthy', count: healthyEndpoints, color: '#00FF88', icon: CheckCircle },
-            { label: 'Warning', count: warningEndpoints, color: '#FFB800', icon: AlertTriangle },
-            { label: 'Critical', count: criticalEndpoints, color: '#FF3D6B', icon: Shield },
+            { label: 'Warning', count: warningEndpoints, color: '#F59E0B', icon: AlertTriangle },
+            { label: 'Critical', count: criticalEndpoints, color: '#EF4444', icon: Shield },
           ].map(({ label, count, color, icon: Icon }) => (
             <div key={label} className="flex items-center gap-3 p-3 rounded-lg" style={{
               background: `${color}06`,
@@ -337,7 +337,7 @@ export default function ExecutiveDashboard() {
               </div>
               <div>
                 <div className="text-xl font-bold font-mono" style={{ color }}>{count}</div>
-                <div className="text-[10px] text-[var(--color-ghost-text)] uppercase tracking-wider">{label}</div>
+                <div className="text-[10px] text-[var(--color-text-muted)] uppercase tracking-wider">{label}</div>
               </div>
             </div>
           ))}

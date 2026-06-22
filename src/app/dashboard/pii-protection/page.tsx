@@ -61,27 +61,27 @@ export default function PIIProtectionPage() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
         {endpointRisks.map((ep, i) => (
           <motion.div key={ep.name} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-            className="bio-card" style={{ padding: '1.25rem' }}>
+            className="ag-card" style={{ padding: '1.25rem' }}>
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-[var(--color-surface-text)]">{ep.name}</span>
-              <span className="text-lg font-bold" style={{ color: ep.risk > 30 ? '#FF3D6B' : ep.risk > 15 ? '#FFB800' : '#00FF88' }}>
+              <span className="text-sm font-semibold text-[var(--color-text-primary)]">{ep.name}</span>
+              <span className="text-lg font-bold" style={{ color: ep.risk > 30 ? '#EF4444' : ep.risk > 15 ? '#F59E0B' : '#00FF88' }}>
                 {ep.risk}%
               </span>
             </div>
-            <div className="w-full rounded-full overflow-hidden mb-2" style={{ height: '3px', background: 'rgba(0,255,209,0.06)' }}>
+            <div className="w-full rounded-full overflow-hidden mb-2" style={{ height: '3px', background: 'rgba(59,130,246,0.06)' }}>
               <div className="h-full rounded-full" style={{
                 width: `${ep.risk}%`,
-                background: ep.risk > 30 ? '#FF3D6B' : ep.risk > 15 ? '#FFB800' : '#00FF88',
+                background: ep.risk > 30 ? '#EF4444' : ep.risk > 15 ? '#F59E0B' : '#00FF88',
               }} />
             </div>
-            <div className="flex items-center justify-between text-[10px] text-[var(--color-ghost-text)]">
+            <div className="flex items-center justify-between text-[10px] text-[var(--color-text-muted)]">
               <span>{ep.scans} responses scanned</span>
               <span>{ep.piiFound} PII instances</span>
             </div>
             <div className="flex gap-1 mt-2">
               {ep.types.map(t => (
                 <span key={t} className="text-[8px] font-mono rounded-full"
-                  style={{ padding: '1px 6px', background: 'rgba(255,184,0,0.06)', color: '#FFB800' }}>
+                  style={{ padding: '1px 6px', background: 'rgba(255,184,0,0.06)', color: '#F59E0B' }}>
                   {PII_TYPE_INFO[t as PIIType]?.icon} {t}
                 </span>
               ))}
@@ -91,17 +91,17 @@ export default function PIIProtectionPage() {
       </div>
 
       {/* Scanner */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bio-card" style={{ padding: '1.5rem' }}>
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ag-card" style={{ padding: '1.5rem' }}>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Search size={16} className="text-[var(--color-biolume-primary)]" />
-            <h3 className="font-semibold text-[var(--color-surface-text)]">PII Scanner</h3>
+            <Search size={16} className="text-[var(--color-brand-primary)]" />
+            <h3 className="font-semibold text-[var(--color-text-primary)]">PII Scanner</h3>
           </div>
           <div className="flex gap-1">
             {SAMPLE_TEXTS.map((_, idx) => (
               <button key={idx} onClick={() => loadSample(idx)}
-                className="text-[9px] font-mono rounded-full transition-all hover:bg-[rgba(0,255,209,0.08)]"
-                style={{ padding: '3px 8px', background: 'rgba(0,255,209,0.03)', color: '#5A7A7D', border: '1px solid rgba(0,255,209,0.08)' }}>
+                className="text-[9px] font-mono rounded-full transition-all hover:bg-[rgba(59,130,246,0.08)]"
+                style={{ padding: '3px 8px', background: 'rgba(59,130,246,0.03)', color: '#5A7A7D', border: '1px solid rgba(59,130,246,0.08)' }}>
                 Sample {idx + 1}
               </button>
             ))}
@@ -115,9 +115,9 @@ export default function PIIProtectionPage() {
               className="text-[10px] font-mono rounded-full transition-all flex items-center gap-1"
               style={{
                 padding: '4px 10px',
-                background: enabledTypes.has(type) ? 'rgba(0,255,209,0.08)' : 'rgba(0,255,209,0.02)',
-                border: `1px solid ${enabledTypes.has(type) ? 'rgba(0,255,209,0.25)' : 'rgba(0,255,209,0.06)'}`,
-                color: enabledTypes.has(type) ? '#00FFD1' : '#5A7A7D',
+                background: enabledTypes.has(type) ? 'rgba(59,130,246,0.08)' : 'rgba(59,130,246,0.02)',
+                border: `1px solid ${enabledTypes.has(type) ? 'rgba(59,130,246,0.25)' : 'rgba(59,130,246,0.06)'}`,
+                color: enabledTypes.has(type) ? '#3B82F6' : '#5A7A7D',
               }}>
               {info.icon} {info.label}
             </button>
@@ -140,10 +140,10 @@ export default function PIIProtectionPage() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           {/* Detections */}
           {scanResults.length > 0 ? (
-            <div className="bio-card" style={{ padding: '1.5rem', marginBottom: '1rem' }}>
+            <div className="ag-card" style={{ padding: '1.5rem', marginBottom: '1rem' }}>
               <div className="flex items-center gap-2 mb-3">
-                <AlertTriangle size={16} className="text-[#FFB800]" />
-                <span className="text-sm font-semibold text-[var(--color-surface-text)]">
+                <AlertTriangle size={16} className="text-[#F59E0B]" />
+                <span className="text-sm font-semibold text-[var(--color-text-primary)]">
                   {scanResults.length} PII Instance{scanResults.length > 1 ? 's' : ''} Detected
                 </span>
               </div>
@@ -151,13 +151,13 @@ export default function PIIProtectionPage() {
               <div className="space-y-2">
                 {scanResults.map((match, i) => (
                   <div key={i} className="flex items-center gap-3 rounded-lg text-xs"
-                    style={{ padding: '8px 12px', background: 'rgba(0,255,209,0.02)', border: '1px solid rgba(0,255,209,0.06)' }}>
+                    style={{ padding: '8px 12px', background: 'rgba(59,130,246,0.02)', border: '1px solid rgba(59,130,246,0.06)' }}>
                     <span className="text-base">{PII_TYPE_INFO[match.type]?.icon}</span>
-                    <span className="font-mono text-[var(--color-surface-text)]" style={{ minWidth: '100px' }}>
+                    <span className="font-mono text-[var(--color-text-primary)]" style={{ minWidth: '100px' }}>
                       {PII_TYPE_INFO[match.type]?.label}
                     </span>
-                    <code className="text-[#FF3D6B] line-through">{match.value}</code>
-                    <span className="text-[var(--color-ghost-text)]">→</span>
+                    <code className="text-[#EF4444] line-through">{match.value}</code>
+                    <span className="text-[var(--color-text-muted)]">→</span>
                     <code className="text-[#00FF88]">{match.masked}</code>
                     <span className="ml-auto text-[9px] font-mono rounded-full"
                       style={{ padding: '2px 6px', background: getPIISeverityColor(match.severity) + '12', color: getPIISeverityColor(match.severity) }}>
@@ -168,7 +168,7 @@ export default function PIIProtectionPage() {
               </div>
             </div>
           ) : (
-            <div className="bio-card flex items-center gap-2" style={{ padding: '1.25rem', marginBottom: '1rem' }}>
+            <div className="ag-card flex items-center gap-2" style={{ padding: '1.25rem', marginBottom: '1rem' }}>
               <CheckCircle2 size={16} className="text-[#00FF88]" />
               <span className="text-sm text-[#00FF88]">No PII detected — text is clean</span>
             </div>
@@ -176,18 +176,18 @@ export default function PIIProtectionPage() {
 
           {/* Masked output */}
           {maskedText && scanResults.length > 0 && (
-            <div className="bio-card" style={{ padding: '1.5rem' }}>
+            <div className="ag-card" style={{ padding: '1.5rem' }}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <EyeOff size={16} className="text-[#00FF88]" />
-                  <span className="text-sm font-semibold text-[var(--color-surface-text)]">Redacted Output</span>
+                  <span className="text-sm font-semibold text-[var(--color-text-primary)]">Redacted Output</span>
                 </div>
-                <button onClick={copyMasked} className="flex items-center gap-1 text-[10px] text-[var(--color-ghost-text)] hover:text-[var(--color-surface-text)]">
+                <button onClick={copyMasked} className="flex items-center gap-1 text-[10px] text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]">
                   {copied ? <Check size={12} className="text-[#00FF88]" /> : <Copy size={12} />}
                   {copied ? 'Copied!' : 'Copy'}
                 </button>
               </div>
-              <pre className="text-xs font-mono text-[var(--color-muted-text)] whitespace-pre-wrap rounded-lg"
+              <pre className="text-xs font-mono text-[var(--color-text-secondary)] whitespace-pre-wrap rounded-lg"
                 style={{ padding: '12px', background: 'rgba(0,255,136,0.03)', border: '1px solid rgba(0,255,136,0.1)' }}>
                 {maskedText}
               </pre>

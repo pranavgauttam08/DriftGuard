@@ -140,11 +140,11 @@ const STATUS_CONFIG: Record<string, { icon: any; color: string; label: string }>
   evaluating: { icon: Loader2, color: '#00E5FF', label: 'Evaluating' },
   probing: { icon: Loader2, color: '#00E5FF', label: 'Probing' },
   diffing: { icon: Loader2, color: '#00E5FF', label: 'Diffing' },
-  awaiting_approval: { icon: ShieldCheck, color: '#FFB800', label: 'Awaiting Approval' },
+  awaiting_approval: { icon: ShieldCheck, color: '#F59E0B', label: 'Awaiting Approval' },
   approved: { icon: CheckCircle2, color: '#00FF88', label: 'Approved' },
-  rejected: { icon: XCircle, color: '#FF3D6B', label: 'Rejected' },
-  deployed: { icon: CheckCircle2, color: '#00FFD1', label: 'Deployed' },
-  rolled_back: { icon: RotateCcw, color: '#FF3D6B', label: 'Rolled Back' },
+  rejected: { icon: XCircle, color: '#EF4444', label: 'Rejected' },
+  deployed: { icon: CheckCircle2, color: '#3B82F6', label: 'Deployed' },
+  rolled_back: { icon: RotateCcw, color: '#EF4444', label: 'Rolled Back' },
   cancelled: { icon: XCircle, color: '#5A7A7D', label: 'Cancelled' },
 };
 
@@ -152,7 +152,7 @@ const STEP_STATUS_COLORS: Record<string, string> = {
   completed: '#00FF88',
   running: '#00E5FF',
   pending: '#5A7A7D',
-  failed: '#FF3D6B',
+  failed: '#EF4444',
 };
 
 type TabView = 'pipeline' | 'promotion';
@@ -298,9 +298,9 @@ export default function DeploymentsPage() {
           className="text-xs font-medium rounded-lg transition-all"
           style={{
             padding: '8px 16px',
-            background: activeTab === 'pipeline' ? 'rgba(0,255,209,0.08)' : 'transparent',
-            border: `1px solid ${activeTab === 'pipeline' ? 'rgba(0,255,209,0.25)' : 'rgba(0,255,209,0.06)'}`,
-            color: activeTab === 'pipeline' ? '#00FFD1' : '#5A7A7D',
+            background: activeTab === 'pipeline' ? 'rgba(59,130,246,0.08)' : 'transparent',
+            border: `1px solid ${activeTab === 'pipeline' ? 'rgba(59,130,246,0.25)' : 'rgba(59,130,246,0.06)'}`,
+            color: activeTab === 'pipeline' ? '#3B82F6' : '#5A7A7D',
           }}>
           <GitBranch size={12} className="inline mr-1" /> Pipeline
         </button>
@@ -308,9 +308,9 @@ export default function DeploymentsPage() {
           className="text-xs font-medium rounded-lg transition-all"
           style={{
             padding: '8px 16px',
-            background: activeTab === 'promotion' ? 'rgba(0,255,209,0.08)' : 'transparent',
-            border: `1px solid ${activeTab === 'promotion' ? 'rgba(0,255,209,0.25)' : 'rgba(0,255,209,0.06)'}`,
-            color: activeTab === 'promotion' ? '#00FFD1' : '#5A7A7D',
+            background: activeTab === 'promotion' ? 'rgba(59,130,246,0.08)' : 'transparent',
+            border: `1px solid ${activeTab === 'promotion' ? 'rgba(59,130,246,0.25)' : 'rgba(59,130,246,0.06)'}`,
+            color: activeTab === 'promotion' ? '#3B82F6' : '#5A7A7D',
           }}>
           <ArrowUpRight size={12} className="inline mr-1" /> Environment Promotion
         </button>
@@ -322,7 +322,7 @@ export default function DeploymentsPage() {
       {activeTab === 'pipeline' ? (
         <>
           {/* Pipeline visualization */}
-          <div className="bio-card" style={{ padding: '1.25rem' }}>
+          <div className="ag-card" style={{ padding: '1.25rem' }}>
             <div className="flex items-center gap-0">
               {['Fingerprint', 'Eval Dataset', 'Probe Suite', 'Diff + Verdict', 'Deploy'].map((step, i) => (
                 <div key={step} className="flex items-center" style={{ flex: i < 4 ? 1 : 'none' }}>
@@ -330,13 +330,13 @@ export default function DeploymentsPage() {
                     <div className="rounded-full flex items-center justify-center text-[10px] font-mono"
                       style={{
                         width: '28px', height: '28px',
-                        background: 'rgba(0,255,209,0.08)', border: '1px solid rgba(0,255,209,0.2)',
-                        color: '#00FFD1',
+                        background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)',
+                        color: '#3B82F6',
                       }}>{i + 1}</div>
-                    <span className="text-[9px] text-[var(--color-ghost-text)] mt-1 text-center" style={{ maxWidth: '70px' }}>{step}</span>
+                    <span className="text-[9px] text-[var(--color-text-muted)] mt-1 text-center" style={{ maxWidth: '70px' }}>{step}</span>
                   </div>
                   {i < 4 && (
-                    <div className="flex-1 h-px mx-2" style={{ background: 'rgba(0,255,209,0.1)', marginTop: '-16px' }}>
+                    <div className="flex-1 h-px mx-2" style={{ background: 'rgba(59,130,246,0.1)', marginTop: '-16px' }}>
                       <div className="data-flow-line h-full" />
                     </div>
                   )}
@@ -356,15 +356,15 @@ export default function DeploymentsPage() {
                 <motion.div key={dep.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
                   <button
                     onClick={() => setSelectedDep(isSelected ? null : dep.id)}
-                    className="bio-card w-full text-left transition-all"
-                    style={{ padding: '1.25rem', borderColor: isSelected ? 'rgba(0,255,209,0.4)' : undefined }}
+                    className="ag-card w-full text-left transition-all"
+                    style={{ padding: '1.25rem', borderColor: isSelected ? 'rgba(59,130,246,0.4)' : undefined }}
                   >
                     <div className="flex items-center justify-between" style={{ marginBottom: '0.5rem' }}>
                       <div className="flex items-center gap-3">
                         <StatusIcon size={16} style={{ color: config.color }} className={dep.status.includes('ing') ? 'animate-spin' : ''} />
                         <div>
-                          <span className="text-sm font-semibold text-[var(--color-surface-text)]">{dep.endpointName}</span>
-                          <span className="text-xs text-[var(--color-ghost-text)] ml-2 font-mono">{dep.version}</span>
+                          <span className="text-sm font-semibold text-[var(--color-text-primary)]">{dep.endpointName}</span>
+                          <span className="text-xs text-[var(--color-text-muted)] ml-2 font-mono">{dep.version}</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -372,26 +372,26 @@ export default function DeploymentsPage() {
                         <span className="text-[10px] font-mono rounded-lg" style={{ padding: '3px 8px', background: config.color + '15', color: config.color }}>
                           {config.label}
                         </span>
-                        {isSelected ? <ChevronDown size={12} className="text-[var(--color-ghost-text)]" /> : <ChevronRight size={12} className="text-[var(--color-ghost-text)]" />}
+                        {isSelected ? <ChevronDown size={12} className="text-[var(--color-text-muted)]" /> : <ChevronRight size={12} className="text-[var(--color-text-muted)]" />}
                       </div>
                     </div>
 
                     {/* Progress bar */}
-                    <div className="w-full rounded-full overflow-hidden" style={{ height: '2px', background: 'rgba(0,255,209,0.06)', marginBottom: '0.5rem' }}>
+                    <div className="w-full rounded-full overflow-hidden" style={{ height: '2px', background: 'rgba(59,130,246,0.06)', marginBottom: '0.5rem' }}>
                       <motion.div className="h-full rounded-full" initial={{ width: 0 }} animate={{ width: `${dep.progress}%` }}
-                        style={{ background: dep.verdict === 'BLOCK' ? '#FF3D6B' : dep.verdict === 'WARN' ? '#FFB800' : '#00FF88' }} />
+                        style={{ background: dep.verdict === 'BLOCK' ? '#EF4444' : dep.verdict === 'WARN' ? '#F59E0B' : '#00FF88' }} />
                     </div>
 
-                    <div className="flex items-center gap-4 text-xs text-[var(--color-muted-text)]">
+                    <div className="flex items-center gap-4 text-xs text-[var(--color-text-secondary)]">
                       <span className="font-mono">{dep.sourceEnv} <ArrowRight size={10} className="inline" /> {dep.targetEnv}</span>
                       <span>{dep.createdAt.toLocaleDateString()}</span>
                       {dep.compositeScore > 0 && (
-                        <span className="font-mono" style={{ color: dep.compositeScore > 40 ? '#FF3D6B' : dep.compositeScore > 15 ? '#FFB800' : '#00FF88' }}>
+                        <span className="font-mono" style={{ color: dep.compositeScore > 40 ? '#EF4444' : dep.compositeScore > 15 ? '#F59E0B' : '#00FF88' }}>
                           severity: {dep.compositeScore}/100
                         </span>
                       )}
                       {dep.regressions.length > 0 && (
-                        <span className="text-[var(--color-biolume-danger)]">{dep.regressions.length} regression{dep.regressions.length > 1 ? 's' : ''}</span>
+                        <span className="text-[var(--color-block)]">{dep.regressions.length} regression{dep.regressions.length > 1 ? 's' : ''}</span>
                       )}
                     </div>
                   </button>
@@ -400,10 +400,10 @@ export default function DeploymentsPage() {
                   <AnimatePresence>
                     {isSelected && selected && (
                       <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                        <div className="bio-card" style={{ padding: '1.25rem', marginTop: '4px', borderColor: 'rgba(0,255,209,0.2)' }}>
+                        <div className="ag-card" style={{ padding: '1.25rem', marginTop: '4px', borderColor: 'rgba(59,130,246,0.2)' }}>
 
                           {/* Pipeline step detail */}
-                          <div className="text-[10px] font-mono text-[var(--color-ghost-text)] mb-2 uppercase">Pipeline Steps</div>
+                          <div className="text-[10px] font-mono text-[var(--color-text-muted)] mb-2 uppercase">Pipeline Steps</div>
                           <div className="flex items-center gap-2 mb-4">
                             {selected.steps.map((step: any, si: number) => (
                               <div key={step.name} className="flex items-center gap-1 text-[10px] font-mono rounded-lg"
@@ -415,7 +415,7 @@ export default function DeploymentsPage() {
                                 }}>
                                 {step.status === 'completed' ? <CheckCircle2 size={10} /> : step.status === 'running' ? <Loader2 size={10} className="animate-spin" /> : step.status === 'failed' ? <XCircle size={10} /> : <Clock size={10} />}
                                 {step.name}
-                                {step.duration && <span className="text-[var(--color-ghost-text)] ml-1">{step.duration}</span>}
+                                {step.duration && <span className="text-[var(--color-text-muted)] ml-1">{step.duration}</span>}
                                 {step.passRate && <span className="ml-1">{step.passRate}</span>}
                                 {step.verdict && <span className="ml-1">{step.verdict}</span>}
                               </div>
@@ -425,15 +425,15 @@ export default function DeploymentsPage() {
                           {/* Release Gates */}
                           {selected.gates && selected.gates.length > 0 && (
                             <div style={{ marginBottom: '1rem' }}>
-                              <div className="text-[10px] font-mono text-[var(--color-ghost-text)] mb-2 uppercase">Release Gates</div>
+                              <div className="text-[10px] font-mono text-[var(--color-text-muted)] mb-2 uppercase">Release Gates</div>
                               <div className="flex flex-wrap items-center gap-2 mb-4">
                                 {selected.gates.map((gate: any) => (
                                   <div key={gate.name} className="flex items-center gap-1 text-[10px] font-mono rounded-lg"
                                     style={{
                                       padding: '4px 10px',
-                                      background: gate.status === 'pass' ? 'rgba(0,255,136,0.1)' : gate.status === 'fail' ? 'rgba(255,61,107,0.1)' : gate.status === 'warn' ? 'rgba(255,184,0,0.1)' : 'rgba(0,255,209,0.04)',
-                                      border: `1px solid ${gate.status === 'pass' ? 'rgba(0,255,136,0.3)' : gate.status === 'fail' ? 'rgba(255,61,107,0.3)' : gate.status === 'warn' ? 'rgba(255,184,0,0.3)' : 'rgba(0,255,209,0.1)'}`,
-                                      color: gate.status === 'pass' ? '#00FF88' : gate.status === 'fail' ? '#FF3D6B' : gate.status === 'warn' ? '#FFB800' : '#5A7A7D',
+                                      background: gate.status === 'pass' ? 'rgba(0,255,136,0.1)' : gate.status === 'fail' ? 'rgba(255,61,107,0.1)' : gate.status === 'warn' ? 'rgba(255,184,0,0.1)' : 'rgba(59,130,246,0.04)',
+                                      border: `1px solid ${gate.status === 'pass' ? 'rgba(0,255,136,0.3)' : gate.status === 'fail' ? 'rgba(255,61,107,0.3)' : gate.status === 'warn' ? 'rgba(255,184,0,0.3)' : 'rgba(59,130,246,0.1)'}`,
+                                      color: gate.status === 'pass' ? '#00FF88' : gate.status === 'fail' ? '#EF4444' : gate.status === 'warn' ? '#F59E0B' : '#5A7A7D',
                                     }}>
                                     {gate.status === 'pass' ? <CheckCircle2 size={10} /> : gate.status === 'fail' ? <XCircle size={10} /> : gate.status === 'warn' ? <AlertTriangle size={10} /> : <Loader2 size={10} className={gate.status === 'running' ? 'animate-spin' : ''} />}
                                     {gate.name}
@@ -446,16 +446,16 @@ export default function DeploymentsPage() {
                           {/* Root causes */}
                           {selected.rootCauses && selected.rootCauses.length > 0 && (
                             <div style={{ marginBottom: '1rem' }}>
-                              <div className="text-[10px] font-mono text-[var(--color-biolume-warning)] mb-2 uppercase">Root Cause Analysis</div>
+                              <div className="text-[10px] font-mono text-[var(--color-warn)] mb-2 uppercase">Root Cause Analysis</div>
                               {selected.rootCauses.map((rc: any, ri: number) => (
                                 <div key={ri} className="flex items-start gap-3 text-xs rounded-lg"
                                   style={{ padding: '10px 12px', background: 'rgba(255,184,0,0.03)', border: '1px solid rgba(255,184,0,0.1)', marginBottom: '4px' }}>
-                                  <AlertTriangle size={12} className="text-[var(--color-biolume-warning)] mt-0.5 flex-shrink-0" />
+                                  <AlertTriangle size={12} className="text-[var(--color-warn)] mt-0.5 flex-shrink-0" />
                                   <div>
-                                    <span className="font-semibold text-[var(--color-surface-text)]">{rc.dimension}</span>
-                                    <span className="text-[9px] font-mono ml-2 rounded" style={{ padding: '1px 6px', background: 'rgba(255,184,0,0.08)', color: '#FFB800' }}>{rc.category.replace('_', ' ')}</span>
-                                    <p className="text-[var(--color-muted-text)] mt-1">{rc.explanation}</p>
-                                    <span className="text-[9px] text-[var(--color-ghost-text)]">Confidence: {(rc.confidence * 100).toFixed(0)}%</span>
+                                    <span className="font-semibold text-[var(--color-text-primary)]">{rc.dimension}</span>
+                                    <span className="text-[9px] font-mono ml-2 rounded" style={{ padding: '1px 6px', background: 'rgba(255,184,0,0.08)', color: '#F59E0B' }}>{rc.category.replace('_', ' ')}</span>
+                                    <p className="text-[var(--color-text-secondary)] mt-1">{rc.explanation}</p>
+                                    <span className="text-[9px] text-[var(--color-text-muted)]">Confidence: {(rc.confidence * 100).toFixed(0)}%</span>
                                   </div>
                                 </div>
                               ))}
@@ -465,22 +465,22 @@ export default function DeploymentsPage() {
                           {/* Regressions */}
                           {selected.regressions.length > 0 && (
                             <div style={{ marginBottom: '1rem' }}>
-                              <div className="text-[10px] font-mono text-[var(--color-biolume-danger)] mb-2 uppercase">Regressions</div>
+                              <div className="text-[10px] font-mono text-[var(--color-block)] mb-2 uppercase">Regressions</div>
                               {selected.regressions.map((r: any, ri: number) => (
                                 <div key={ri} className="flex items-center justify-between text-xs rounded-lg"
                                   style={{ padding: '8px 12px', background: 'rgba(255,61,107,0.04)', border: '1px solid rgba(255,61,107,0.12)', marginBottom: '4px' }}>
                                   <div className="flex items-center gap-2">
-                                    <span className="text-[var(--color-surface-text)]">{r.dimension}</span>
+                                    <span className="text-[var(--color-text-primary)]">{r.dimension}</span>
                                     <span className="text-[9px] font-mono rounded" style={{
                                       padding: '1px 6px',
                                       background: r.severity === 'critical' ? 'rgba(255,61,107,0.1)' : 'rgba(255,184,0,0.08)',
-                                      color: r.severity === 'critical' ? '#FF3D6B' : '#FFB800',
+                                      color: r.severity === 'critical' ? '#EF4444' : '#F59E0B',
                                     }}>{r.severity}</span>
                                   </div>
                                   <span className="font-mono">
-                                    <span className="text-[var(--color-ghost-text)]">{typeof r.baseValue === 'number' ? r.baseValue.toFixed(2) : r.baseValue}</span>
-                                    <span className="text-[var(--color-ghost-text)] mx-1">→</span>
-                                    <span className="text-[var(--color-biolume-danger)]">{typeof r.newValue === 'number' ? r.newValue.toFixed(2) : r.newValue}</span>
+                                    <span className="text-[var(--color-text-muted)]">{typeof r.baseValue === 'number' ? r.baseValue.toFixed(2) : r.baseValue}</span>
+                                    <span className="text-[var(--color-text-muted)] mx-1">→</span>
+                                    <span className="text-[var(--color-block)]">{typeof r.newValue === 'number' ? r.newValue.toFixed(2) : r.newValue}</span>
                                   </span>
                                 </div>
                               ))}
@@ -494,7 +494,7 @@ export default function DeploymentsPage() {
                               {selected.improvements.map((imp: any, ii: number) => (
                                 <div key={ii} className="flex items-center justify-between text-xs rounded-lg"
                                   style={{ padding: '8px 12px', background: 'rgba(0,255,136,0.03)', border: '1px solid rgba(0,255,136,0.1)', marginBottom: '4px' }}>
-                                  <span className="text-[var(--color-surface-text)]">{imp.dimension}</span>
+                                  <span className="text-[var(--color-text-primary)]">{imp.dimension}</span>
                                   <span className="font-mono text-[#00FF88]">Δ {typeof imp.delta === 'number' ? (imp.delta > 0 ? '+' : '') + imp.delta.toFixed(2) : imp.delta}</span>
                                 </div>
                               ))}
@@ -502,16 +502,16 @@ export default function DeploymentsPage() {
                           )}
 
                           {/* Audit trail toggle */}
-                          <button onClick={() => setShowAudit(!showAudit)} className="flex items-center gap-1 text-[10px] font-mono text-[var(--color-ghost-text)] hover:text-[var(--color-biolume-primary)] transition-all mb-2">
+                          <button onClick={() => setShowAudit(!showAudit)} className="flex items-center gap-1 text-[10px] font-mono text-[var(--color-text-muted)] hover:text-[var(--color-brand-primary)] transition-all mb-2">
                             <FileText size={10} />{showAudit ? 'Hide' : 'Show'} Audit Trail ({selected.audit.length} events)
                           </button>
                           {showAudit && (
-                            <div className="rounded-lg mb-4" style={{ padding: '8px', background: 'rgba(0,255,209,0.02)', border: '1px solid rgba(0,255,209,0.06)' }}>
+                            <div className="rounded-lg mb-4" style={{ padding: '8px', background: 'rgba(59,130,246,0.02)', border: '1px solid rgba(59,130,246,0.06)' }}>
                               {selected.audit.map((entry: any, ai: number) => (
                                 <div key={ai} className="flex items-center gap-3 text-[10px]" style={{ padding: '4px 8px' }}>
-                                  <span className="text-[var(--color-ghost-text)] w-16 flex-shrink-0">{entry.timestamp}</span>
-                                  <span className="font-mono rounded" style={{ padding: '1px 4px', background: 'rgba(0,255,209,0.04)', color: '#4A8F8A', minWidth: '120px' }}>{entry.action}</span>
-                                  <span className="text-[var(--color-muted-text)] truncate">{entry.details}</span>
+                                  <span className="text-[var(--color-text-muted)] w-16 flex-shrink-0">{entry.timestamp}</span>
+                                  <span className="font-mono rounded" style={{ padding: '1px 4px', background: 'rgba(59,130,246,0.04)', color: '#4A8F8A', minWidth: '120px' }}>{entry.action}</span>
+                                  <span className="text-[var(--color-text-secondary)] truncate">{entry.details}</span>
                                 </div>
                               ))}
                             </div>
@@ -556,8 +556,8 @@ export default function DeploymentsPage() {
 
                           {(selected as any).rejectionReason && (
                             <div className="rounded-lg text-xs mt-3" style={{ padding: '10px 14px', background: 'rgba(255,61,107,0.04)', border: '1px solid rgba(255,61,107,0.12)' }}>
-                              <span className="text-[var(--color-biolume-danger)] font-mono">Rejection reason:</span>{' '}
-                              <span className="text-[var(--color-muted-text)]">{(selected as any).rejectionReason}</span>
+                              <span className="text-[var(--color-block)] font-mono">Rejection reason:</span>{' '}
+                              <span className="text-[var(--color-text-secondary)]">{(selected as any).rejectionReason}</span>
                             </div>
                           )}
                         </div>
@@ -572,9 +572,9 @@ export default function DeploymentsPage() {
       ) : (
         /* Environment Promotion View */
         <div className="space-y-3">
-          <div className="bio-card" style={{ padding: '1.25rem' }}>
-            <div className="text-[10px] font-mono text-[var(--color-ghost-text)] mb-3 uppercase">Environment Status</div>
-            <div className="grid grid-cols-4 gap-2 text-[10px] font-mono text-[var(--color-ghost-text)] mb-2" style={{ paddingLeft: '120px' }}>
+          <div className="ag-card" style={{ padding: '1.25rem' }}>
+            <div className="text-[10px] font-mono text-[var(--color-text-muted)] mb-3 uppercase">Environment Status</div>
+            <div className="grid grid-cols-4 gap-2 text-[10px] font-mono text-[var(--color-text-muted)] mb-2" style={{ paddingLeft: '120px' }}>
               <span>Development</span>
               <span className="text-center">→</span>
               <span>Staging</span>
@@ -584,34 +584,34 @@ export default function DeploymentsPage() {
 
           {DEMO_PROMOTIONS.map((promo, i) => (
             <motion.div key={promo.endpoint} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-              className="bio-card" style={{ padding: '1.25rem' }}>
+              className="ag-card" style={{ padding: '1.25rem' }}>
               <div className="flex items-center justify-between" style={{ marginBottom: '0.75rem' }}>
-                <span className="text-sm font-semibold text-[var(--color-surface-text)]">{promo.endpoint}</span>
+                <span className="text-sm font-semibold text-[var(--color-text-primary)]">{promo.endpoint}</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="flex-1 rounded-lg text-center" style={{ padding: '10px', background: 'rgba(0,229,255,0.04)', border: '1px solid rgba(0,229,255,0.1)' }}>
-                  <span className="text-[10px] text-[var(--color-ghost-text)] block">DEV</span>
+                <div className="flex-1 rounded-lg text-center" style={{ padding: '10px', background: 'rgba(139,92,246,0.04)', border: '1px solid rgba(139,92,246,0.1)' }}>
+                  <span className="text-[10px] text-[var(--color-text-muted)] block">DEV</span>
                   <span className="text-xs font-mono text-[#00E5FF]">{promo.devVersion}</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <ArrowRight size={14} style={{ color: promo.devToStaging === 'ahead' ? '#FFB800' : '#00FF88' }} />
-                  <span className="text-[8px] font-mono" style={{ color: promo.devToStaging === 'ahead' ? '#FFB800' : '#00FF88' }}>
+                  <ArrowRight size={14} style={{ color: promo.devToStaging === 'ahead' ? '#F59E0B' : '#00FF88' }} />
+                  <span className="text-[8px] font-mono" style={{ color: promo.devToStaging === 'ahead' ? '#F59E0B' : '#00FF88' }}>
                     {promo.devToStaging === 'ahead' ? 'PROMOTE' : 'IN SYNC'}
                   </span>
                 </div>
                 <div className="flex-1 rounded-lg text-center" style={{ padding: '10px', background: 'rgba(255,184,0,0.04)', border: '1px solid rgba(255,184,0,0.1)' }}>
-                  <span className="text-[10px] text-[var(--color-ghost-text)] block">STAGING</span>
-                  <span className="text-xs font-mono text-[#FFB800]">{promo.stagingVersion}</span>
+                  <span className="text-[10px] text-[var(--color-text-muted)] block">STAGING</span>
+                  <span className="text-xs font-mono text-[#F59E0B]">{promo.stagingVersion}</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <ArrowRight size={14} style={{ color: promo.stagingToProd === 'ahead' ? '#FFB800' : '#00FF88' }} />
-                  <span className="text-[8px] font-mono" style={{ color: promo.stagingToProd === 'ahead' ? '#FFB800' : '#00FF88' }}>
+                  <ArrowRight size={14} style={{ color: promo.stagingToProd === 'ahead' ? '#F59E0B' : '#00FF88' }} />
+                  <span className="text-[8px] font-mono" style={{ color: promo.stagingToProd === 'ahead' ? '#F59E0B' : '#00FF88' }}>
                     {promo.stagingToProd === 'ahead' ? 'PROMOTE' : 'IN SYNC'}
                   </span>
                 </div>
                 <div className="flex-1 rounded-lg text-center" style={{ padding: '10px', background: 'rgba(0,255,136,0.04)', border: '1px solid rgba(0,255,136,0.1)' }}>
-                  <span className="text-[10px] text-[var(--color-ghost-text)] block">PRODUCTION</span>
+                  <span className="text-[10px] text-[var(--color-text-muted)] block">PRODUCTION</span>
                   <span className="text-xs font-mono text-[#00FF88]">{promo.prodVersion}</span>
                 </div>
               </div>
@@ -644,30 +644,30 @@ export default function DeploymentsPage() {
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="bio-card w-full max-w-lg"
+              className="ag-card w-full max-w-lg"
               style={{ padding: '2rem', position: 'relative' }}
               onClick={e => e.stopPropagation()}
             >
               {/* Close */}
               <button onClick={() => setShowNewDeployModal(false)}
-                className="absolute top-4 right-4 text-[var(--color-ghost-text)] hover:text-[var(--color-surface-text)] transition-colors">
+                className="absolute top-4 right-4 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors">
                 <X size={18} />
               </button>
 
               <div className="flex items-center gap-2 mb-6">
-                <div className="p-2 rounded-lg" style={{ background: 'rgba(0,255,209,0.08)' }}>
-                  <Zap size={18} style={{ color: '#00FFD1' }} />
+                <div className="p-2 rounded-lg" style={{ background: 'rgba(59,130,246,0.08)' }}>
+                  <Zap size={18} style={{ color: '#3B82F6' }} />
                 </div>
                 <div>
-                  <h2 className="text-base font-semibold text-[var(--color-surface-text)]">New Deployment</h2>
-                  <p className="text-[10px] text-[var(--color-ghost-text)]">Run the full behavioral gating pipeline</p>
+                  <h2 className="text-base font-semibold text-[var(--color-text-primary)]">New Deployment</h2>
+                  <p className="text-[10px] text-[var(--color-text-muted)]">Run the full behavioral gating pipeline</p>
                 </div>
               </div>
 
               <div className="space-y-4">
                 {/* Endpoint Name */}
                 <div>
-                  <label className="text-[10px] font-mono text-[var(--color-ghost-text)] uppercase tracking-wider block mb-1.5">
+                  <label className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider block mb-1.5">
                     Endpoint / AI System Name
                   </label>
                   <input
@@ -680,7 +680,7 @@ export default function DeploymentsPage() {
 
                 {/* Version */}
                 <div>
-                  <label className="text-[10px] font-mono text-[var(--color-ghost-text)] uppercase tracking-wider block mb-1.5">
+                  <label className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider block mb-1.5">
                     Version
                   </label>
                   <input
@@ -694,7 +694,7 @@ export default function DeploymentsPage() {
                 {/* Source and Target Environment */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[10px] font-mono text-[var(--color-ghost-text)] uppercase tracking-wider block mb-1.5">
+                    <label className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider block mb-1.5">
                       Source Environment
                     </label>
                     <select className="bio-input w-full" value={newDep.sourceEnv} onChange={e => setNewDep(p => ({ ...p, sourceEnv: e.target.value }))}>
@@ -704,7 +704,7 @@ export default function DeploymentsPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="text-[10px] font-mono text-[var(--color-ghost-text)] uppercase tracking-wider block mb-1.5">
+                    <label className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider block mb-1.5">
                       Target Environment
                     </label>
                     <select className="bio-input w-full" value={newDep.targetEnv} onChange={e => setNewDep(p => ({ ...p, targetEnv: e.target.value }))}>
@@ -715,9 +715,9 @@ export default function DeploymentsPage() {
                 </div>
 
                 {/* Pipeline info */}
-                <div className="rounded-lg" style={{ padding: '10px 14px', background: 'rgba(0,255,209,0.03)', border: '1px solid rgba(0,255,209,0.08)' }}>
-                  <div className="text-[10px] text-[var(--color-muted-text)] leading-relaxed">
-                    <strong className="text-[var(--color-biolume-primary)]">Pipeline will run:</strong> Fingerprint → Dataset Eval → Probe Suite (50 probes) → Behavioral Diff → Verdict
+                <div className="rounded-lg" style={{ padding: '10px 14px', background: 'rgba(59,130,246,0.03)', border: '1px solid rgba(59,130,246,0.08)' }}>
+                  <div className="text-[10px] text-[var(--color-text-secondary)] leading-relaxed">
+                    <strong className="text-[var(--color-brand-primary)]">Pipeline will run:</strong> Fingerprint → Dataset Eval → Probe Suite (50 probes) → Behavioral Diff → Verdict
                   </div>
                 </div>
 

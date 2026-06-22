@@ -3,8 +3,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "DriftGuard — Behavioral Version Control for AI",
-  description: "Fingerprint, diff, and gate AI deployments. Catch behavioral regressions before your users do.",
+  title: "DriftGuard — Enterprise AI Governance & Compliance Platform",
+  description: "Govern, measure, and prove every AI system. Behavioral version control, compliance automation, cost intelligence — from a single control tower.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -12,30 +12,30 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <ClerkProvider
       appearance={{
         variables: {
-          colorPrimary: '#00FFD1',
-          colorBackground: '#010D10',
-          colorInputBackground: '#011418',
-          colorInputText: '#E0F2F1',
-          colorText: '#E0F2F1',
-          colorTextSecondary: '#5A7A7D',
-          borderRadius: '12px',
-          fontFamily: '"DM Sans", sans-serif',
+          colorPrimary: '#3B82F6',
+          colorBackground: '#0D1117',
+          colorInputBackground: '#161B27',
+          colorInputText: '#F1F5F9',
+          colorText: '#F1F5F9',
+          colorTextSecondary: '#94A3B8',
+          borderRadius: '8px',
+          fontFamily: '"Inter", system-ui, sans-serif',
         },
         elements: {
-          card: { backgroundColor: 'rgba(1,20,24,0.95)', border: '1px solid rgba(0,255,209,0.12)', backdropFilter: 'blur(20px)', boxShadow: '0 0 40px rgba(0,255,209,0.05)' },
-          headerTitle: { color: '#E0F2F1' },
-          headerSubtitle: { color: '#5A7A7D' },
-          socialButtonsBlockButton: { backgroundColor: 'rgba(0,255,209,0.06)', border: '1px solid rgba(0,255,209,0.15)', color: '#E0F2F1' },
-          formButtonPrimary: { background: 'linear-gradient(135deg, rgba(0,255,209,0.2), rgba(0,229,255,0.15))', border: '1px solid rgba(0,255,209,0.4)', color: '#00FFD1', boxShadow: '0 0 20px rgba(0,255,209,0.15)' },
-          footerActionLink: { color: '#00FFD1' },
-          identityPreviewEditButton: { color: '#00FFD1' },
-          formFieldInput: { backgroundColor: 'rgba(0,255,209,0.04)', border: '1px solid rgba(0,255,209,0.15)', color: '#E0F2F1' },
-          formFieldLabel: { color: '#5A7A7D' },
-          dividerLine: { backgroundColor: 'rgba(0,255,209,0.1)' },
-          dividerText: { color: '#3A5A5D' },
-          userButtonPopoverCard: { backgroundColor: '#010D10', border: '1px solid rgba(0,255,209,0.12)' },
-          userButtonPopoverActionButton: { color: '#E0F2F1' },
-          userButtonPopoverActionButtonText: { color: '#E0F2F1' },
+          card: { backgroundColor: '#0D1117', border: '1px solid #1E2536', backdropFilter: 'blur(20px)', boxShadow: '0 8px 32px rgba(0,0,0,0.6)' },
+          headerTitle: { color: '#F1F5F9' },
+          headerSubtitle: { color: '#94A3B8' },
+          socialButtonsBlockButton: { backgroundColor: '#161B27', border: '1px solid #252D3D', color: '#F1F5F9' },
+          formButtonPrimary: { background: '#3B82F6', border: '1px solid #3B82F6', color: '#fff', boxShadow: '0 0 20px rgba(59,130,246,0.2)' },
+          footerActionLink: { color: '#3B82F6' },
+          identityPreviewEditButton: { color: '#3B82F6' },
+          formFieldInput: { backgroundColor: '#161B27', border: '1px solid #252D3D', color: '#F1F5F9' },
+          formFieldLabel: { color: '#94A3B8' },
+          dividerLine: { backgroundColor: '#1E2536' },
+          dividerText: { color: '#475569' },
+          userButtonPopoverCard: { backgroundColor: '#0D1117', border: '1px solid #1E2536' },
+          userButtonPopoverActionButton: { color: '#F1F5F9' },
+          userButtonPopoverActionButtonText: { color: '#F1F5F9' },
           userButtonPopoverFooter: { display: 'none' },
         },
       }}
@@ -44,9 +44,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <head>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-          <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet" />
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
         </head>
-        <body className="bg-[var(--color-abyss)] text-[var(--color-surface-text)] antialiased">
+        <body className="bg-[var(--color-bg-base)] text-[var(--color-text-primary)] antialiased">
           {children}
         </body>
       </html>

@@ -36,9 +36,9 @@ export default function ProbesPage() {
       <TopBar title="Probe Runner" />
 
       <div className="flex items-center gap-4 flex-wrap">
-        <span className="text-xs text-[var(--color-muted-text)] font-mono">Testing:</span>
+        <span className="text-xs text-[var(--color-text-secondary)] font-mono">Testing:</span>
         <EndpointSelector endpoints={dg.endpoints} selected={dg.selectedEndpoint} onSelect={dg.selectEndpoint} />
-        <span className="text-xs text-[var(--color-ghost-text)]">
+        <span className="text-xs text-[var(--color-text-muted)]">
           {dg.selectedEndpoint?.name} — {dg.selectedEndpoint?.latestVersion}
         </span>
       </div>

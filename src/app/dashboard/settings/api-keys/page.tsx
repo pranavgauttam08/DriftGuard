@@ -94,21 +94,21 @@ export default function APIKeysPage() {
           border: `1px solid ${connectedCount > 0 ? 'rgba(0,255,136,0.15)' : 'rgba(255,184,0,0.15)'}`,
         }}>
         <div className="flex items-center gap-3">
-          <Zap size={18} style={{ color: connectedCount > 0 ? '#00FF88' : '#FFB800' }} />
+          <Zap size={18} style={{ color: connectedCount > 0 ? '#00FF88' : '#F59E0B' }} />
           <div>
-            <span className="text-sm font-medium text-[var(--color-surface-text)]">
+            <span className="text-sm font-medium text-[var(--color-text-primary)]">
               {connectedCount > 0
                 ? `${connectedCount} provider${connectedCount > 1 ? 's' : ''} connected`
                 : 'No providers connected'}
             </span>
-            <p className="text-[10px] text-[var(--color-ghost-text)]">
+            <p className="text-[10px] text-[var(--color-text-muted)]">
               {connectedCount > 0
                 ? 'DriftGuard can test real AI models for behavioral analysis'
                 : 'Add API keys to enable real model testing, cost analysis, and recommendations'}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-1 text-[10px] text-[var(--color-ghost-text)]">
+        <div className="flex items-center gap-1 text-[10px] text-[var(--color-text-muted)]">
           <Shield size={10} /> Keys stored locally, never logged
         </div>
       </motion.div>
@@ -123,7 +123,7 @@ export default function APIKeysPage() {
           <motion.div key={provider.id}
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.08 }}
-            className="bio-card" style={{ padding: '1.5rem' }}
+            className="ag-card" style={{ padding: '1.5rem' }}
           >
             <div className="flex items-center justify-between" style={{ marginBottom: '1rem' }}>
               <div className="flex items-center gap-3">
@@ -132,8 +132,8 @@ export default function APIKeysPage() {
                   <Key size={16} style={{ color: provider.color }} />
                 </div>
                 <div>
-                  <span className="text-sm font-semibold text-[var(--color-surface-text)]">{provider.name}</span>
-                  <p className="text-[10px] text-[var(--color-ghost-text)]">{provider.description}</p>
+                  <span className="text-sm font-semibold text-[var(--color-text-primary)]">{provider.name}</span>
+                  <p className="text-[10px] text-[var(--color-text-muted)]">{provider.description}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -145,7 +145,7 @@ export default function APIKeysPage() {
                 )}
                 {keyData.lastTested && !isConnected && keyData.apiKey && (
                   <span className="flex items-center gap-1 text-[10px] font-mono rounded-full"
-                    style={{ padding: '3px 10px', background: 'rgba(255,61,107,0.08)', color: '#FF3D6B' }}>
+                    style={{ padding: '3px 10px', background: 'rgba(255,61,107,0.08)', color: '#EF4444' }}>
                     <XCircle size={10} /> Failed
                   </span>
                 )}
@@ -164,7 +164,7 @@ export default function APIKeysPage() {
                   style={{ paddingRight: '36px' }}
                 />
                 <button onClick={() => setShowKey(prev => ({ ...prev, [provider.id]: !prev[provider.id] }))}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-ghost-text)] hover:text-[var(--color-surface-text)]">
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]">
                   {showKey[provider.id] ? <EyeOff size={14} /> : <Eye size={14} />}
                 </button>
               </div>
@@ -185,7 +185,7 @@ export default function APIKeysPage() {
             {/* Connected models */}
             {isConnected && keyData.models.length > 0 && (
               <div className="flex items-center gap-2 mt-2">
-                <span className="text-[10px] text-[var(--color-ghost-text)]">Available models:</span>
+                <span className="text-[10px] text-[var(--color-text-muted)]">Available models:</span>
                 {keyData.models.map(model => (
                   <span key={model} className="text-[9px] font-mono rounded-full"
                     style={{ padding: '2px 8px', background: provider.color + '10', color: provider.color, border: `1px solid ${provider.color}25` }}>
@@ -199,12 +199,12 @@ export default function APIKeysPage() {
       })}
 
       {/* Security info */}
-      <div className="rounded-xl" style={{ padding: '1.25rem', background: 'rgba(0,229,255,0.02)', border: '1px solid rgba(0,229,255,0.08)' }}>
+      <div className="rounded-xl" style={{ padding: '1.25rem', background: 'rgba(139,92,246,0.02)', border: '1px solid rgba(139,92,246,0.08)' }}>
         <div className="flex items-center gap-2 mb-2">
-          <Shield size={14} className="text-[var(--color-biolume-secondary)]" />
-          <span className="text-xs font-semibold text-[var(--color-surface-text)]">Security Notice</span>
+          <Shield size={14} className="text-[var(--color-brand-secondary)]" />
+          <span className="text-xs font-semibold text-[var(--color-text-primary)]">Security Notice</span>
         </div>
-        <ul className="text-[10px] text-[var(--color-muted-text)] space-y-1" style={{ paddingLeft: '1.25rem', listStyle: 'disc' }}>
+        <ul className="text-[10px] text-[var(--color-text-secondary)] space-y-1" style={{ paddingLeft: '1.25rem', listStyle: 'disc' }}>
           <li>API keys are stored in your browser&apos;s localStorage — they never leave your device except to contact the provider API directly</li>
           <li>Keys are scoped to your Clerk user account and are not shared with other users or organizations</li>
           <li>DriftGuard does not log, store, or transmit your API keys to our servers</li>

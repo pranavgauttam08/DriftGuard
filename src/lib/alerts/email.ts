@@ -10,8 +10,8 @@ const EMAIL_FROM = process.env.ALERT_EMAIL_FROM || 'alerts@driftguard.dev';
 
 const SEVERITY_COLORS: Record<string, string> = {
   info: '#00E5FF',
-  warning: '#FFB800',
-  critical: '#FF3D6B',
+  warning: '#F59E0B',
+  critical: '#EF4444',
 };
 
 export async function sendEmailAlert(channel: AlertChannel, event: AlertEvent): Promise<void> {

@@ -94,30 +94,30 @@ const DEMO_REVIEWS = [
 ];
 
 const ANNOTATION_COLORS: Record<string, string> = {
-  hallucination: '#FF3D6B',
-  toxicity: '#FF3D6B',
-  regression: '#FFB800',
-  wrong_tone: '#FFB800',
-  pii: '#FF3D6B',
-  bias: '#FF3D6B',
-  factual_error: '#FF3D6B',
-  safety_concern: '#FF3D6B',
+  hallucination: '#EF4444',
+  toxicity: '#EF4444',
+  regression: '#F59E0B',
+  wrong_tone: '#F59E0B',
+  pii: '#EF4444',
+  bias: '#EF4444',
+  factual_error: '#EF4444',
+  safety_concern: '#EF4444',
   quality_improvement: '#00FF88',
   other: '#5A7A7D',
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  open: '#FFB800',
+  open: '#F59E0B',
   approved: '#00FF88',
-  rejected: '#FF3D6B',
+  rejected: '#EF4444',
   needs_changes: '#00E5FF',
 };
 
 const PRIORITY_COLORS: Record<string, string> = {
   low: '#5A7A7D',
   medium: '#00E5FF',
-  high: '#FFB800',
-  critical: '#FF3D6B',
+  high: '#F59E0B',
+  critical: '#EF4444',
 };
 
 type StatusFilter = 'all' | 'open' | 'approved' | 'rejected' | 'needs_changes';
@@ -159,12 +159,12 @@ export default function ReviewsPage() {
             className="text-[10px] font-mono rounded-lg transition-all flex items-center gap-1"
             style={{
               padding: '6px 12px',
-              background: statusFilter === s ? 'rgba(0,255,209,0.08)' : 'transparent',
-              border: `1px solid ${statusFilter === s ? 'rgba(0,255,209,0.25)' : 'rgba(0,255,209,0.06)'}`,
-              color: statusFilter === s ? '#00FFD1' : '#5A7A7D',
+              background: statusFilter === s ? 'rgba(59,130,246,0.08)' : 'transparent',
+              border: `1px solid ${statusFilter === s ? 'rgba(59,130,246,0.25)' : 'rgba(59,130,246,0.06)'}`,
+              color: statusFilter === s ? '#3B82F6' : '#5A7A7D',
             }}>
             {s === 'all' ? 'All' : s.replace('_', ' ')}
-            <span className="rounded-full text-[9px]" style={{ padding: '0 5px', background: 'rgba(0,255,209,0.06)' }}>
+            <span className="rounded-full text-[9px]" style={{ padding: '0 5px', background: 'rgba(59,130,246,0.06)' }}>
               {statusCounts[s]}
             </span>
           </button>
@@ -183,39 +183,39 @@ export default function ReviewsPage() {
             <motion.div key={review.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
               <button
                 onClick={() => setExpandedReview(isExpanded ? null : review.id)}
-                className="bio-card w-full text-left transition-all"
+                className="ag-card w-full text-left transition-all"
                 style={{
                   padding: '1.25rem',
-                  borderColor: isExpanded ? 'rgba(0,255,209,0.4)' : undefined,
+                  borderColor: isExpanded ? 'rgba(59,130,246,0.4)' : undefined,
                   borderLeftWidth: '3px',
                   borderLeftColor: STATUS_COLORS[review.status] || '#5A7A7D',
                 }}
               >
                 <div className="flex items-center justify-between" style={{ marginBottom: '0.5rem' }}>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-[var(--color-surface-text)]">{review.endpointName}</span>
-                    <span className="text-xs font-mono text-[var(--color-ghost-text)]">{review.version}</span>
+                    <span className="text-sm font-semibold text-[var(--color-text-primary)]">{review.endpointName}</span>
+                    <span className="text-xs font-mono text-[var(--color-text-muted)]">{review.version}</span>
                     {review.verdict && (
                       <span className="text-[9px] font-mono rounded" style={{
                         padding: '1px 6px',
-                        background: (review.verdict === 'BLOCK' ? '#FF3D6B' : review.verdict === 'WARN' ? '#FFB800' : '#00FF88') + '15',
-                        color: review.verdict === 'BLOCK' ? '#FF3D6B' : review.verdict === 'WARN' ? '#FFB800' : '#00FF88',
+                        background: (review.verdict === 'BLOCK' ? '#EF4444' : review.verdict === 'WARN' ? '#F59E0B' : '#00FF88') + '15',
+                        color: review.verdict === 'BLOCK' ? '#EF4444' : review.verdict === 'WARN' ? '#F59E0B' : '#00FF88',
                       }}>{review.verdict}</span>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-[9px] font-mono rounded" style={{ padding: '2px 6px', background: (PRIORITY_COLORS[review.priority] || '#5A7A7D') + '15', color: PRIORITY_COLORS[review.priority] }}>{review.priority}</span>
                     <span className="text-[10px] font-mono rounded-lg" style={{ padding: '3px 8px', background: (STATUS_COLORS[review.status] || '#5A7A7D') + '15', color: STATUS_COLORS[review.status] }}>{review.status.replace('_', ' ')}</span>
-                    {isExpanded ? <ChevronDown size={12} className="text-[var(--color-ghost-text)]" /> : <ChevronRight size={12} className="text-[var(--color-ghost-text)]" />}
+                    {isExpanded ? <ChevronDown size={12} className="text-[var(--color-text-muted)]" /> : <ChevronRight size={12} className="text-[var(--color-text-muted)]" />}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 text-[10px] text-[var(--color-muted-text)]">
+                <div className="flex items-center gap-4 text-[10px] text-[var(--color-text-secondary)]">
                   <span className="flex items-center gap-1"><Clock size={10} />{timeAgo(review.createdAt)}</span>
                   <span className="flex items-center gap-1"><MessageSquare size={10} />{review.comments.filter(c => !c.isSystem).length} comments</span>
                   <span className="flex items-center gap-1"><Tag size={10} />{review.annotations.length} annotations</span>
                   {review.regressions.length > 0 && (
-                    <span className="text-[var(--color-biolume-danger)] flex items-center gap-1"><AlertTriangle size={10} />{review.regressions.length} regressions</span>
+                    <span className="text-[var(--color-block)] flex items-center gap-1"><AlertTriangle size={10} />{review.regressions.length} regressions</span>
                   )}
                   <span className="flex items-center gap-1"><User size={10} />{review.assignedTo.length} reviewer{review.assignedTo.length > 1 ? 's' : ''}</span>
                   <span className="font-mono">sim: {(review.similarityScore * 100).toFixed(0)}%</span>
@@ -226,12 +226,12 @@ export default function ReviewsPage() {
               <AnimatePresence>
                 {isExpanded && (
                   <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                    <div className="bio-card" style={{ padding: '1.25rem', marginTop: '4px', borderColor: 'rgba(0,255,209,0.15)' }}>
+                    <div className="ag-card" style={{ padding: '1.25rem', marginTop: '4px', borderColor: 'rgba(59,130,246,0.15)' }}>
 
                       {/* Annotations */}
                       {review.annotations.length > 0 && (
                         <div style={{ marginBottom: '1.25rem' }}>
-                          <div className="text-[10px] font-mono text-[var(--color-ghost-text)] mb-2 uppercase">Annotations</div>
+                          <div className="text-[10px] font-mono text-[var(--color-text-muted)] mb-2 uppercase">Annotations</div>
                           <div className="flex flex-wrap gap-2">
                             {review.annotations.map((ann: any) => (
                               <div key={ann.id} className="rounded-lg" style={{
@@ -246,14 +246,14 @@ export default function ReviewsPage() {
                                     background: (ANNOTATION_COLORS[ann.type] || '#5A7A7D') + '15',
                                     color: ANNOTATION_COLORS[ann.type] || '#5A7A7D',
                                   }}>{ann.type.replace('_', ' ')}</span>
-                                  {ann.dimension && <span className="text-[9px] text-[var(--color-ghost-text)]">{ann.dimension}</span>}
+                                  {ann.dimension && <span className="text-[9px] text-[var(--color-text-muted)]">{ann.dimension}</span>}
                                   <span className="text-[8px] rounded" style={{
                                     padding: '1px 4px',
-                                    background: ann.severity === 'critical' ? 'rgba(255,61,107,0.1)' : ann.severity === 'warning' ? 'rgba(255,184,0,0.08)' : 'rgba(0,255,209,0.04)',
-                                    color: ann.severity === 'critical' ? '#FF3D6B' : ann.severity === 'warning' ? '#FFB800' : '#4A8F8A',
+                                    background: ann.severity === 'critical' ? 'rgba(255,61,107,0.1)' : ann.severity === 'warning' ? 'rgba(255,184,0,0.08)' : 'rgba(59,130,246,0.04)',
+                                    color: ann.severity === 'critical' ? '#EF4444' : ann.severity === 'warning' ? '#F59E0B' : '#4A8F8A',
                                   }}>{ann.severity}</span>
                                 </div>
-                                <span className="text-[11px] text-[var(--color-muted-text)]">{ann.note}</span>
+                                <span className="text-[11px] text-[var(--color-text-secondary)]">{ann.note}</span>
                               </div>
                             ))}
                           </div>
@@ -262,29 +262,29 @@ export default function ReviewsPage() {
 
                       {/* Comments thread */}
                       <div style={{ marginBottom: '1rem' }}>
-                        <div className="text-[10px] font-mono text-[var(--color-ghost-text)] mb-2 uppercase">Discussion</div>
+                        <div className="text-[10px] font-mono text-[var(--color-text-muted)] mb-2 uppercase">Discussion</div>
                         <div className="space-y-2">
                           {review.comments.map((comment: any) => (
                             <div key={comment.id} className="flex gap-2"
                               style={{ opacity: comment.isSystem ? 0.6 : 1 }}>
                               <div className="rounded-full flex-shrink-0 flex items-center justify-center" style={{
                                 width: '24px', height: '24px', marginTop: '2px',
-                                background: comment.isSystem ? 'rgba(0,255,209,0.06)' : 'rgba(0,229,255,0.08)',
+                                background: comment.isSystem ? 'rgba(59,130,246,0.06)' : 'rgba(139,92,246,0.08)',
                                 color: comment.isSystem ? '#4A8F8A' : '#00E5FF',
                               }}>
                                 {comment.isSystem ? <ClipboardCheck size={10} /> : <User size={10} />}
                               </div>
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-0.5">
-                                  <span className="text-[10px] font-semibold text-[var(--color-surface-text)]">
+                                  <span className="text-[10px] font-semibold text-[var(--color-text-primary)]">
                                     {comment.isSystem ? 'System' : comment.userId}
                                   </span>
-                                  <span className="text-[9px] text-[var(--color-ghost-text)]">{timeAgo(comment.timestamp)}</span>
+                                  <span className="text-[9px] text-[var(--color-text-muted)]">{timeAgo(comment.timestamp)}</span>
                                 </div>
-                                <div className="text-xs text-[var(--color-muted-text)] rounded-lg" style={{
+                                <div className="text-xs text-[var(--color-text-secondary)] rounded-lg" style={{
                                   padding: comment.isSystem ? '4px 8px' : '8px 12px',
-                                  background: comment.isSystem ? 'transparent' : 'rgba(0,255,209,0.02)',
-                                  border: comment.isSystem ? 'none' : '1px solid rgba(0,255,209,0.06)',
+                                  background: comment.isSystem ? 'transparent' : 'rgba(59,130,246,0.02)',
+                                  border: comment.isSystem ? 'none' : '1px solid rgba(59,130,246,0.06)',
                                   fontStyle: comment.isSystem ? 'italic' : 'normal',
                                 }}>
                                   {comment.text}
@@ -304,7 +304,7 @@ export default function ReviewsPage() {
                               className="bio-input flex-1 text-xs"
                               style={{ padding: '8px 12px' }}
                             />
-                            <button className="rounded-lg transition-all hover:bg-[rgba(0,255,209,0.06)]" style={{ padding: '8px', color: '#5A7A7D' }}>
+                            <button className="rounded-lg transition-all hover:bg-[rgba(59,130,246,0.06)]" style={{ padding: '8px', color: '#5A7A7D' }}>
                               <Send size={14} />
                             </button>
                           </div>
@@ -312,7 +312,7 @@ export default function ReviewsPage() {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex gap-3" style={{ borderTop: '1px solid rgba(0,255,209,0.06)', paddingTop: '1rem' }}>
+                      <div className="flex gap-3" style={{ borderTop: '1px solid rgba(59,130,246,0.06)', paddingTop: '1rem' }}>
                         {review.status === 'open' && (
                           <>
                             <GlowButton size="sm" icon={<CheckCircle2 size={14} />}>Approve</GlowButton>
@@ -322,7 +322,7 @@ export default function ReviewsPage() {
                           </>
                         )}
                         {review.status !== 'open' && review.resolvedBy && (
-                          <div className="text-xs text-[var(--color-muted-text)]">
+                          <div className="text-xs text-[var(--color-text-secondary)]">
                             {review.status === 'approved' ? '✅' : '❌'} {review.status.charAt(0).toUpperCase() + review.status.slice(1)} by {review.resolvedBy}
                             {review.resolvedAt && ` · ${timeAgo(review.resolvedAt)}`}
                           </div>

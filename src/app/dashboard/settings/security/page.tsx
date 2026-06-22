@@ -36,8 +36,8 @@ const DEMO_AUDIT = [
 ];
 
 const SCOPE_COLORS: Record<string, string> = {
-  ingest: '#00FFD1', read: '#00E5FF', fingerprint: '#00FF88',
-  diff: '#FFB800', admin: '#FF3D6B',
+  ingest: '#3B82F6', read: '#00E5FF', fingerprint: '#00FF88',
+  diff: '#F59E0B', admin: '#EF4444',
 };
 
 export default function SecurityPage() {
@@ -55,10 +55,10 @@ export default function SecurityPage() {
       <TopBar title="Security & Compliance" />
 
       {/* API Keys Section */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bio-card" style={{ padding: '1.5rem' }}>
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ag-card" style={{ padding: '1.5rem' }}>
         <div className="flex items-center justify-between" style={{ marginBottom: '1.25rem' }}>
           <div className="flex items-center gap-2">
-            <Key size={16} className="text-[var(--color-biolume-primary)]" />
+            <Key size={16} className="text-[var(--color-brand-primary)]" />
             <h3 className="font-semibold">Scoped API Keys</h3>
           </div>
           <GlowButton size="sm" icon={<Plus size={14} />}>Create Key</GlowButton>
@@ -66,22 +66,22 @@ export default function SecurityPage() {
 
         <div className="space-y-3">
           {DEMO_API_KEYS.map(key => (
-            <div key={key.id} className="rounded-lg" style={{ padding: '1rem', background: 'rgba(0,255,209,0.02)', border: '1px solid rgba(0,255,209,0.08)' }}>
+            <div key={key.id} className="rounded-lg" style={{ padding: '1rem', background: 'rgba(59,130,246,0.02)', border: '1px solid rgba(59,130,246,0.08)' }}>
               <div className="flex items-center justify-between" style={{ marginBottom: '0.5rem' }}>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-[var(--color-surface-text)]">{key.name}</span>
+                  <span className="text-sm font-semibold text-[var(--color-text-primary)]">{key.name}</span>
                   <span className="text-[9px] font-mono rounded" style={{
                     padding: '2px 6px',
-                    background: key.environment === 'production' ? 'rgba(0,255,136,0.08)' : key.environment === 'staging' ? 'rgba(255,184,0,0.08)' : 'rgba(0,229,255,0.08)',
-                    color: key.environment === 'production' ? '#00FF88' : key.environment === 'staging' ? '#FFB800' : '#00E5FF',
+                    background: key.environment === 'production' ? 'rgba(0,255,136,0.08)' : key.environment === 'staging' ? 'rgba(255,184,0,0.08)' : 'rgba(139,92,246,0.08)',
+                    color: key.environment === 'production' ? '#00FF88' : key.environment === 'staging' ? '#F59E0B' : '#00E5FF',
                   }}>{key.environment}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <button onClick={() => copyKey(key.id, key.prefix)}
-                    className="rounded-lg transition-all hover:bg-[rgba(0,255,209,0.06)]" style={{ padding: '6px', color: '#5A7A7D' }}>
+                    className="rounded-lg transition-all hover:bg-[rgba(59,130,246,0.06)]" style={{ padding: '6px', color: '#5A7A7D' }}>
                     {copiedKey === key.id ? <Check size={12} className="text-[#00FF88]" /> : <Copy size={12} />}
                   </button>
-                  <button className="rounded-lg transition-all hover:bg-[rgba(0,255,209,0.06)]" style={{ padding: '6px', color: '#5A7A7D' }}>
+                  <button className="rounded-lg transition-all hover:bg-[rgba(59,130,246,0.06)]" style={{ padding: '6px', color: '#5A7A7D' }}>
                     <RefreshCw size={12} />
                   </button>
                   <button className="rounded-lg transition-all hover:bg-[rgba(255,61,107,0.1)]" style={{ padding: '6px', color: '#5A7A7D' }}>
@@ -89,7 +89,7 @@ export default function SecurityPage() {
                   </button>
                 </div>
               </div>
-              <code className="text-xs font-mono text-[var(--color-muted-text)]">{key.prefix}</code>
+              <code className="text-xs font-mono text-[var(--color-text-secondary)]">{key.prefix}</code>
               <div className="flex items-center gap-3 mt-2">
                 <div className="flex gap-1">
                   {key.scopes.map(scope => (
@@ -98,10 +98,10 @@ export default function SecurityPage() {
                     }}>{scope}</span>
                   ))}
                 </div>
-                <span className="text-[10px] text-[var(--color-ghost-text)]">
+                <span className="text-[10px] text-[var(--color-text-muted)]">
                   {key.totalRequests.toLocaleString()} requests
                 </span>
-                <span className="text-[10px] text-[var(--color-ghost-text)]">
+                <span className="text-[10px] text-[var(--color-text-muted)]">
                   {key.lastUsed ? `Last used ${key.lastUsed.toLocaleDateString()}` : 'Never used'}
                 </span>
               </div>
@@ -112,10 +112,10 @@ export default function SecurityPage() {
 
       {/* Audit Log Section */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-        className="bio-card" style={{ padding: '1.5rem' }}>
+        className="ag-card" style={{ padding: '1.5rem' }}>
         <div className="flex items-center justify-between" style={{ marginBottom: '1.25rem' }}>
           <div className="flex items-center gap-2">
-            <FileText size={16} className="text-[var(--color-biolume-secondary)]" />
+            <FileText size={16} className="text-[var(--color-brand-secondary)]" />
             <h3 className="font-semibold">Audit Log</h3>
           </div>
           <GlowButton variant="ghost" size="sm">Export</GlowButton>
@@ -124,18 +124,18 @@ export default function SecurityPage() {
         <div className="space-y-1">
           {DEMO_AUDIT.map((entry, i) => (
             <div key={i} className="flex items-center justify-between text-xs rounded-lg"
-              style={{ padding: '10px 12px', background: i % 2 === 0 ? 'rgba(0,255,209,0.02)' : 'transparent' }}>
+              style={{ padding: '10px 12px', background: i % 2 === 0 ? 'rgba(59,130,246,0.02)' : 'transparent' }}>
               <div className="flex items-center gap-3">
                 <span className="font-mono text-[10px] rounded" style={{
                   padding: '2px 6px', minWidth: '130px',
-                  background: entry.action.includes('rejected') || entry.action.includes('rotated') ? 'rgba(255,184,0,0.08)' : 'rgba(0,255,209,0.04)',
-                  color: entry.action.includes('rejected') ? '#FFB800' : '#4A8F8A',
+                  background: entry.action.includes('rejected') || entry.action.includes('rotated') ? 'rgba(255,184,0,0.08)' : 'rgba(59,130,246,0.04)',
+                  color: entry.action.includes('rejected') ? '#F59E0B' : '#4A8F8A',
                 }}>{entry.action}</span>
-                <span className="text-[var(--color-muted-text)]">{entry.user}</span>
-                <span className="text-[var(--color-ghost-text)]">→</span>
-                <span className="text-[var(--color-surface-text)]">{entry.resource}</span>
+                <span className="text-[var(--color-text-secondary)]">{entry.user}</span>
+                <span className="text-[var(--color-text-muted)]">→</span>
+                <span className="text-[var(--color-text-primary)]">{entry.resource}</span>
               </div>
-              <span className="text-[var(--color-ghost-text)] flex items-center gap-1"><Clock size={10} />{entry.time}</span>
+              <span className="text-[var(--color-text-muted)] flex items-center gap-1"><Clock size={10} />{entry.time}</span>
             </div>
           ))}
         </div>
@@ -143,27 +143,27 @@ export default function SecurityPage() {
 
       {/* Compliance Readiness */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-        className="bio-card" style={{ padding: '1.5rem' }}>
+        className="ag-card" style={{ padding: '1.5rem' }}>
         <div className="flex items-center gap-2" style={{ marginBottom: '1.25rem' }}>
-          <Shield size={16} className="text-[var(--color-biolume-tertiary)]" />
+          <Shield size={16} className="text-[var(--color-pass)]" />
           <h3 className="font-semibold">Compliance Readiness</h3>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1rem' }}>
           {[
-            { name: 'SOC 2', status: 'partial', items: '8/12 controls', color: '#FFB800' },
-            { name: 'GDPR', status: 'partial', items: '5/8 requirements', color: '#FFB800' },
+            { name: 'SOC 2', status: 'partial', items: '8/12 controls', color: '#F59E0B' },
+            { name: 'GDPR', status: 'partial', items: '5/8 requirements', color: '#F59E0B' },
             { name: 'Data Encryption', status: 'active', items: 'AES-256 at rest', color: '#00FF88' },
             { name: 'Audit Logging', status: 'active', items: 'All mutations logged', color: '#00FF88' },
             { name: 'PII Masking', status: 'configure', items: 'Not configured', color: '#5A7A7D' },
             { name: 'Key Rotation', status: 'configure', items: 'Manual only', color: '#5A7A7D' },
           ].map(item => (
-            <div key={item.name} className="rounded-lg" style={{ padding: '1rem', background: 'rgba(0,255,209,0.02)', border: '1px solid rgba(0,255,209,0.06)' }}>
+            <div key={item.name} className="rounded-lg" style={{ padding: '1rem', background: 'rgba(59,130,246,0.02)', border: '1px solid rgba(59,130,246,0.06)' }}>
               <div className="flex items-center justify-between" style={{ marginBottom: '0.5rem' }}>
-                <span className="text-sm font-medium text-[var(--color-surface-text)]">{item.name}</span>
+                <span className="text-sm font-medium text-[var(--color-text-primary)]">{item.name}</span>
                 <span className="rounded-full" style={{ width: '8px', height: '8px', background: item.color }} />
               </div>
-              <span className="text-[10px] text-[var(--color-muted-text)]">{item.items}</span>
+              <span className="text-[10px] text-[var(--color-text-secondary)]">{item.items}</span>
             </div>
           ))}
         </div>
@@ -173,10 +173,10 @@ export default function SecurityPage() {
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
         className="rounded-xl" style={{ padding: '1.5rem', border: '1px solid rgba(255,184,0,0.2)', background: 'rgba(255,184,0,0.02)' }}>
         <div className="flex items-center gap-2" style={{ marginBottom: '0.75rem' }}>
-          <AlertTriangle size={16} className="text-[var(--color-biolume-warning)]" />
-          <h3 className="font-semibold text-[var(--color-biolume-warning)]">PII Protection</h3>
+          <AlertTriangle size={16} className="text-[var(--color-warn)]" />
+          <h3 className="font-semibold text-[var(--color-warn)]">PII Protection</h3>
         </div>
-        <p className="text-xs text-[var(--color-muted-text)]" style={{ marginBottom: '1rem' }}>
+        <p className="text-xs text-[var(--color-text-secondary)]" style={{ marginBottom: '1rem' }}>
           Automatically detect and mask personally identifiable information in ingested responses before storage.
         </p>
         <div className="flex gap-3">

@@ -112,8 +112,8 @@ function luhnCheck(num: string): boolean {
 /** Get severity color */
 export function getPIISeverityColor(severity: PIIMatch['severity']): string {
   switch (severity) {
-    case 'critical': return '#FF3D6B';
-    case 'high': return '#FFB800';
+    case 'critical': return '#EF4444';
+    case 'high': return '#F59E0B';
     case 'medium': return '#00E5FF';
     case 'low': return '#00FF88';
   }

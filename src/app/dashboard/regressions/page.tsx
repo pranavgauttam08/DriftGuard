@@ -22,7 +22,7 @@ export default function RegressionsPage() {
       <TopBar title="Regressions" />
 
       <div className="flex items-center gap-4 flex-wrap">
-        <span className="text-xs text-[var(--color-muted-text)] font-mono">Viewing:</span>
+        <span className="text-xs text-[var(--color-text-secondary)] font-mono">Viewing:</span>
         <EndpointSelector endpoints={dg.endpoints} selected={dg.selectedEndpoint} onSelect={dg.selectEndpoint} />
         {latestDiff && (
           <StatusBadge
@@ -34,9 +34,9 @@ export default function RegressionsPage() {
 
       {fps.length < 2 ? (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center" style={{ padding: '5rem 2rem' }}>
-          <AlertTriangle size={40} className="mx-auto text-[var(--color-ghost-text)]" style={{ marginBottom: '1.5rem', opacity: 0.3 }} />
+          <AlertTriangle size={40} className="mx-auto text-[var(--color-text-muted)]" style={{ marginBottom: '1.5rem', opacity: 0.3 }} />
           <h3 className="text-lg font-semibold" style={{ marginBottom: '0.5rem' }}>Not enough data for regression analysis</h3>
-          <p className="text-sm text-[var(--color-muted-text)]" style={{ maxWidth: '400px', margin: '0 auto' }}>
+          <p className="text-sm text-[var(--color-text-secondary)]" style={{ maxWidth: '400px', margin: '0 auto' }}>
             Send data for at least <strong>2 different versions</strong> of <strong>{dg.selectedEndpoint?.name}</strong> to compare behavioral fingerprints and detect regressions.
           </p>
         </motion.div>
@@ -46,18 +46,18 @@ export default function RegressionsPage() {
 
           {/* Show diff details if available */}
           {latestDiff && (
-            <div className="bio-card" style={{ padding: '1.5rem' }}>
+            <div className="ag-card" style={{ padding: '1.5rem' }}>
               <div className="flex items-center justify-between" style={{ marginBottom: '1.25rem' }}>
                 <h3 className="text-sm font-semibold">Latest Diff: {latestDiff.baseVersion} → {latestDiff.newVersion}</h3>
                 <StatusBadge status={latestDiff.verdict === 'BLOCK' ? 'block' : latestDiff.verdict === 'WARN' ? 'warn' : 'pass'} />
               </div>
-              <p className="text-sm text-[var(--color-surface-text)] leading-relaxed" style={{ marginBottom: '1.25rem' }}>{latestDiff.verdictReason}</p>
+              <p className="text-sm text-[var(--color-text-primary)] leading-relaxed" style={{ marginBottom: '1.25rem' }}>{latestDiff.verdictReason}</p>
               <div className="space-y-2">
                 {latestDiff.regressions.map((r, i) => (
                   <div key={i} className="flex items-center justify-between rounded-lg" style={{ padding: '0.75rem', background: 'rgba(255,61,107,0.04)', border: '1px solid rgba(255,61,107,0.15)' }}>
                     <span className="text-xs">{r.dimension}</span>
                     <div className="flex items-center gap-3">
-                      <span className="text-[10px] font-mono text-[var(--color-muted-text)]">{r.baseValue.toFixed(2)} → {r.newValue.toFixed(2)}</span>
+                      <span className="text-[10px] font-mono text-[var(--color-text-secondary)]">{r.baseValue.toFixed(2)} → {r.newValue.toFixed(2)}</span>
                       <StatusBadge status={r.severity === 'critical' ? 'critical' : r.severity === 'high' ? 'block' : 'warn'} size="sm" label={r.severity.toUpperCase()} />
                     </div>
                   </div>
@@ -65,7 +65,7 @@ export default function RegressionsPage() {
                 {latestDiff.improvements.map((imp, i) => (
                   <div key={i} className="flex items-center justify-between rounded-lg" style={{ padding: '0.75rem', background: 'rgba(0,255,136,0.04)', border: '1px solid rgba(0,255,136,0.15)' }}>
                     <span className="text-xs">{imp.dimension}</span>
-                    <span className="text-[10px] font-mono text-[var(--color-biolume-tertiary)]">+{Math.abs(imp.delta).toFixed(2)} ✓</span>
+                    <span className="text-[10px] font-mono text-[var(--color-pass)]">+{Math.abs(imp.delta).toFixed(2)} ✓</span>
                   </div>
                 ))}
               </div>
@@ -75,9 +75,9 @@ export default function RegressionsPage() {
           {base && latest && (
             <div className="grid lg:grid-cols-2 gap-6">
               <RadarFingerprint base={base} next={latest} />
-              <div className="bio-card p-6">
+              <div className="ag-card p-6">
                 <h3 className="text-sm font-semibold mb-5">Overlay: {base.version} vs {latest.version}</h3>
-                <p className="text-xs text-[var(--color-muted-text)] leading-relaxed">The radar chart shows both versions overlaid. Teal represents the baseline ({base.version}), cyan represents the new version ({latest.version}). Red highlights indicate regression zones.</p>
+                <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">The radar chart shows both versions overlaid. Teal represents the baseline ({base.version}), cyan represents the new version ({latest.version}). Red highlights indicate regression zones.</p>
               </div>
             </div>
           )}

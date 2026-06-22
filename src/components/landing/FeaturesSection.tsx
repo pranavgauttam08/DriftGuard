@@ -18,14 +18,14 @@ function FeatureCard({ feature, index }: { feature: typeof features[0]; index: n
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: 20 }} animate={isVisible ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="bio-card group" style={{ padding: '1.5rem' }}
+      className="ag-card group" style={{ padding: '1.5rem' }}
     >
       <div className="rounded-lg flex items-center justify-center"
-        style={{ width: '40px', height: '40px', marginBottom: '1rem', background: 'linear-gradient(135deg, rgba(0,255,209,0.12), rgba(0,229,255,0.06))' }}>
-        <Icon size={20} className="text-[var(--color-biolume-primary)]" />
+        style={{ width: '40px', height: '40px', marginBottom: '1rem', background: 'linear-gradient(135deg, rgba(59,130,246,0.12), rgba(139,92,246,0.06))' }}>
+        <Icon size={20} className="text-[var(--color-brand-primary)]" />
       </div>
-      <h3 className="font-semibold text-[var(--color-surface-text)]" style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>{feature.title}</h3>
-      <p className="text-[var(--color-muted-text)]" style={{ fontSize: '0.875rem', lineHeight: 1.6 }}>{feature.desc}</p>
+      <h3 className="font-semibold text-[var(--color-text-primary)]" style={{ fontSize: '1rem', marginBottom: '0.5rem' }}>{feature.title}</h3>
+      <p className="text-[var(--color-text-secondary)]" style={{ fontSize: '0.875rem', lineHeight: 1.6 }}>{feature.desc}</p>
     </motion.div>
   );
 }
@@ -37,7 +37,7 @@ export default function FeaturesSection() {
       <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
         <motion.div ref={ref} initial={{ opacity: 0 }} animate={isVisible ? { opacity: 1 } : {}} className="text-center" style={{ marginBottom: '4rem' }}>
           <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', fontWeight: 700, marginBottom: '1rem' }}>
-            Intelligence That <span className="bio-glow-text">Watches Itself</span>
+            Intelligence That <span className="ag-glow-text">Watches Itself</span>
           </h2>
         </motion.div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.25rem' }}>

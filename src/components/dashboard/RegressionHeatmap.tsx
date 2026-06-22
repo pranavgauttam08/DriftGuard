@@ -24,7 +24,7 @@ function getVal(fp: BehavioralFingerprint, dim: string): number {
 function cellColor(value: number, isInverted: boolean): string {
   const v = isInverted ? value : 1 - value;
   if (v < 0.3) return 'rgba(0,255,136,0.4)';
-  if (v < 0.5) return 'rgba(0,255,209,0.3)';
+  if (v < 0.5) return 'rgba(59,130,246,0.3)';
   if (v < 0.7) return 'rgba(255,184,0,0.3)';
   return 'rgba(255,61,107,0.4)';
 }
@@ -35,14 +35,14 @@ export default function RegressionHeatmap({ fingerprints }: HeatmapProps) {
   const sorted = [...fingerprints].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 
   return (
-    <div className="bio-card p-5 overflow-x-auto">
-      <h3 className="text-sm font-semibold text-[var(--color-surface-text)] mb-4">Regression Heatmap</h3>
+    <div className="ag-card p-5 overflow-x-auto">
+      <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-4">Regression Heatmap</h3>
       <div className="min-w-max">
         {/* Header row */}
         <div className="flex items-center mb-2">
-          <div className="w-24 text-[10px] text-[var(--color-ghost-text)]" />
+          <div className="w-24 text-[10px] text-[var(--color-text-muted)]" />
           {sorted.map(fp => (
-            <div key={fp.id} className="w-16 text-center text-[10px] font-mono text-[var(--color-muted-text)]">{fp.version}</div>
+            <div key={fp.id} className="w-16 text-center text-[10px] font-mono text-[var(--color-text-secondary)]">{fp.version}</div>
           ))}
         </div>
 
@@ -51,7 +51,7 @@ export default function RegressionHeatmap({ fingerprints }: HeatmapProps) {
           const isInverted = invertedDims.includes(dim);
           return (
             <div key={dim} className="flex items-center mb-1">
-              <div className="w-24 text-[10px] text-[var(--color-muted-text)] truncate pr-2">{dim}</div>
+              <div className="w-24 text-[10px] text-[var(--color-text-secondary)] truncate pr-2">{dim}</div>
               {sorted.map((fp, i) => {
                 const val = getVal(fp, dim);
                 const prevVal = i > 0 ? getVal(sorted[i - 1], dim) : val;
@@ -66,10 +66,10 @@ export default function RegressionHeatmap({ fingerprints }: HeatmapProps) {
                       animation: isRegression ? 'bio-pulse 2s ease-in-out infinite' : undefined,
                     }}
                   >
-                    <span className="text-[10px] font-mono text-[var(--color-surface-text)]">{val.toFixed(2)}</span>
+                    <span className="text-[10px] font-mono text-[var(--color-text-primary)]">{val.toFixed(2)}</span>
                     <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 hidden group-hover:block z-10">
-                      <div className="bio-card !p-2 text-[10px] whitespace-nowrap">
-                        {dim}: {val.toFixed(3)}{isRegression && <span className="text-[var(--color-biolume-danger)] ml-1">⚠ regression</span>}
+                      <div className="ag-card !p-2 text-[10px] whitespace-nowrap">
+                        {dim}: {val.toFixed(3)}{isRegression && <span className="text-[var(--color-block)] ml-1">⚠ regression</span>}
                       </div>
                     </div>
                   </div>
@@ -80,7 +80,7 @@ export default function RegressionHeatmap({ fingerprints }: HeatmapProps) {
         })}
 
         {/* Legend */}
-        <div className="flex items-center gap-4 mt-4 text-[10px] text-[var(--color-ghost-text)]">
+        <div className="flex items-center gap-4 mt-4 text-[10px] text-[var(--color-text-muted)]">
           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded" style={{ background: 'rgba(0,255,136,0.4)' }} /> Good</span>
           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded" style={{ background: 'rgba(255,184,0,0.3)' }} /> Degrading</span>
           <span className="flex items-center gap-1"><span className="w-3 h-3 rounded" style={{ background: 'rgba(255,61,107,0.4)' }} /> Regressed</span>

@@ -28,7 +28,7 @@ interface TimelineProps {
 
 const ENV_COLORS: Record<string, string> = {
   development: '#00E5FF',
-  staging: '#FFB800',
+  staging: '#F59E0B',
   production: '#00FF88',
   canary: '#B388FF',
 };
@@ -42,19 +42,19 @@ export default function BehavioralTimeline({ fingerprints, onSelectVersion, sele
   const getAlerts = (version: string) => alerts.filter(a => a.version === version);
 
   return (
-    <div className="bio-card p-5 overflow-x-auto">
+    <div className="ag-card p-5 overflow-x-auto">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-[var(--color-surface-text)]">Behavioral Timeline</h3>
+        <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Behavioral Timeline</h3>
         <div className="flex items-center gap-3">
           {/* Legend */}
           {[
             { color: '#00FF88', label: 'Pass' },
-            { color: '#FFB800', label: 'Warn' },
-            { color: '#FF3D6B', label: 'Block' },
+            { color: '#F59E0B', label: 'Warn' },
+            { color: '#EF4444', label: 'Block' },
           ].map(l => (
             <div key={l.label} className="flex items-center gap-1.5">
               <div className="w-2 h-2 rounded-full" style={{ background: l.color }} />
-              <span className="text-[10px] text-[var(--color-ghost-text)]">{l.label}</span>
+              <span className="text-[10px] text-[var(--color-text-muted)]">{l.label}</span>
             </div>
           ))}
         </div>
@@ -65,7 +65,7 @@ export default function BehavioralTimeline({ fingerprints, onSelectVersion, sele
           const isSelected = selectedVersion === fp.version;
           const isHovered = hoveredIdx === i;
           const hallScore = fp.hallucinationScore;
-          const nodeColor = hallScore > 0.2 ? '#FF3D6B' : hallScore > 0.1 ? '#FFB800' : '#00FFD1';
+          const nodeColor = hallScore > 0.2 ? '#EF4444' : hallScore > 0.1 ? '#F59E0B' : '#3B82F6';
           const verdict = hallScore > 0.2 ? 'block' : hallScore > 0.1 ? 'warn' : 'pass';
           const deployment = getDeployment(fp.version);
           const versionAlerts = getAlerts(fp.version);
@@ -77,7 +77,7 @@ export default function BehavioralTimeline({ fingerprints, onSelectVersion, sele
                 onClick={() => onSelectVersion?.(fp)}
                 onMouseEnter={() => setHoveredIdx(i)}
                 onMouseLeave={() => setHoveredIdx(null)}
-                className={`relative flex flex-col items-center gap-2 px-4 py-3 rounded-lg transition-all ${isSelected ? 'bg-[var(--color-biolume-dim)] border border-[var(--color-biolume-primary)]' : 'hover:bg-[rgba(0,255,209,0.04)]'}`}
+                className={`relative flex flex-col items-center gap-2 px-4 py-3 rounded-lg transition-all ${isSelected ? 'bg-[var(--color-biolume-dim)] border border-[var(--color-brand-primary)]' : 'hover:bg-[rgba(59,130,246,0.04)]'}`}
               >
                 {/* Deployment marker */}
                 {deployment && (
@@ -85,9 +85,9 @@ export default function BehavioralTimeline({ fingerprints, onSelectVersion, sele
                     {deployment.status === 'deployed' ? (
                       <Rocket size={11} style={{ color: envColor }} />
                     ) : deployment.status === 'blocked' ? (
-                      <XCircle size={11} style={{ color: '#FF3D6B' }} />
+                      <XCircle size={11} style={{ color: '#EF4444' }} />
                     ) : (
-                      <AlertTriangle size={11} style={{ color: '#FFB800' }} />
+                      <AlertTriangle size={11} style={{ color: '#F59E0B' }} />
                     )}
                   </div>
                 )}
@@ -97,8 +97,8 @@ export default function BehavioralTimeline({ fingerprints, onSelectVersion, sele
                   <div className="absolute -top-1 -left-1 flex gap-0.5">
                     {versionAlerts.slice(0, 3).map((a, j) => (
                       <div key={j} className="w-2 h-2 rounded-full animate-pulse" style={{
-                        background: a.severity === 'critical' ? '#FF3D6B' : a.severity === 'warning' ? '#FFB800' : '#00E5FF',
-                        boxShadow: `0 0 6px ${a.severity === 'critical' ? '#FF3D6B' : '#FFB800'}60`,
+                        background: a.severity === 'critical' ? '#EF4444' : a.severity === 'warning' ? '#F59E0B' : '#00E5FF',
+                        boxShadow: `0 0 6px ${a.severity === 'critical' ? '#EF4444' : '#F59E0B'}60`,
                       }} />
                     ))}
                   </div>
@@ -131,7 +131,7 @@ export default function BehavioralTimeline({ fingerprints, onSelectVersion, sele
                 </div>
 
                 {/* Version label */}
-                <span className="text-[10px] font-mono text-[var(--color-muted-text)]">{fp.version}</span>
+                <span className="text-[10px] font-mono text-[var(--color-text-secondary)]">{fp.version}</span>
                 <StatusBadge status={verdict as 'pass' | 'warn' | 'block'} size="sm" />
 
                 {/* Environment badge */}
@@ -153,12 +153,12 @@ export default function BehavioralTimeline({ fingerprints, onSelectVersion, sele
                     className="absolute -bottom-24 left-1/2 -translate-x-1/2 z-20 pointer-events-none"
                     style={{ minWidth: '160px' }}
                   >
-                    <div className="bio-card p-2.5 text-[10px] space-y-1" style={{ background: 'var(--color-bg-primary)', border: '1px solid var(--color-border)' }}>
-                      <div className="flex justify-between"><span className="text-[var(--color-ghost-text)]">Hallucination</span><span className="font-mono">{(hallScore * 100).toFixed(1)}%</span></div>
-                      <div className="flex justify-between"><span className="text-[var(--color-ghost-text)]">Consistency</span><span className="font-mono">{(fp.topicConsistency * 100).toFixed(1)}%</span></div>
-                      <div className="flex justify-between"><span className="text-[var(--color-ghost-text)]">Samples</span><span className="font-mono">{fp.sampleCount}</span></div>
+                    <div className="ag-card p-2.5 text-[10px] space-y-1" style={{ background: 'var(--color-bg-primary)', border: '1px solid var(--color-border)' }}>
+                      <div className="flex justify-between"><span className="text-[var(--color-text-muted)]">Hallucination</span><span className="font-mono">{(hallScore * 100).toFixed(1)}%</span></div>
+                      <div className="flex justify-between"><span className="text-[var(--color-text-muted)]">Consistency</span><span className="font-mono">{(fp.topicConsistency * 100).toFixed(1)}%</span></div>
+                      <div className="flex justify-between"><span className="text-[var(--color-text-muted)]">Samples</span><span className="font-mono">{fp.sampleCount}</span></div>
                       {deployment && (
-                        <div className="flex justify-between"><span className="text-[var(--color-ghost-text)]">Deploy</span><span className="font-mono" style={{ color: envColor }}>{deployment.environment}</span></div>
+                        <div className="flex justify-between"><span className="text-[var(--color-text-muted)]">Deploy</span><span className="font-mono" style={{ color: envColor }}>{deployment.environment}</span></div>
                       )}
                     </div>
                     <ChevronDown size={10} className="mx-auto -mt-px text-[var(--color-border)]" style={{ transform: 'rotate(180deg)' }} />
@@ -172,13 +172,13 @@ export default function BehavioralTimeline({ fingerprints, onSelectVersion, sele
                   {(() => {
                     const nextFp = sorted[i + 1];
                     const delta = nextFp.hallucinationScore - fp.hallucinationScore;
-                    const lineColor = delta > 0.1 ? '#FF3D6B' : delta > 0.05 ? '#FFB800' : 'var(--color-biolume-primary)';
+                    const lineColor = delta > 0.1 ? '#EF4444' : delta > 0.05 ? '#F59E0B' : 'var(--color-brand-primary)';
                     return (
                       <>
                         <div className="h-full w-full" style={{ background: `linear-gradient(90deg, ${nodeColor}40, ${lineColor}40)` }} />
                         {delta > 0.1 && (
                           <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#FF3D6B] animate-pulse" style={{ boxShadow: '0 0 4px #FF3D6B60' }} />
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#EF4444] animate-pulse" style={{ boxShadow: '0 0 4px #EF444460' }} />
                           </div>
                         )}
                       </>

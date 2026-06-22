@@ -28,19 +28,19 @@ export default function ToastSystem() {
   useEffect(() => { addToastFn = addToast; return () => { addToastFn = null; }; }, [addToast]);
 
   const icons = { success: <CheckCircle size={16} />, error: <AlertTriangle size={16} />, warning: <AlertTriangle size={16} />, info: <Info size={16} /> };
-  const colors = { success: '#00FF88', error: '#FF3D6B', warning: '#FFB800', info: '#00E5FF' };
+  const colors = { success: '#00FF88', error: '#EF4444', warning: '#F59E0B', info: '#00E5FF' };
 
   return (
     <div className="fixed top-4 right-4 z-[9999] flex flex-col gap-2 max-w-sm">
       <AnimatePresence>
         {toasts.map(t => (
           <motion.div key={t.id} initial={{ opacity: 0, x: 80 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 80 }}
-            className="bio-card px-4 py-3 flex items-center gap-3"
+            className="ag-card px-4 py-3 flex items-center gap-3"
             style={{ borderColor: colors[t.type], boxShadow: `0 0 20px ${colors[t.type]}30` }}
           >
             <span style={{ color: colors[t.type] }}>{icons[t.type]}</span>
             <span className="text-sm flex-1">{t.message}</span>
-            <button onClick={() => setToasts(prev => prev.filter(x => x.id !== t.id))} className="text-[var(--color-muted-text)] hover:text-white"><X size={14} /></button>
+            <button onClick={() => setToasts(prev => prev.filter(x => x.id !== t.id))} className="text-[var(--color-text-secondary)] hover:text-white"><X size={14} /></button>
           </motion.div>
         ))}
       </AnimatePresence>

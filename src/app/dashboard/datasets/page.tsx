@@ -216,7 +216,7 @@ export default function DatasetsPage() {
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2 flex-1">
           <div className="relative flex-1" style={{ maxWidth: '320px' }}>
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-ghost-text)]" />
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
             <input
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
@@ -231,9 +231,9 @@ export default function DatasetsPage() {
                 className="text-[10px] font-mono rounded-full transition-all"
                 style={{
                   padding: '4px 10px',
-                  background: selectedTag === tag ? 'rgba(0,255,209,0.1)' : 'rgba(0,255,209,0.03)',
-                  border: `1px solid ${selectedTag === tag ? 'rgba(0,255,209,0.3)' : 'rgba(0,255,209,0.08)'}`,
-                  color: selectedTag === tag ? '#00FFD1' : '#5A7A7D',
+                  background: selectedTag === tag ? 'rgba(59,130,246,0.1)' : 'rgba(59,130,246,0.03)',
+                  border: `1px solid ${selectedTag === tag ? 'rgba(59,130,246,0.3)' : 'rgba(59,130,246,0.08)'}`,
+                  color: selectedTag === tag ? '#3B82F6' : '#5A7A7D',
                 }}>
                 <Tag size={8} className="inline mr-1" />{tag}
               </button>
@@ -254,32 +254,32 @@ export default function DatasetsPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            className="bio-card"
+            className="ag-card"
             style={{ padding: '1.25rem' }}
           >
             <div className="flex items-center justify-between" style={{ marginBottom: '0.75rem' }}>
               <div className="flex items-center gap-2">
-                <Database size={16} className="text-[var(--color-biolume-secondary)]" />
-                <span className="text-sm font-semibold text-[var(--color-surface-text)]">{ds.name}</span>
+                <Database size={16} className="text-[var(--color-brand-secondary)]" />
+                <span className="text-sm font-semibold text-[var(--color-text-primary)]">{ds.name}</span>
               </div>
-              <span className="text-[10px] font-mono text-[var(--color-biolume-primary)]"
-                style={{ padding: '2px 8px', borderRadius: '4px', background: 'rgba(0,255,209,0.06)' }}>
+              <span className="text-[10px] font-mono text-[var(--color-brand-primary)]"
+                style={{ padding: '2px 8px', borderRadius: '4px', background: 'rgba(59,130,246,0.06)' }}>
                 v{ds.version}
               </span>
             </div>
 
-            <p className="text-xs text-[var(--color-muted-text)]" style={{ marginBottom: '0.75rem' }}>{ds.description}</p>
+            <p className="text-xs text-[var(--color-text-secondary)]" style={{ marginBottom: '0.75rem' }}>{ds.description}</p>
 
             <div className="flex flex-wrap gap-1" style={{ marginBottom: '0.75rem' }}>
               {ds.tags.map(tag => (
                 <span key={tag} className="text-[9px] font-mono rounded-full"
-                  style={{ padding: '2px 8px', background: 'rgba(0,255,209,0.04)', border: '1px solid rgba(0,255,209,0.1)', color: '#4A8F8A' }}>
+                  style={{ padding: '2px 8px', background: 'rgba(59,130,246,0.04)', border: '1px solid rgba(59,130,246,0.1)', color: '#4A8F8A' }}>
                   {tag}
                 </span>
               ))}
             </div>
 
-            <div className="flex items-center justify-between text-xs text-[var(--color-ghost-text)]" style={{ marginBottom: '1rem' }}>
+            <div className="flex items-center justify-between text-xs text-[var(--color-text-muted)]" style={{ marginBottom: '1rem' }}>
               <span>{ds.responseCount} entries</span>
               <span>{ds.createdAt.toLocaleDateString()}</span>
             </div>
@@ -290,7 +290,7 @@ export default function DatasetsPage() {
               <GlowButton variant="ghost" size="sm" icon={<Download size={12} />}
                 onClick={() => handleExport(ds)}>Export</GlowButton>
               <button onClick={() => handleDelete(ds.id)}
-                className="ml-auto text-[var(--color-ghost-text)] hover:text-[var(--color-biolume-danger)] transition-all" style={{ padding: '4px' }}>
+                className="ml-auto text-[var(--color-text-muted)] hover:text-[var(--color-block)] transition-all" style={{ padding: '4px' }}>
                 <Trash2 size={14} />
               </button>
             </div>
@@ -300,17 +300,17 @@ export default function DatasetsPage() {
               {viewingDataset === ds.id && (
                 <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                   <div style={{ marginTop: '1rem', borderTop: '1px solid var(--color-border)', paddingTop: '1rem' }}>
-                    <div className="text-[10px] font-mono text-[var(--color-ghost-text)] mb-2 uppercase">Dataset Items ({ds.items.length} shown)</div>
+                    <div className="text-[10px] font-mono text-[var(--color-text-muted)] mb-2 uppercase">Dataset Items ({ds.items.length} shown)</div>
                     <div className="space-y-2" style={{ maxHeight: '200px', overflowY: 'auto' }}>
                       {ds.items.map((item, idx) => (
-                        <div key={idx} className="rounded-lg text-xs" style={{ padding: '8px 12px', background: 'rgba(0,255,209,0.02)', border: '1px solid var(--color-border)' }}>
+                        <div key={idx} className="rounded-lg text-xs" style={{ padding: '8px 12px', background: 'rgba(59,130,246,0.02)', border: '1px solid var(--color-border)' }}>
                           <div className="flex items-start gap-2 mb-1">
-                            <span className="text-[9px] font-mono px-1.5 rounded" style={{ background: 'rgba(0,229,255,0.1)', color: '#00E5FF' }}>INPUT</span>
-                            <span className="text-[var(--color-surface-text)]">{item.input}</span>
+                            <span className="text-[9px] font-mono px-1.5 rounded" style={{ background: 'rgba(139,92,246,0.1)', color: '#00E5FF' }}>INPUT</span>
+                            <span className="text-[var(--color-text-primary)]">{item.input}</span>
                           </div>
                           <div className="flex items-start gap-2">
                             <span className="text-[9px] font-mono px-1.5 rounded" style={{ background: 'rgba(0,255,136,0.1)', color: '#00FF88' }}>EXPECTED</span>
-                            <span className="text-[var(--color-muted-text)]">{item.expectedOutput}</span>
+                            <span className="text-[var(--color-text-secondary)]">{item.expectedOutput}</span>
                           </div>
                         </div>
                       ))}
@@ -324,19 +324,19 @@ export default function DatasetsPage() {
       </div>
 
       {/* Import format info */}
-      <div className="bio-card" style={{ padding: '1.25rem' }}>
-        <h3 className="text-sm font-semibold text-[var(--color-surface-text)]" style={{ marginBottom: '0.75rem' }}>Supported Import Formats</h3>
+      <div className="ag-card" style={{ padding: '1.25rem' }}>
+        <h3 className="text-sm font-semibold text-[var(--color-text-primary)]" style={{ marginBottom: '0.75rem' }}>Supported Import Formats</h3>
         <div className="flex gap-4">
-          <div className="flex items-center gap-2 text-xs text-[var(--color-muted-text)]">
-            <FileJson size={16} className="text-[var(--color-biolume-primary)]" />
+          <div className="flex items-center gap-2 text-xs text-[var(--color-text-secondary)]">
+            <FileJson size={16} className="text-[var(--color-brand-primary)]" />
             <span>JSON Array</span>
           </div>
-          <div className="flex items-center gap-2 text-xs text-[var(--color-muted-text)]">
-            <FileSpreadsheet size={16} className="text-[var(--color-biolume-secondary)]" />
+          <div className="flex items-center gap-2 text-xs text-[var(--color-text-secondary)]">
+            <FileSpreadsheet size={16} className="text-[var(--color-brand-secondary)]" />
             <span>CSV (with headers)</span>
           </div>
-          <div className="flex items-center gap-2 text-xs text-[var(--color-muted-text)]">
-            <Upload size={16} className="text-[var(--color-biolume-tertiary)]" />
+          <div className="flex items-center gap-2 text-xs text-[var(--color-text-secondary)]">
+            <Upload size={16} className="text-[var(--color-pass)]" />
             <span>API Upload</span>
           </div>
         </div>
@@ -355,40 +355,40 @@ export default function DatasetsPage() {
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="bio-card w-full max-w-2xl"
+              className="ag-card w-full max-w-2xl"
               style={{ padding: '2rem', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}
               onClick={e => e.stopPropagation()}
             >
               <button onClick={() => setShowNewModal(false)}
-                className="absolute top-4 right-4 text-[var(--color-ghost-text)] hover:text-[var(--color-surface-text)] transition-colors">
+                className="absolute top-4 right-4 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors">
                 <X size={18} />
               </button>
 
               <div className="flex items-center gap-2 mb-6">
-                <div className="p-2 rounded-lg" style={{ background: 'rgba(0,255,209,0.08)' }}>
-                  <Database size={18} style={{ color: '#00FFD1' }} />
+                <div className="p-2 rounded-lg" style={{ background: 'rgba(59,130,246,0.08)' }}>
+                  <Database size={18} style={{ color: '#3B82F6' }} />
                 </div>
                 <div>
-                  <h2 className="text-base font-semibold text-[var(--color-surface-text)]">New Dataset</h2>
-                  <p className="text-[10px] text-[var(--color-ghost-text)]">Create an evaluation dataset with input/expected output pairs</p>
+                  <h2 className="text-base font-semibold text-[var(--color-text-primary)]">New Dataset</h2>
+                  <p className="text-[10px] text-[var(--color-text-muted)]">Create an evaluation dataset with input/expected output pairs</p>
                 </div>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-[10px] font-mono text-[var(--color-ghost-text)] uppercase tracking-wider block mb-1.5">Dataset Name</label>
+                  <label className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider block mb-1.5">Dataset Name</label>
                   <input className="bio-input w-full" placeholder="e.g. Customer Support Golden Set"
                     value={newDs.name} onChange={e => setNewDs(p => ({ ...p, name: e.target.value }))} />
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-mono text-[var(--color-ghost-text)] uppercase tracking-wider block mb-1.5">Description</label>
+                  <label className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider block mb-1.5">Description</label>
                   <input className="bio-input w-full" placeholder="Describe what this dataset tests"
                     value={newDs.description} onChange={e => setNewDs(p => ({ ...p, description: e.target.value }))} />
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-mono text-[var(--color-ghost-text)] uppercase tracking-wider block mb-1.5">Tags (comma-separated)</label>
+                  <label className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider block mb-1.5">Tags (comma-separated)</label>
                   <input className="bio-input w-full" placeholder="e.g. support, golden, production"
                     value={newDs.tags} onChange={e => setNewDs(p => ({ ...p, tags: e.target.value }))} />
                 </div>
@@ -396,20 +396,20 @@ export default function DatasetsPage() {
                 {/* Items */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-[10px] font-mono text-[var(--color-ghost-text)] uppercase tracking-wider">Items</label>
+                    <label className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider">Items</label>
                     <button onClick={() => setNewItems(prev => [...prev, { input: '', expectedOutput: '' }])}
-                      className="text-[10px] text-[var(--color-biolume-primary)] hover:underline flex items-center gap-1">
+                      className="text-[10px] text-[var(--color-brand-primary)] hover:underline flex items-center gap-1">
                       <Plus size={10} /> Add Item
                     </button>
                   </div>
 
                   <div className="space-y-3" style={{ maxHeight: '300px', overflowY: 'auto' }}>
                     {newItems.map((item, idx) => (
-                      <div key={idx} className="rounded-lg relative" style={{ padding: '12px', background: 'rgba(0,255,209,0.02)', border: '1px solid var(--color-border)' }}>
-                        <div className="text-[9px] font-mono text-[var(--color-ghost-text)] mb-1">Item #{idx + 1}</div>
+                      <div key={idx} className="rounded-lg relative" style={{ padding: '12px', background: 'rgba(59,130,246,0.02)', border: '1px solid var(--color-border)' }}>
+                        <div className="text-[9px] font-mono text-[var(--color-text-muted)] mb-1">Item #{idx + 1}</div>
                         {newItems.length > 1 && (
                           <button onClick={() => setNewItems(prev => prev.filter((_, i) => i !== idx))}
-                            className="absolute top-2 right-2 text-[var(--color-ghost-text)] hover:text-[var(--color-biolume-danger)]">
+                            className="absolute top-2 right-2 text-[var(--color-text-muted)] hover:text-[var(--color-block)]">
                             <X size={12} />
                           </button>
                         )}
@@ -452,35 +452,35 @@ export default function DatasetsPage() {
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="bio-card w-full max-w-2xl"
+              className="ag-card w-full max-w-2xl"
               style={{ padding: '2rem', position: 'relative', maxHeight: '90vh', overflowY: 'auto' }}
               onClick={e => e.stopPropagation()}
             >
               <button onClick={() => { setShowImportModal(false); setImportError(''); setImportSuccess(''); }}
-                className="absolute top-4 right-4 text-[var(--color-ghost-text)] hover:text-[var(--color-surface-text)] transition-colors">
+                className="absolute top-4 right-4 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors">
                 <X size={18} />
               </button>
 
               <div className="flex items-center gap-2 mb-6">
-                <div className="p-2 rounded-lg" style={{ background: 'rgba(0,229,255,0.08)' }}>
+                <div className="p-2 rounded-lg" style={{ background: 'rgba(139,92,246,0.08)' }}>
                   <Upload size={18} style={{ color: '#00E5FF' }} />
                 </div>
                 <div>
-                  <h2 className="text-base font-semibold text-[var(--color-surface-text)]">Import Dataset</h2>
-                  <p className="text-[10px] text-[var(--color-ghost-text)]">Upload a JSON or CSV file, or paste JSON directly</p>
+                  <h2 className="text-base font-semibold text-[var(--color-text-primary)]">Import Dataset</h2>
+                  <p className="text-[10px] text-[var(--color-text-muted)]">Upload a JSON or CSV file, or paste JSON directly</p>
                 </div>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="text-[10px] font-mono text-[var(--color-ghost-text)] uppercase tracking-wider block mb-1.5">Dataset Name</label>
+                  <label className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider block mb-1.5">Dataset Name</label>
                   <input className="bio-input w-full" placeholder="e.g. Imported Support Set"
                     value={importName} onChange={e => setImportName(e.target.value)} />
                 </div>
 
                 {/* File upload */}
                 <div>
-                  <label className="text-[10px] font-mono text-[var(--color-ghost-text)] uppercase tracking-wider block mb-1.5">Upload File</label>
+                  <label className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider block mb-1.5">Upload File</label>
                   <div className="flex gap-2">
                     <input ref={fileInputRef} type="file" accept=".json,.csv" onChange={handleFileUpload} className="hidden" />
                     <GlowButton variant="ghost" size="sm" icon={<FileJson size={14} />}
@@ -492,7 +492,7 @@ export default function DatasetsPage() {
 
                 {/* Or paste JSON */}
                 <div>
-                  <label className="text-[10px] font-mono text-[var(--color-ghost-text)] uppercase tracking-wider block mb-1.5">Or Paste JSON</label>
+                  <label className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase tracking-wider block mb-1.5">Or Paste JSON</label>
                   <textarea className="bio-input w-full font-mono text-xs" rows={8}
                     placeholder={`[\n  { "input": "How do I return a product?", "expectedOutput": "You can initiate a return..." },\n  { "input": "Where is my order?", "expectedOutput": "Track your order at..." }\n]`}
                     value={importData} onChange={e => { setImportData(e.target.value); setImportError(''); }}
@@ -500,9 +500,9 @@ export default function DatasetsPage() {
                 </div>
 
                 {/* Accepted field names */}
-                <div className="rounded-lg" style={{ padding: '10px 14px', background: 'rgba(0,255,209,0.03)', border: '1px solid rgba(0,255,209,0.08)' }}>
-                  <div className="text-[10px] text-[var(--color-muted-text)] leading-relaxed">
-                    <strong className="text-[var(--color-biolume-primary)]">Accepted fields:</strong>{' '}
+                <div className="rounded-lg" style={{ padding: '10px 14px', background: 'rgba(59,130,246,0.03)', border: '1px solid rgba(59,130,246,0.08)' }}>
+                  <div className="text-[10px] text-[var(--color-text-secondary)] leading-relaxed">
+                    <strong className="text-[var(--color-brand-primary)]">Accepted fields:</strong>{' '}
                     <code className="text-[9px]">input</code> / <code className="text-[9px]">prompt</code> / <code className="text-[9px]">question</code> →{' '}
                     <code className="text-[9px]">expectedOutput</code> / <code className="text-[9px]">expected</code> / <code className="text-[9px]">answer</code> / <code className="text-[9px]">output</code>
                   </div>
@@ -510,7 +510,7 @@ export default function DatasetsPage() {
 
                 {/* Error / success */}
                 {importError && (
-                  <div className="flex items-center gap-2 text-xs rounded-lg" style={{ padding: '10px', background: 'rgba(255,61,107,0.06)', border: '1px solid rgba(255,61,107,0.15)', color: '#FF3D6B' }}>
+                  <div className="flex items-center gap-2 text-xs rounded-lg" style={{ padding: '10px', background: 'rgba(255,61,107,0.06)', border: '1px solid rgba(255,61,107,0.15)', color: '#EF4444' }}>
                     <AlertTriangle size={14} /> {importError}
                   </div>
                 )}

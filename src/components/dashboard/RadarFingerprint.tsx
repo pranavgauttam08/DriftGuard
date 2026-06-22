@@ -54,7 +54,7 @@ export default function RadarFingerprint({ base, next, size = 300 }: RadarProps)
         i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
       ctx.closePath();
-      ctx.strokeStyle = 'rgba(0,255,209,0.08)';
+      ctx.strokeStyle = 'rgba(59,130,246,0.08)';
       ctx.stroke();
     }
 
@@ -64,15 +64,15 @@ export default function RadarFingerprint({ base, next, size = 300 }: RadarProps)
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.lineTo(cx + Math.cos(angle) * maxR, cy + Math.sin(angle) * maxR);
-      ctx.strokeStyle = 'rgba(0,255,209,0.1)';
+      ctx.strokeStyle = 'rgba(59,130,246,0.1)';
       ctx.stroke();
 
       // Labels
       const labelR = maxR + 18;
       const lx = cx + Math.cos(angle) * labelR;
       const ly = cy + Math.sin(angle) * labelR;
-      ctx.fillStyle = '#4A8F8A';
-      ctx.font = '9px "Fira Code", monospace';
+      ctx.fillStyle = '#94A3B8';
+      ctx.font = '9px "JetBrains Mono", monospace';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(AXES[i], lx, ly);
@@ -112,8 +112,8 @@ export default function RadarFingerprint({ base, next, size = 300 }: RadarProps)
     const baseValues = extractValues(base);
     if (next) {
       const nextValues = extractValues(next);
-      drawPolygon(baseValues, 'rgb(0,255,209)', 'rgba(0,255,209,0.4)', 0.08);
-      drawPolygon(nextValues, 'rgb(0,229,255)', 'rgba(0,229,255,0.8)', 0.15);
+      drawPolygon(baseValues, 'rgb(59,130,246)', 'rgba(59,130,246,0.4)', 0.08);
+      drawPolygon(nextValues, 'rgb(139,92,246)', 'rgba(139,92,246,0.8)', 0.15);
 
       // Highlight regression zones
       for (let i = 0; i < n; i++) {
@@ -123,22 +123,22 @@ export default function RadarFingerprint({ base, next, size = 300 }: RadarProps)
           const y = cy + Math.sin(angle) * nextValues[i] * maxR;
           ctx.beginPath();
           ctx.arc(x, y, 6, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(255,61,107,0.3)';
+          ctx.fillStyle = 'rgba(239,68,68,0.3)';
           ctx.fill();
         }
       }
     } else {
-      drawPolygon(baseValues, 'rgb(0,255,209)', 'rgba(0,255,209,0.7)', 0.12);
+      drawPolygon(baseValues, 'rgb(59,130,246)', 'rgba(59,130,246,0.7)', 0.12);
     }
   }, [base, next, size]);
 
   return (
-    <div className="bio-card p-4 inline-block">
+    <div className="ag-card p-4 inline-block">
       <canvas ref={canvasRef} style={{ width: size, height: size }} />
       {next && (
         <div className="flex gap-4 mt-2 justify-center text-[10px] font-mono">
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[rgba(0,255,209,0.4)]" /> {base.version}</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[rgba(0,229,255,0.8)]" /> {next.version}</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[rgba(59,130,246,0.5)]" /> {base.version}</span>
+          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[rgba(139,92,246,0.8)]" /> {next.version}</span>
         </div>
       )}
     </div>

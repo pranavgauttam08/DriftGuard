@@ -29,14 +29,14 @@ export default function MetricCard({ title, value, suffix = '', prefix = '', del
 
   const displayValue = format === 'percent' ? `${counter.value}%` : format === 'ms' ? `${counter.value}ms` : `${prefix}${counter.value}${suffix}`;
 
-  const statusColor = status === 'critical' ? 'var(--color-biolume-danger)' : status === 'warning' ? 'var(--color-biolume-warning)' : 'var(--color-biolume-primary)';
+  const statusColor = status === 'critical' ? 'var(--color-block)' : status === 'warning' ? 'var(--color-warn)' : 'var(--color-brand-primary)';
 
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: 20 }} animate={isVisible ? { opacity: 1, y: 0 } : {}}
-      className={`bio-card p-5 relative overflow-hidden ${halo ? 'halo-border' : ''}`}
+      className={`ag-card p-5 relative overflow-hidden ${halo ? 'halo-border' : ''}`}
     >
       <div className="flex items-start justify-between mb-3">
-        <span className="text-xs text-[var(--color-muted-text)] font-medium uppercase tracking-wider">{title}</span>
+        <span className="text-xs text-[var(--color-text-secondary)] font-medium uppercase tracking-wider">{title}</span>
         {icon && <span style={{ color: statusColor }}>{icon}</span>}
       </div>
 
@@ -46,15 +46,15 @@ export default function MetricCard({ title, value, suffix = '', prefix = '', del
 
       {(delta !== undefined || deltaLabel) && (
         <div className="flex items-center gap-1 mt-2">
-          {trend === 'up' && <TrendingUp size={12} className="text-[var(--color-biolume-tertiary)]" />}
-          {trend === 'down' && <TrendingDown size={12} className="text-[var(--color-biolume-danger)]" />}
-          {trend === 'neutral' && <Minus size={12} className="text-[var(--color-muted-text)]" />}
+          {trend === 'up' && <TrendingUp size={12} className="text-[var(--color-pass)]" />}
+          {trend === 'down' && <TrendingDown size={12} className="text-[var(--color-block)]" />}
+          {trend === 'neutral' && <Minus size={12} className="text-[var(--color-text-secondary)]" />}
           {delta !== undefined && (
-            <span className={`text-xs font-mono ${delta > 0 && trend !== 'down' ? 'text-[var(--color-biolume-tertiary)]' : delta < 0 ? 'text-[var(--color-biolume-danger)]' : 'text-[var(--color-muted-text)]'}`}>
+            <span className={`text-xs font-mono ${delta > 0 && trend !== 'down' ? 'text-[var(--color-pass)]' : delta < 0 ? 'text-[var(--color-block)]' : 'text-[var(--color-text-secondary)]'}`}>
               {delta > 0 ? '+' : ''}{format === 'percent' ? `${(delta * 100).toFixed(1)}%` : delta.toFixed(1)}
             </span>
           )}
-          {deltaLabel && <span className="text-[10px] text-[var(--color-ghost-text)]">{deltaLabel}</span>}
+          {deltaLabel && <span className="text-[10px] text-[var(--color-text-muted)]">{deltaLabel}</span>}
         </div>
       )}
 
@@ -63,7 +63,7 @@ export default function MetricCard({ title, value, suffix = '', prefix = '', del
           {sparkline.map((v, i) => (
             <div key={i} className="flex-1 rounded-sm" style={{
               height: `${(v / Math.max(...sparkline)) * 100}%`,
-              background: `rgba(0,255,209,${0.2 + (v / Math.max(...sparkline)) * 0.4})`,
+              background: `rgba(59,130,246,${0.2 + (v / Math.max(...sparkline)) * 0.4})`,
               minHeight: '2px',
             }} />
           ))}

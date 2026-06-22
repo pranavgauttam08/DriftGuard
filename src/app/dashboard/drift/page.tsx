@@ -18,15 +18,15 @@ export default function DriftPage() {
       <TopBar title="Drift Map" />
 
       <div className="flex items-center gap-4">
-        <span className="text-xs text-[var(--color-muted-text)] font-mono">Viewing:</span>
+        <span className="text-xs text-[var(--color-text-secondary)] font-mono">Viewing:</span>
         <EndpointSelector endpoints={dg.endpoints} selected={dg.selectedEndpoint} onSelect={dg.selectEndpoint} />
       </div>
 
       {fps.length === 0 ? (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center" style={{ padding: '5rem 2rem' }}>
-          <Map size={40} className="mx-auto text-[var(--color-ghost-text)]" style={{ marginBottom: '1.5rem', opacity: 0.3 }} />
+          <Map size={40} className="mx-auto text-[var(--color-text-muted)]" style={{ marginBottom: '1.5rem', opacity: 0.3 }} />
           <h3 className="text-lg font-semibold" style={{ marginBottom: '0.5rem' }}>No drift data yet</h3>
-          <p className="text-sm text-[var(--color-muted-text)]" style={{ maxWidth: '360px', margin: '0 auto' }}>
+          <p className="text-sm text-[var(--color-text-secondary)]" style={{ maxWidth: '360px', margin: '0 auto' }}>
             Send multiple versions of data to <strong>{dg.selectedEndpoint?.name}</strong> to see how its behavior drifts over time.
           </p>
         </motion.div>
@@ -34,8 +34,8 @@ export default function DriftPage() {
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2"><DriftMap fingerprints={fps} /></div>
           <div className="flex flex-col items-center gap-5">
-            <div className="bio-card p-5"><DriftSphere driftData={driftData} /></div>
-            <p className="text-xs text-[var(--color-muted-text)] text-center max-w-[280px] leading-relaxed">
+            <div className="ag-card p-5"><DriftSphere driftData={driftData} /></div>
+            <p className="text-xs text-[var(--color-text-secondary)] text-center max-w-[280px] leading-relaxed">
               3D drift sphere for <strong>{dg.selectedEndpoint?.name}</strong> — vertex colors encode behavioral drift magnitude across {fps.length} version{fps.length !== 1 ? 's' : ''}.
             </p>
           </div>

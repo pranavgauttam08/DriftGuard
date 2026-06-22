@@ -13,7 +13,7 @@ interface GlowButtonProps {
 }
 
 export default function GlowButton({ children, onClick, variant = 'primary', size = 'md', disabled, className = '', icon }: GlowButtonProps) {
-  const base = variant === 'danger' ? 'bio-button-danger' : variant === 'ghost' ? 'bio-button-ghost' : 'bio-button';
+  const base = variant === 'danger' ? 'ag-button-danger' : variant === 'ghost' ? 'ag-button-ghost' : 'ag-button';
   const sizeClass = size === 'sm' ? '!px-4 !py-2 !text-xs' : size === 'lg' ? '!px-8 !py-4 !text-base' : '';
   return (
     <motion.button

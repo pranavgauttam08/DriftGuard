@@ -9,8 +9,8 @@ export default function LoadingOrb({ size = 60 }: { size?: number }) {
         style={{
           width: size * 0.6,
           height: size * 0.6,
-          background: 'radial-gradient(circle, rgba(0,255,209,0.4), transparent)',
-          boxShadow: '0 0 30px rgba(0,255,209,0.3), 0 0 60px rgba(0,255,209,0.1)',
+          background: 'radial-gradient(circle, rgba(59,130,246,0.4), transparent)',
+          boxShadow: '0 0 30px rgba(59,130,246,0.3), 0 0 60px rgba(59,130,246,0.1)',
         }}
         animate={{
           scale: [1, 1.3, 1],
@@ -19,7 +19,7 @@ export default function LoadingOrb({ size = 60 }: { size?: number }) {
         transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.div
-        className="absolute rounded-full border border-[rgba(0,255,209,0.2)]"
+        className="absolute rounded-full border border-[rgba(59,130,246,0.2)]"
         style={{ width: size * 0.9, height: size * 0.9 }}
         animate={{ rotate: 360 }}
         transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
