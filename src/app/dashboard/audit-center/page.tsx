@@ -1,239 +1,347 @@
 'use client';
+// ============================================================
+// app/dashboard/audit-center/page.tsx
+// Live Supabase audit log viewer. All colours via CSS vars only.
+// Role visibility:
+//   Admin, Auditor (owner/auditor): see ALL logs
+//   Manager/Reviewer: see only own team logs
+//   Engineer/Developer, Viewer: blocked with no-access banner
+// ============================================================
 import { useState, useMemo } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { motion } from 'framer-motion';
 import TopBar from '@/components/dashboard/TopBar';
-import GlowButton from '@/components/ui/GlowButton';
-import { loadCollection, saveCollection, COLLECTIONS } from '@/lib/persistence';
+import { useAuditLogs } from '@/hooks/useControls';
+import { useTenant } from '@/hooks/useTenant';
 import {
-  ScrollText, Search, Download, Filter, Clock, User, Server, Shield,
-  GitBranch, Settings, CheckCircle2, XCircle, ChevronDown,
+  ScrollText, Search, Download, Shield, Clock, ChevronLeft, ChevronRight,
+  ArrowRight, Lock, RefreshCw, Filter,
 } from 'lucide-react';
 
-interface AuditEntry {
-  id: string;
-  action: string;
-  category: 'deployment' | 'endpoint' | 'config' | 'auth' | 'compliance' | 'review';
-  user: string;
-  resource: string;
-  details: string;
-  timestamp: string;
-  environment: string;
-  severity: 'info' | 'warning' | 'critical';
+// ── Roles that can see the audit center ──────────────────────
+const ALLOWED_ROLES = new Set(['admin', 'owner', 'auditor', 'reviewer']);
+
+// ── CSV export ───────────────────────────────────────────────
+function exportToCsv(logs: any[], filename: string) {
+  const headers = ['Timestamp', 'Actor Email', 'Role', 'Event', 'Resource Type', 'Resource Name', 'Old Value', 'New Value', 'IP'];
+  const rows = logs.map(l => [
+    l.created_at,
+    l.actor_email,
+    l.actor_role,
+    l.event_type,
+    l.resource_type,
+    l.resource_name,
+    l.old_value ? JSON.stringify(l.old_value) : '',
+    l.new_value ? JSON.stringify(l.new_value) : '',
+    l.ip_address,
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
-const DEMO_AUDIT: AuditEntry[] = [
-  { id: 'a-1', action: 'deployment.approved', category: 'deployment', user: 'admin@company.com', resource: 'support-bot v1.3.0', details: 'Approved deployment to staging after behavioral diff passed', timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), environment: 'staging', severity: 'info' },
-  { id: 'a-2', action: 'deployment.rejected', category: 'deployment', user: 'reviewer@company.com', resource: 'support-bot v1.4.0', details: 'Rejected: hallucination score increased 256%', timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), environment: 'production', severity: 'critical' },
-  { id: 'a-3', action: 'endpoint.created', category: 'endpoint', user: 'dev@company.com', resource: 'analytics-ai', details: 'New endpoint registered with default configuration', timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), environment: 'development', severity: 'info' },
-  { id: 'a-4', action: 'api_key.rotated', category: 'config', user: 'admin@company.com', resource: 'Production Ingestion Key', details: 'API key rotated as part of 30-day rotation policy', timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), environment: 'production', severity: 'warning' },
-  { id: 'a-5', action: 'member.invited', category: 'auth', user: 'owner@company.com', resource: 'reviewer@company.com', details: 'Invited as Auditor role to DriftGuard organization', timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), environment: 'all', severity: 'info' },
-  { id: 'a-6', action: 'probe.executed', category: 'compliance', user: 'system', resource: 'support-bot v1.4.0', details: 'Executed 20 adversarial probes: 16 passed, 4 failed (jailbreak, hallucination)', timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), environment: 'staging', severity: 'warning' },
-  { id: 'a-7', action: 'config.changed', category: 'config', user: 'admin@company.com', resource: 'Drift Thresholds', details: 'Updated hallucination block threshold from 0.2 to 0.15', timestamp: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(), environment: 'production', severity: 'info' },
-  { id: 'a-8', action: 'review.submitted', category: 'review', user: 'reviewer@company.com', resource: 'code-assistant v1.4.0', details: 'Review approved with notes: latency improvement confirmed', timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), environment: 'staging', severity: 'info' },
-  { id: 'a-9', action: 'pii.detected', category: 'compliance', user: 'system', resource: 'support-bot', details: 'PII scan found 12 email addresses and 3 phone numbers in responses', timestamp: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString(), environment: 'production', severity: 'warning' },
-  { id: 'a-10', action: 'rollback.executed', category: 'deployment', user: 'admin@company.com', resource: 'onboarding-guide v1.3.0', details: 'Rolled back to v1.2.0 due to topic consistency regression', timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), environment: 'production', severity: 'critical' },
-  { id: 'a-11', action: 'fingerprint.generated', category: 'endpoint', user: 'system', resource: 'code-assistant v1.4.0', details: 'Auto-generated behavioral fingerprint from 25 response samples', timestamp: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(), environment: 'staging', severity: 'info' },
-  { id: 'a-12', action: 'compliance.scan', category: 'compliance', user: 'system', resource: 'SOC2 / GDPR / HIPAA', details: 'Automated compliance scan completed. Score: 67/100', timestamp: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(), environment: 'all', severity: 'info' },
-];
+// ── Change diff cell ─────────────────────────────────────────
+function ChangeDiff({ oldValue, newValue }: { oldValue: any; newValue: any }) {
+  if (!oldValue && !newValue) return <span style={{ color: 'var(--color-text-muted)' }}>—</span>;
+  const oldStr = oldValue ? Object.entries(oldValue).map(([k, v]) => `${k}: ${v}`).join(', ') : null;
+  const newStr = newValue ? Object.entries(newValue).map(([k, v]) => `${k}: ${v}`).join(', ') : null;
+  return (
+    <span className="flex items-center gap-1 text-[10px] font-mono flex-wrap">
+      {oldStr && <span className="line-through" style={{ color: 'var(--color-text-danger)' }}>{oldStr}</span>}
+      {oldStr && newStr && <ArrowRight size={9} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />}
+      {newStr && <span style={{ color: 'var(--color-text-success)' }}>{newStr}</span>}
+    </span>
+  );
+}
 
-const CATEGORY_ICONS: Record<string, any> = {
-  deployment: GitBranch,
-  endpoint: Server,
-  config: Settings,
-  auth: User,
-  compliance: Shield,
-  review: CheckCircle2,
-};
+// ── Date formatter ────────────────────────────────────────────
+function formatTs(iso: string) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
 
-const CATEGORY_COLORS: Record<string, string> = {
-  deployment: '#00E5FF',
-  endpoint: '#3B82F6',
-  config: '#F59E0B',
-  auth: '#D4A574',
-  compliance: '#00FF88',
-  review: '#B388FF',
-};
+const PAGE_SIZE = 50;
 
 export default function AuditCenterPage() {
-  const [filterCategory, setFilterCategory] = useState<string | null>(null);
-  const [filterSeverity, setFilterSeverity] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const { user } = useUser();
+  const { org, role } = useTenant();
+  const orgId = org?.id ?? '';
 
-  const filtered = useMemo(() => {
-    return DEMO_AUDIT.filter(entry => {
-      if (filterCategory && entry.category !== filterCategory) return false;
-      if (filterSeverity && entry.severity !== filterSeverity) return false;
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase();
-        return entry.action.includes(q) || entry.user.includes(q) || entry.resource.toLowerCase().includes(q) || entry.details.toLowerCase().includes(q);
-      }
-      return true;
-    });
-  }, [filterCategory, filterSeverity, searchQuery]);
+  const [actorFilter, setActorFilter]      = useState('');
+  const [eventFilter, setEventFilter]      = useState('');
+  const [dateFrom, setDateFrom]            = useState('');
+  const [dateTo, setDateTo]                = useState('');
+  const [page, setPage]                    = useState(0);
 
-  const exportAudit = () => {
-    const data = JSON.stringify(filtered, null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `driftguard-audit-${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+  const { data, isLoading, isError, refetch } = useAuditLogs({
+    orgId,
+    actorFilter:     actorFilter || undefined,
+    eventTypeFilter: eventFilter || undefined,
+    dateFrom:        dateFrom || undefined,
+    dateTo:          dateTo || undefined,
+    page,
+    pageSize: PAGE_SIZE,
+    viewerRole:   role,
+    viewerUserId: user?.id,
+  });
 
-  const timeAgo = (ts: string) => {
-    const diff = Date.now() - new Date(ts).getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 60) return `${mins}m ago`;
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs}h ago`;
-    return `${Math.floor(hrs / 24)}d ago`;
-  };
+  const logs   = data?.logs ?? [];
+  const total  = data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
-  // Activity chart (last 10 days)
-  const activityByDay = useMemo(() => {
-    const days: Record<string, number> = {};
-    for (let i = 9; i >= 0; i--) {
-      const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      days[d] = 0;
-    }
-    DEMO_AUDIT.forEach(e => {
-      const d = e.timestamp.split('T')[0];
-      if (days[d] !== undefined) days[d]++;
-    });
-    return Object.entries(days).map(([date, count]) => ({ date, count }));
-  }, []);
-  const maxActivity = Math.max(...activityByDay.map(d => d.count), 1);
+  // ── Role-gate ─────────────────────────────────────────────
+  if (!ALLOWED_ROLES.has(role)) {
+    return (
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <TopBar title="Audit Center" />
+        <motion.div
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+          className="ag-card flex flex-col items-center justify-center text-center"
+          style={{ padding: '4rem 2rem', marginTop: '2rem' }}
+        >
+          <Lock size={40} style={{ color: 'var(--color-text-muted)', opacity: 0.4, marginBottom: '1rem' }} />
+          <h3 className="text-lg font-bold" style={{ color: 'var(--color-text-primary)', marginBottom: '0.5rem' }}>
+            Access Restricted
+          </h3>
+          <p className="text-sm" style={{ color: 'var(--color-text-secondary)', maxWidth: '360px' }}>
+            Your role does not have permission to view audit logs.
+            Contact your organization administrator.
+          </p>
+          <p className="text-[10px] font-mono mt-3" style={{ color: 'var(--color-text-muted)' }}>
+            Current role: {role}
+          </p>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <TopBar title="Audit Center" />
 
-      {/* Activity chart */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ag-card" style={{ padding: '1.25rem' }}>
-        <div className="text-[10px] font-mono text-[var(--color-text-muted)] uppercase mb-3">Activity (Last 10 Days)</div>
-        <div className="flex items-end gap-2" style={{ height: '60px' }}>
-          {activityByDay.map((day, i) => (
-            <div key={i} className="flex-1 flex flex-col items-center gap-1">
-              <div className="w-full rounded-t transition-all"
-                style={{
-                  height: `${Math.max(4, (day.count / maxActivity) * 100)}%`,
-                  background: day.count > 2 ? '#F59E0B' : '#3B82F6',
-                  opacity: 0.7,
-                }}
-                title={`${day.date}: ${day.count} events`}
-              />
-              <span className="text-[7px] text-[var(--color-text-muted)]">{day.date.split('-')[2]}</span>
-            </div>
-          ))}
+      {/* ── Filter bar ────────────────────────────────────── */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+        className="ag-card" style={{ padding: '1rem 1.25rem' }}>
+        <div className="flex items-center gap-3 flex-wrap">
+          <Filter size={13} style={{ color: 'var(--color-text-muted)' }} />
+
+          {/* Actor search */}
+          <div className="relative" style={{ minWidth: '200px', flex: 1 }}>
+            <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--color-text-muted)' }} />
+            <input
+              className="w-full text-xs font-mono rounded-md"
+              style={{
+                paddingLeft: '30px',
+                paddingRight: '10px',
+                height: '32px',
+                background: 'var(--color-bg-overlay)',
+                border: '1px solid var(--color-border-subtle)',
+                color: 'var(--color-text-primary)',
+              }}
+              placeholder="Search actor email..."
+              value={actorFilter}
+              onChange={e => { setActorFilter(e.target.value); setPage(0); }}
+            />
+          </div>
+
+          {/* Event type filter */}
+          <select
+            className="text-xs font-mono rounded-md"
+            style={{
+              padding: '0 10px',
+              height: '32px',
+              background: 'var(--color-bg-overlay)',
+              border: '1px solid var(--color-border-subtle)',
+              color: eventFilter ? 'var(--color-brand-primary)' : 'var(--color-text-muted)',
+            }}
+            value={eventFilter}
+            onChange={e => { setEventFilter(e.target.value); setPage(0); }}
+          >
+            <option value="">All Events</option>
+            <option value="control.status_changed">control.status_changed</option>
+            <option value="control.evidence_uploaded">control.evidence_uploaded</option>
+            <option value="control.evidence_deleted">control.evidence_deleted</option>
+            <option value="user.login">user.login</option>
+          </select>
+
+          {/* Date range */}
+          <input type="date" value={dateFrom}
+            onChange={e => { setDateFrom(e.target.value); setPage(0); }}
+            className="text-xs font-mono rounded-md"
+            style={{ padding: '0 8px', height: '32px', background: 'var(--color-bg-overlay)', border: '1px solid var(--color-border-subtle)', color: 'var(--color-text-muted)' }}
+          />
+          <span className="text-[10px]" style={{ color: 'var(--color-text-muted)' }}>to</span>
+          <input type="date" value={dateTo}
+            onChange={e => { setDateTo(e.target.value); setPage(0); }}
+            className="text-xs font-mono rounded-md"
+            style={{ padding: '0 8px', height: '32px', background: 'var(--color-bg-overlay)', border: '1px solid var(--color-border-subtle)', color: 'var(--color-text-muted)' }}
+          />
+
+          {/* Export CSV */}
+          <button
+            onClick={() => exportToCsv(logs, `audit_log_${new Date().toISOString().split('T')[0]}.csv`)}
+            disabled={logs.length === 0}
+            className="flex items-center gap-1.5 text-xs font-mono rounded-md transition-all disabled:opacity-40"
+            style={{
+              padding: '0 12px',
+              height: '32px',
+              background: 'rgba(59,130,246,0.08)',
+              border: '1px solid rgba(59,130,246,0.20)',
+              color: 'var(--color-brand-primary)',
+            }}
+          >
+            <Download size={11} />
+            Export CSV ({logs.length})
+          </button>
+
+          {/* Refresh */}
+          <button onClick={() => refetch()}
+            className="flex items-center gap-1 text-xs font-mono rounded-md transition-all"
+            style={{ padding: '0 10px', height: '32px', background: 'var(--color-bg-overlay)', border: '1px solid var(--color-border-subtle)', color: 'var(--color-text-muted)' }}>
+            <RefreshCw size={11} />
+          </button>
         </div>
       </motion.div>
 
-      {/* Filters */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <div className="relative flex-1" style={{ maxWidth: '280px' }}>
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
-          <input className="bio-input w-full" style={{ paddingLeft: '36px' }}
-            placeholder="Search audit logs..." value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)} />
+      {/* ── Error state ───────────────────────────────────── */}
+      {isError && (
+        <div className="rounded-xl flex items-center gap-3" style={{
+          padding: '1rem', background: 'var(--color-background-danger)', border: '1px solid var(--color-border-danger)',
+        }}>
+          <span className="text-sm" style={{ color: 'var(--color-text-danger)' }}>Failed to load audit logs.</span>
+          <button onClick={() => refetch()} className="text-xs font-mono underline" style={{ color: 'var(--color-text-danger)' }}>Try again</button>
+        </div>
+      )}
+
+      {/* ── Log table ─────────────────────────────────────── */}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="ag-card" style={{ padding: 0, overflow: 'hidden' }}>
+        {/* Table header */}
+        <div className="grid text-[9px] font-mono uppercase font-semibold" style={{
+          gridTemplateColumns: '160px 1fr 70px 140px 100px 1fr',
+          padding: '10px 16px',
+          background: 'var(--color-bg-overlay)',
+          borderBottom: '1px solid var(--color-border-subtle)',
+          color: 'var(--color-text-muted)',
+          letterSpacing: '0.06em',
+        }}>
+          <span>Timestamp</span>
+          <span>Actor Email</span>
+          <span>Role</span>
+          <span>Event</span>
+          <span>Resource</span>
+          <span>Change</span>
         </div>
 
-        <div className="flex gap-1">
-          {Object.keys(CATEGORY_ICONS).map(cat => (
-            <button key={cat} onClick={() => setFilterCategory(filterCategory === cat ? null : cat)}
-              className="text-[9px] font-mono rounded-full transition-all"
-              style={{
-                padding: '4px 8px',
-                background: filterCategory === cat ? CATEGORY_COLORS[cat] + '15' : 'rgba(59,130,246,0.02)',
-                border: `1px solid ${filterCategory === cat ? CATEGORY_COLORS[cat] + '40' : 'rgba(59,130,246,0.06)'}`,
-                color: filterCategory === cat ? CATEGORY_COLORS[cat] : '#5A7A7D',
-              }}>{cat}</button>
-          ))}
-        </div>
-
-        <div className="flex gap-1">
-          {['info', 'warning', 'critical'].map(sev => (
-            <button key={sev} onClick={() => setFilterSeverity(filterSeverity === sev ? null : sev)}
-              className="text-[9px] font-mono rounded-full transition-all"
-              style={{
-                padding: '4px 8px',
-                background: filterSeverity === sev ? 'rgba(59,130,246,0.08)' : 'rgba(59,130,246,0.02)',
-                border: `1px solid ${filterSeverity === sev ? 'rgba(59,130,246,0.25)' : 'rgba(59,130,246,0.06)'}`,
-                color: filterSeverity === sev ? (sev === 'critical' ? '#EF4444' : sev === 'warning' ? '#F59E0B' : '#00E5FF') : '#5A7A7D',
-              }}>{sev}</button>
-          ))}
-        </div>
-
-        <GlowButton variant="ghost" size="sm" icon={<Download size={12} />} onClick={exportAudit}>
-          Export ({filtered.length})
-        </GlowButton>
-      </div>
-
-      {/* Audit log entries */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="ag-card" style={{ padding: '0' }}>
-        <div className="space-y-0">
-          {filtered.map((entry, i) => {
-            const Icon = CATEGORY_ICONS[entry.category] || ScrollText;
-            const catColor = CATEGORY_COLORS[entry.category] || '#5A7A7D';
-            return (
-              <div key={entry.id}
-                className="flex items-start gap-3 transition-colors hover:bg-[rgba(59,130,246,0.02)]"
-                style={{
-                  padding: '14px 20px',
-                  borderBottom: i < filtered.length - 1 ? '1px solid rgba(59,130,246,0.04)' : 'none',
-                }}>
-                {/* Timeline dot */}
-                <div className="flex flex-col items-center gap-1 pt-0.5">
-                  <div className="rounded-full p-1.5" style={{ background: catColor + '12' }}>
-                    <Icon size={12} style={{ color: catColor }} />
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] font-mono font-semibold rounded"
-                      style={{ padding: '1px 6px', background: catColor + '10', color: catColor }}>
-                      {entry.action}
-                    </span>
-                    <span className="text-[9px] font-mono rounded-full"
-                      style={{
-                        padding: '1px 6px',
-                        background: entry.severity === 'critical' ? 'rgba(255,61,107,0.08)' : entry.severity === 'warning' ? 'rgba(255,184,0,0.08)' : 'rgba(139,92,246,0.05)',
-                        color: entry.severity === 'critical' ? '#EF4444' : entry.severity === 'warning' ? '#F59E0B' : '#00E5FF',
-                      }}>{entry.severity}</span>
-                    <span className="text-[9px] font-mono rounded-full"
-                      style={{ padding: '1px 6px', background: 'rgba(59,130,246,0.04)', color: '#5A7A7D' }}>
-                      {entry.environment}
-                    </span>
-                  </div>
-
-                  <div className="text-xs text-[var(--color-text-primary)] mb-0.5">
-                    <span className="text-[var(--color-text-secondary)]">{entry.user}</span>
-                    <span className="text-[var(--color-text-muted)]"> → </span>
-                    <span className="font-medium">{entry.resource}</span>
-                  </div>
-
-                  <p className="text-[10px] text-[var(--color-text-muted)]">{entry.details}</p>
-                </div>
-
-                {/* Timestamp */}
-                <span className="text-[10px] text-[var(--color-text-muted)] flex items-center gap-1 whitespace-nowrap flex-shrink-0">
-                  <Clock size={10} /> {timeAgo(entry.timestamp)}
-                </span>
+        {/* Loading skeleton */}
+        {isLoading && (
+          <div className="divide-y" style={{ borderColor: 'var(--color-border-subtle)' }}>
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="grid animate-pulse" style={{
+                gridTemplateColumns: '160px 1fr 70px 140px 100px 1fr',
+                padding: '12px 16px', gap: '12px',
+              }}>
+                {Array.from({ length: 6 }).map((_, j) => (
+                  <div key={j} className="h-3 rounded" style={{ background: 'var(--color-background-secondary)' }} />
+                ))}
               </div>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!isLoading && logs.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-16" style={{ color: 'var(--color-text-muted)' }}>
+            <ScrollText size={32} style={{ opacity: 0.3, marginBottom: '0.75rem' }} />
+            <p className="text-sm">No audit log entries found</p>
+          </div>
+        )}
+
+        {/* Rows */}
+        {!isLoading && logs.map((log, i) => (
+          <div
+            key={log.id}
+            className="grid text-xs transition-colors hover:bg-[rgba(59,130,246,0.03)]"
+            style={{
+              gridTemplateColumns: '160px 1fr 70px 140px 100px 1fr',
+              padding: '11px 16px',
+              borderBottom: i < logs.length - 1 ? '1px solid var(--color-border-subtle)' : 'none',
+              gap: '8px',
+              alignItems: 'start',
+            }}
+          >
+            {/* Timestamp */}
+            <span className="font-mono text-[10px] flex items-center gap-1" style={{ color: 'var(--color-text-muted)' }}>
+              <Clock size={9} />{formatTs(log.created_at)}
+            </span>
+
+            {/* Actor email */}
+            <span className="truncate font-medium" style={{ color: 'var(--color-text-primary)' }}>
+              {log.actor_email}
+            </span>
+
+            {/* Role */}
+            <span className="text-[10px] font-mono rounded px-1.5 py-0.5 self-start w-fit"
+              style={{ background: 'rgba(59,130,246,0.07)', color: 'var(--color-brand-primary)' }}>
+              {log.actor_role}
+            </span>
+
+            {/* Event type */}
+            <span className="text-[10px] font-mono truncate" style={{ color: 'var(--color-text-secondary)' }}>
+              {log.event_type}
+            </span>
+
+            {/* Resource */}
+            <span className="text-[10px] truncate" style={{ color: 'var(--color-text-secondary)' }}>
+              {log.resource_name}
+            </span>
+
+            {/* Change diff */}
+            <ChangeDiff oldValue={log.old_value} newValue={log.new_value} />
+          </div>
+        ))}
       </motion.div>
 
-      {/* Immutability notice */}
-      <div className="rounded-xl flex items-center gap-2 text-[10px] text-[var(--color-text-secondary)]"
-        style={{ padding: '10px 14px', background: 'rgba(59,130,246,0.02)', border: '1px solid rgba(59,130,246,0.06)' }}>
-        <Shield size={12} className="text-[var(--color-brand-primary)]" />
-        All audit entries are immutable and tamper-proof. Logs are retained for 7 years per compliance requirements.
+      {/* ── Pagination ───────────────────────────────────── */}
+      {!isLoading && total > PAGE_SIZE && (
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] font-mono" style={{ color: 'var(--color-text-muted)' }}>
+            Showing {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, total)} of {total}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              disabled={page === 0}
+              onClick={() => setPage(p => p - 1)}
+              className="flex items-center gap-1 text-xs font-mono rounded-md transition-all disabled:opacity-30"
+              style={{ padding: '6px 12px', background: 'var(--color-bg-overlay)', border: '1px solid var(--color-border-subtle)', color: 'var(--color-text-muted)' }}
+            >
+              <ChevronLeft size={12} /> Previous
+            </button>
+            <span className="text-xs font-mono" style={{ color: 'var(--color-text-secondary)' }}>
+              Page {page + 1} / {totalPages}
+            </span>
+            <button
+              disabled={page >= totalPages - 1}
+              onClick={() => setPage(p => p + 1)}
+              className="flex items-center gap-1 text-xs font-mono rounded-md transition-all disabled:opacity-30"
+              style={{ padding: '6px 12px', background: 'var(--color-bg-overlay)', border: '1px solid var(--color-border-subtle)', color: 'var(--color-text-muted)' }}
+            >
+              Next <ChevronRight size={12} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Immutability notice ──────────────────────────── */}
+      <div className="rounded-xl flex items-center gap-2 text-[10px]"
+        style={{ padding: '10px 14px', background: 'rgba(59,130,246,0.03)', border: '1px solid var(--color-border-subtle)', color: 'var(--color-text-secondary)' }}>
+        <Shield size={12} style={{ color: 'var(--color-brand-primary)', flexShrink: 0 }} />
+        All audit entries are immutable and tamper-proof. Written via service role key, bypassing RLS.
+        Retained for 7 years per compliance requirements.
       </div>
     </div>
   );

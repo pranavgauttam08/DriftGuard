@@ -23,6 +23,18 @@
   --color-info:           #8B5CF6;
   --color-info-bg:        #1E0D3D;
 
+  /* ── Extended Control Card Status Tokens ──────────────── */
+  --color-background-success:   rgba(16, 185, 129, 0.10);
+  --color-text-success:         #10B981;
+  --color-background-warning:   rgba(245, 158, 11, 0.10);
+  --color-text-warning:         #F59E0B;
+  --color-background-danger:    rgba(239, 68, 68, 0.10);
+  --color-text-danger:          #EF4444;
+  --color-background-secondary: rgba(30, 37, 54, 0.80);
+  --color-text-success-strong:  #34D399;
+  --color-border-danger:        rgba(239, 68, 68, 0.40);
+  --color-border-warning:       rgba(245, 158, 11, 0.40);
+
   /* ── Compliance Framework Colors ──────────────────────── */
   --color-gdpr:           #3B82F6;
   --color-hipaa:          #10B981;
