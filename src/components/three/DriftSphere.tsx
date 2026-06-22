@@ -144,7 +144,14 @@ function WebGLDrift({ driftData = [] }: DriftSphereProps) {
 
     return () => {
       if (animId) cancelAnimationFrame(animId);
-      try { renderer?.dispose(); if (container.firstChild) container.removeChild(container.firstChild); } catch {}
+      try { 
+        renderer?.dispose(); 
+        if (container) {
+          while (container.firstChild) {
+            container.removeChild(container.firstChild);
+          }
+        }
+      } catch {}
     };
   }, [driftData]);
 
