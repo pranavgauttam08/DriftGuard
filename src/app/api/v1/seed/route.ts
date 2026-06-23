@@ -56,15 +56,18 @@ export async function GET() {
     const { error } = await (supabaseAdmin as any).from('controls').insert(controlsToInsert);
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ 
+        error: error.message, 
+        debugUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+        debugHint: "Look closely at the debugUrl above. Does it have quotes? Is it missing https://? Does it have a typo?"
+      }, { status: 500 });
     }
 
-    return NextResponse.json({ 
-      success: true, 
-      message: `Successfully seeded ${controlsToInsert.length} controls for org: ${orgId}. Go back to the dashboard!` 
-    });
-
+    return NextResponse.json({ success: true, inserted: controlsToInsert.length });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ 
+      error: err.message,
+      debugUrl: process.env.NEXT_PUBLIC_SUPABASE_URL
+    }, { status: 500 });
   }
 }
