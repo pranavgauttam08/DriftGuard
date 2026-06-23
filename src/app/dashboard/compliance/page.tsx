@@ -72,7 +72,7 @@ export default function ComplianceDashboardPage() {
   const orgId = org?.id ?? '';
   
   // Connect to live data
-  const { data: report, isLoading, isError } = useComplianceScore(orgId);
+  const { data: report, isLoading, isError, error } = useComplianceScore(orgId);
   const realtimeStatus = useRealtimeStatus(orgId);
 
   // If no data yet (not even cached), don't render 0s.
@@ -103,9 +103,16 @@ export default function ComplianceDashboardPage() {
 
       {/* ── ERROR STATE ──────────────────────────────────────── */}
       {isError && (
-         <div className="ag-card p-4 flex items-center gap-3" style={{ background: 'var(--color-background-danger)', borderColor: 'var(--color-border-danger)' }}>
-            <AlertTriangle size={20} style={{ color: 'var(--color-text-danger)' }} />
-            <span style={{ color: 'var(--color-text-danger)' }}>Failed to load compliance data. Please check your connection.</span>
+         <div className="ag-card p-4 flex flex-col gap-2" style={{ background: 'var(--color-background-danger)', borderColor: 'var(--color-border-danger)' }}>
+            <div className="flex items-center gap-3">
+               <AlertTriangle size={20} style={{ color: 'var(--color-text-danger)' }} />
+               <span style={{ color: 'var(--color-text-danger)', fontWeight: 'bold' }}>Failed to load compliance data.</span>
+            </div>
+            {error?.message && (
+               <div className="text-xs font-mono p-2 rounded" style={{ background: 'rgba(0,0,0,0.2)', color: 'var(--color-text-danger)' }}>
+                  Error details: {error.message}
+               </div>
+            )}
          </div>
       )}
 
