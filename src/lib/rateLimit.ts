@@ -5,18 +5,28 @@
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
-const redis = new Redis({
-  url:   process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
+let rateLimiterInstance: Ratelimit | null = null;
 
-// 100 requests per minute per org (sliding window)
-export const rateLimiter = new Ratelimit({
-  redis,
-  limiter:   Ratelimit.slidingWindow(100, '1 m'),
-  analytics: true,
-  prefix:    'driftguard',
-});
+function getRateLimiter() {
+  if (!rateLimiterInstance) {
+    const url = process.env.UPSTASH_REDIS_REST_URL?.trim();
+    const token = process.env.UPSTASH_REDIS_REST_TOKEN?.trim();
+
+    if (!url || !token) {
+      return null;
+    }
+
+    const redis = new Redis({ url, token });
+    
+    rateLimiterInstance = new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(100, '1 m'),
+      analytics: true,
+      prefix: 'driftguard',
+    });
+  }
+  return rateLimiterInstance;
+}
 
 export interface RateLimitResult {
   success:   boolean;
@@ -30,11 +40,12 @@ export interface RateLimitResult {
  * If Upstash is not configured, always returns success=true (graceful degradation).
  */
 export async function checkRateLimit(identifier: string): Promise<RateLimitResult> {
-  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
-    // Graceful degradation — env vars not configured
+  const limiter = getRateLimiter();
+  if (!limiter) {
+    // Graceful degradation — env vars not configured or invalid
     return { success: true, remaining: 99, reset: Date.now() + 60_000 };
   }
-  const { success, remaining, reset } = await rateLimiter.limit(identifier);
+  const { success, remaining, reset } = await limiter.limit(identifier);
   return { success, remaining, reset };
 }
 
