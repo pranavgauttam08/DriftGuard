@@ -25,7 +25,7 @@ export interface ComplianceReport {
   overallScore: number;
   overallGrade: string;
   domains: DomainScore[];
-  criticalFailures: ControlRow[];
+  criticalFailures: any[];
 }
 
 // ── Point values ─────────────────────────────────────────────

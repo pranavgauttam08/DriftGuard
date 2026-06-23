@@ -54,10 +54,21 @@
   --color-text-inverse:   #080C14;
 
   /* ── Borders ──────────────────────────────────────────── */
-  --color-border-subtle:  #1E2536;
-  --color-border-default: #252D3D;
-  --color-border-strong:  #334155;
-  --color-border-brand:   #3B82F6;
+  --color-border-subtle:    #1E2536;
+  --color-border-default:   #252D3D;
+  --color-border-strong:    #334155;
+  --color-border-brand:     #3B82F6;
+  --color-border-tertiary:  #1A2132;
+
+  /* ── Grade badge colors ────────────────────────────────── */
+  --color-grade-a-bg:   rgba(16, 185, 129, 0.12);
+  --color-grade-a-text: #10B981;
+  --color-grade-b-bg:   rgba(59, 130, 246, 0.12);
+  --color-grade-b-text: #3B82F6;
+  --color-grade-c-bg:   rgba(245, 158, 11, 0.12);
+  --color-grade-c-text: #F59E0B;
+  --color-grade-df-bg:  rgba(239, 68, 68, 0.12);
+  --color-grade-df-text:#EF4444;
 
   /* ── Legacy compat aliases (so old pages don't break instantly) */
   --color-abyss:             #080C14;
