@@ -1,6 +1,11 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/[\s\n\r]/g, '');
+// Clean the URL by removing whitespaces, trailing slashes, and accidental '/rest/v1' suffixes
+const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || '')
+  .replace(/[\s\n\r]/g, '')
+  .replace(/\/rest\/v1\/?$/, '')
+  .replace(/\/+$/, '');
+
 const supabaseAnonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').replace(/[\s\n\r]/g, '');
 const supabaseServiceKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').replace(/[\s\n\r]/g, '');
 
