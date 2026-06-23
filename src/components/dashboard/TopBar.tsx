@@ -1,6 +1,6 @@
 'use client';
 import { Search, Bell } from 'lucide-react';
-import { UserButton } from '@clerk/nextjs';
+import { UserButton, OrganizationSwitcher } from '@clerk/nextjs';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
@@ -54,6 +54,20 @@ export default function TopBar({ title }: { title: string }) {
             3
           </span>
         </button>
+        <OrganizationSwitcher
+          hidePersonal={true}
+          appearance={{
+            elements: {
+              organizationSwitcherTrigger: {
+                color: 'var(--color-text-primary)',
+                padding: '6px 12px',
+                border: '1px solid var(--color-border-subtle)',
+                borderRadius: '8px',
+                background: 'var(--color-bg-elevated)'
+              }
+            }
+          }}
+        />
         <UserButton
           appearance={{
             elements: {
