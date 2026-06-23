@@ -56,12 +56,27 @@ const LS_ORG = 'dg_active_org';
 const LS_PROJECT = 'dg_active_project';
 const LS_ENV = 'dg_active_env';
 
+import { useAuth } from '@clerk/nextjs';
+
 // ── Provider Component ───────────────────────────────────────
 export function TenantProvider({ children }: { children: ReactNode }) {
+  const { orgId: clerkOrgId, orgSlug: clerkOrgSlug } = useAuth();
+  
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [environments, setEnvironments] = useState<Environment[]>([]);
-  const [org, setOrg] = useState<Organization | null>(null);
+  
+  // Create a synthetic org that uses Clerk's active organization ID
+  const defaultOrg = clerkOrgId ? {
+    id: clerkOrgId,
+    name: clerkOrgSlug || 'My Organization',
+    slug: clerkOrgSlug || 'my-org',
+    plan: 'free',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  } : null;
+
+  const [org, setOrg] = useState<Organization | null>(defaultOrg);
   const [project, setProject] = useState<Project | null>(null);
   const [environment, setEnvironment] = useState<Environment | null>(null);
   const [role, setRole] = useState<Role>('viewer');
@@ -81,21 +96,37 @@ export function TenantProvider({ children }: { children: ReactNode }) {
 
       // Restore saved org or pick first
       const savedOrgId = typeof window !== 'undefined' ? localStorage.getItem(LS_ORG) : null;
-      const activeOrg = orgs.find(o => o.id === savedOrgId) || orgs[0] || null;
-      setOrg(activeOrg);
+      // If Clerk provided an orgId, ALWAYS use that. Otherwise fallback to saved or first.
+      const targetId = clerkOrgId || savedOrgId;
+      const activeOrg = orgs.find(o => o.id === targetId) || orgs[0] || null;
+      
+      if (clerkOrgId) {
+        setOrg({
+          id: clerkOrgId,
+          name: clerkOrgSlug || 'My Organization',
+          slug: clerkOrgSlug || 'my-org',
+          plan: 'free',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+      } else {
+        setOrg(activeOrg);
+      }
 
       return activeOrg;
     } catch {
       // Fallback for demo mode
-      const defaultOrg: Organization = {
-        id: 'default-org', name: 'My Organization', slug: 'my-org',
+      const fallbackOrg: Organization = {
+        id: clerkOrgId || 'default-org', 
+        name: clerkOrgSlug || 'My Organization', 
+        slug: clerkOrgSlug || 'my-org',
         plan: 'free', createdAt: new Date(), updatedAt: new Date(),
       };
-      setOrganizations([defaultOrg]);
-      setOrg(defaultOrg);
-      return defaultOrg;
+      setOrganizations([fallbackOrg]);
+      setOrg(fallbackOrg);
+      return fallbackOrg;
     }
-  }, []);
+  }, [clerkOrgId, clerkOrgSlug]);
 
   // ── Fetch Projects ─────────────────────────────────────────
   const refreshProjects = useCallback(async (orgId?: string) => {
