@@ -199,7 +199,21 @@ export function TenantProvider({ children }: { children: ReactNode }) {
       setRole('owner'); // Will be fetched from API in production
       setIsLoading(false);
     })();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [refreshOrgs, refreshProjects, fetchEnvironments]); 
+
+  // Forcefully sync the active organization state with Clerk
+  useEffect(() => {
+    if (clerkOrgId) {
+      setOrg({
+        id: clerkOrgId,
+        name: clerkOrgSlug || 'My Organization',
+        slug: clerkOrgSlug || 'my-org',
+        plan: 'free',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+    }
+  }, [clerkOrgId, clerkOrgSlug]);
 
   // ── Switchers ──────────────────────────────────────────────
   const switchOrg = useCallback(async (orgId: string) => {
