@@ -5,7 +5,8 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import { DOMAIN_CODES, SupabaseControl } from '@/hooks/useControls';
+
+const DOMAIN_CODES = ['GL', 'RM', 'RO', 'LC', 'SE', 'PR', 'RS', 'AA', 'OM', 'IM', 'TP', 'CO'];
 
 export async function GET() {
   const { orgId } = await auth();
@@ -15,7 +16,7 @@ export async function GET() {
   }
 
   try {
-    const controlsToInsert: Partial<SupabaseControl>[] = [];
+    const controlsToInsert: any[] = [];
     let idCounter = 1;
 
     // Generate 5-8 controls per domain
